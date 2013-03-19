@@ -20,31 +20,12 @@ namespace Speedo
         public About()
         {
             InitializeComponent();
-
-            bool appTrial = new LicenseInformation().IsTrial();
-            if (appTrial)
-            {
-                freetext.Visibility = System.Windows.Visibility.Visible;
-                paidtext.Visibility = System.Windows.Visibility.Collapsed;
-            }
-            else
-            {
-                freetext.Visibility = System.Windows.Visibility.Collapsed;
-                paidtext.Visibility = System.Windows.Visibility.Visible;
-            }
         }
 
         private void ReviewApp_Click(object sender, RoutedEventArgs e)
         {
             MarketplaceReviewTask marketplaceReviewTask = new MarketplaceReviewTask();
             marketplaceReviewTask.Show();
-        }
-
-        private void BuyApp_Click(object sender, RoutedEventArgs e)
-        {
-            MarketplaceDetailTask marketplaceDetailTask = new MarketplaceDetailTask();
-            marketplaceDetailTask.ContentType = MarketplaceContentType.Applications;
-            marketplaceDetailTask.Show();
         }
 
         private void Awesome_Click(object sender, RoutedEventArgs e)

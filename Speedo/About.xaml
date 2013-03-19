@@ -42,12 +42,8 @@
                     </StackPanel>
                     <StackPanel Margin="0,20,0,0">
                         <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}">Support the developer</TextBlock>
-                        <StackPanel Margin="0,0,0,0" x:Name="freetext">
-                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap">You're currently using the fully-featured trial version of the app. Buy the application to support the developer.</TextBlock>
-                            <Button x:Name="BuyApp" Click="BuyApp_Click" Content="Buy this app" />
-                        </StackPanel>
                         <StackPanel Margin="0,0,0,0" x:Name="paidtext">
-                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap">Thanks for buying the app! :)</TextBlock>
+                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap">Thanks for downloading the app! :)</TextBlock>
                             <Button x:Name="Awesome" Click="Awesome_Click" Content="You are awesome" />
                         </StackPanel>
                     </StackPanel>
