@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
-  <App xmlns="" ProductID="{e9401136-1d0d-4340-b6d1-e72b30c518a1}" Title="Speedo Plus" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Pixel Tucker Pty Ltd" Description="Speedometer" Publisher="Pixel Tucker">
+<Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
+  <DefaultLanguage xmlns="" code="en" />
+  <App xmlns="" ProductID="{817f97cc-f8db-4fde-89fc-78a40ab4e9be}" Title="Speedo Plus" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Pixel Tucker Pty Ltd" Description="Speedometer" Publisher="Pixel Tucker" PublisherID="{7b55a78d-aa98-4d4d-8ddf-e6c887f52c14}">
     <IconPath IsRelative="true" IsResource="false">ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_LOCATION" />
@@ -11,12 +12,23 @@
     </Tasks>
     <Tokens>
       <PrimaryToken TokenID="SpeedoToken" TaskName="_default">
-        <TemplateType5>
-          <BackgroundImageURI IsRelative="true" IsResource="false">Background.png</BackgroundImageURI>
+        <TemplateFlip>
+          <SmallImageURI IsResource="false" IsRelative="true">Background.png</SmallImageURI>
           <Count>0</Count>
+          <BackgroundImageURI IsResource="false" IsRelative="true">Background.png</BackgroundImageURI>
           <Title>Speedo Plus</Title>
-        </TemplateType5>
+          <BackContent></BackContent>
+          <BackBackgroundImageURI></BackBackgroundImageURI>
+          <BackTitle></BackTitle>
+          <DeviceLockImageURI></DeviceLockImageURI>
+          <HasLarge>false</HasLarge>
+        </TemplateFlip>
       </PrimaryToken>
     </Tokens>
+    <ScreenResolutions>
+      <ScreenResolution Name="ID_RESOLUTION_WVGA" />
+      <ScreenResolution Name="ID_RESOLUTION_WXGA" />
+      <ScreenResolution Name="ID_RESOLUTION_HD720P" />
+    </ScreenResolutions>
   </App>
 </Deployment>
