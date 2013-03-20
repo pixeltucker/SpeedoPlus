@@ -38,8 +38,8 @@ namespace Speedo
 
         void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            s1 = new SpeedDataSource.Speeds();
-            s2 = new SpeedDataSource.Speeds5();
+            s1 = new Speedo.Speeds();
+            s2 = new Speedo.Speeds5();
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
