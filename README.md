@@ -1,6 +1,8 @@
 Speedo Plus for Windows Phone
 ==========
 
+This is a fork of Long Zheng's original app.
+
 The speedo, done Metro. An easy and elegant way to check how fast you're traveling using the GPS.
 
 - Supports both metric (km/h) and imperial (mph) measurements.
@@ -10,7 +12,7 @@ The speedo, done Metro. An easy and elegant way to check how fast you're traveli
 - Calculates moving average and maximum speed during trip
 - Map underlay feature
 
-Why I decided to open source it http://www.istartedsomething.com/20130319/help-me-improve-speedo-plus-on-github/
+Why Long decided to open source it http://www.istartedsomething.com/20130319/help-me-improve-speedo-plus-on-github/
 
 Windows Phone Store listing http://www.windowsphone.com/en-us/store/app/speedo-plus/d2075a58-c9a4-e011-986b-78e7d1fa76f8
 
