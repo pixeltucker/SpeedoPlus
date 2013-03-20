@@ -752,7 +752,7 @@ namespace Speedo
         {
             if ( speedAlertConfig == "off" )
             {
-                AlertPopup alertPopup = new AlertPopup( Convert.ToInt32( speedAlertSpeed ), UnitTextBlock.Text );
+                AlertPopup alertPopup = new AlertPopup( UnitTextBlock.Text ) { AlertSpeed = (int) speedAlertSpeed };
                 PopupContent.Children.Add( alertPopup );
                 LayoutRoot.IsHitTestVisible = false;
                 ApplicationBar.IsVisible = false;
