@@ -13,7 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Controls.Maps;
+using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -101,7 +101,6 @@ namespace Speedo
             VisualStateManager.GoToState( this, "HideControls", false );
 
             // initialize Bing map with our API
-            BackMap.CredentialsProvider = new ApplicationIdCredentialsProvider( "AtV3X75PD_JTG4pJKbQtd3cT8YRD2b8Fdow7mVKr2wdx63VB4jDqxlU1WELTVFDv" );
             BackMap.ZoomLevel = mapScale;
 
             // get our map setting
@@ -675,11 +674,11 @@ namespace Speedo
             stateSettings["SpeedAlertConfig"] = speedAlertConfig;
         }
 
-        private void BackMap_LoadingError( object sender, LoadingErrorEventArgs e )
-        {
-            errorMap = true;
-            UpdateMap();
-        }
+        //private void BackMap_LoadingError( object sender, LoadingErrorEventArgs e )
+        //{
+        //    errorMap = true;
+        //    UpdateMap();
+        //}
 
         private void ResetSpeedGraph()
         {

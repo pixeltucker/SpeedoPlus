@@ -4,7 +4,7 @@
                             xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
                             xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
                             xmlns:my="clr-namespace:Speedo"
-                            xmlns:bing="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"  
+                            xmlns:maps="clr-namespace:Microsoft.Phone.Maps.Controls;assembly=Microsoft.Phone.Maps"
                             xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
                             FontFamily="{StaticResource PhoneFontFamilyNormal}"
                             FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -26,7 +26,8 @@
 
             <Grid x:Name="MapLayer"
                   Background="#CCCCCC">
-                <bing:Map x:Name="BackMap" 
+                <!-- TODO: LoadingError isn't supported any more, fix it? -->
+                <maps:Map x:Name="BackMap" 
                           IsHitTestVisible="False" 
                           Visibility="Visible" 
                           VerticalAlignment="Center" 
@@ -34,18 +35,17 @@
                           RenderTransformOrigin="0.5,0.5" 
                           Width="934" 
                           Height="934" 
-                          LoadingError="BackMap_LoadingError" 
-                          CacheMode="BitmapCache">
-                    <bing:Map.RenderTransform>
+                          CartographicMode="Road"                         
+                          CacheMode="BitmapCache">                   
+                    <maps:Map.RenderTransform>
                         <RotateTransform x:Name="BackMapRotateTransform" Angle="0" />
-                    </bing:Map.RenderTransform>
-                </bing:Map>
+                    </maps:Map.RenderTransform>
+                </maps:Map>
                 <Rectangle Fill="{StaticResource PhoneBackgroundBrush}" 
                            Opacity="0.65" />
             </Grid>
 
-            <Grid x:Name="Content" 
-                  VerticalAlignment="Center" 
+            <Grid VerticalAlignment="Center" 
                   Margin="0,-70,0,0" 
                   RenderTransformOrigin="0.5,0.5">
                 <Grid.RowDefinitions>
