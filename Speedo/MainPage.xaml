@@ -6,7 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:my="clr-namespace:SpeedoBubbleButton"
+    xmlns:my="clr-namespace:Speedo"
     xmlns:BingMaps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"  
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
     xmlns:toolkitPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls.Toolkit"
@@ -79,9 +79,9 @@
 
             <Grid x:Name="settingsGrid" Margin="0,0,0,0">
                 <Grid x:Name="windscreenRoot" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <my:Button x:Name="windscreenButton" MouseLeftButtonDown="windscreenButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
+                    <my:BubbleButton x:Name="windscreenButton" MouseLeftButtonDown="windscreenButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/windscreen.png" />
-                    </my:Button>
+                    </my:BubbleButton>
                     <Grid x:Name="windsreenIndicator" Visibility="Collapsed" IsHitTestVisible="False" Background="{StaticResource PhoneAccentBrush}" Width="48" Height="48" Margin="16">
                         <Grid.OpacityMask>
                             <ImageBrush ImageSource="Resources/windscreen.png"/>
@@ -97,9 +97,9 @@
                     </Grid.RenderTransform>
                 </Grid>
                 <Grid x:Name="mapRoot" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <my:Button x:Name="mapButton" MouseLeftButtonDown="mapButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
+                    <my:BubbleButton x:Name="mapButton" MouseLeftButtonDown="mapButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/map.png" />
-                    </my:Button>
+                    </my:BubbleButton>
                     <Grid.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -110,9 +110,9 @@
                     </Grid.RenderTransform>
                 </Grid>
                 <Grid x:Name="alertRoot" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                    <my:Button x:Name="alertButton" MouseLeftButtonDown="alertButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
+                    <my:BubbleButton x:Name="alertButton" MouseLeftButtonDown="alertButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/alert.png" />
-                    </my:Button>
+                    </my:BubbleButton>
                     <Grid x:Name="alertIndicator" Visibility="Collapsed" IsHitTestVisible="False" Background="{StaticResource PhoneAccentBrush}" Width="48" Height="48" Margin="16">
                         <Grid.OpacityMask>
                             <ImageBrush ImageSource="Resources/alert.png"/>
