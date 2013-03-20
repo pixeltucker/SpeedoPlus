@@ -178,7 +178,7 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="roadbg.jpg" />
+    <Resource Include="Resources\roadbg.jpg" />
     <Resource Include="Resources\map.png" />
     <Resource Include="Resources\windscreen.png" />
   </ItemGroup>
