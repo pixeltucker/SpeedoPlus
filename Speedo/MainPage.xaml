@@ -1,75 +1,120 @@
-﻿<phone:PhoneApplicationPage 
-    x:Class="Speedo.MainPage"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
-    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:my="clr-namespace:Speedo"
-    xmlns:BingMaps="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"  
-    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
-    xmlns:toolkitPrimitives="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls.Toolkit"
-    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
-    shell:SystemTray.IsVisible="True"
-    OrientationChanged="OnOrientationChanged">
-
+﻿<phone:PhoneApplicationPage x:Class="Speedo.MainPage"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:my="clr-namespace:Speedo"
+                            xmlns:bing="clr-namespace:Microsoft.Phone.Controls.Maps;assembly=Microsoft.Phone.Controls.Maps"  
+                            xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            SupportedOrientations="PortraitOrLandscape"
+                            Orientation="Portrait"
+                            shell:SystemTray.IsVisible="True"
+                            OrientationChanged="OnOrientationChanged">
     <shell:SystemTray.ProgressIndicator>
-        <shell:ProgressIndicator x:Name="LocatingIndicator" IsIndeterminate="True" IsVisible="False" Text="Locating..." />
+        <shell:ProgressIndicator x:Name="LocatingIndicator" 
+                                 IsIndeterminate="True" 
+                                 IsVisible="False" 
+                                 Text="Locating..." />
     </shell:SystemTray.ProgressIndicator>
-
     <Grid>
+        <Grid x:Name="LayoutRoot" 
+              Background="{StaticResource PhoneBackgroundBrush}" 
+              MouseLeftButtonDown="LayoutRoot_MouseLeftButtonDown">
 
-        <!--LayoutRoot is the root grid where all page content is placed-->
-        <Grid x:Name="LayoutRoot" Background="{StaticResource PhoneBackgroundBrush}" MouseLeftButtonDown="LayoutRoot_MouseLeftButtonDown">
-
-            <Grid x:Name="MapLayer" Background="#CCCCCC">
-                <BingMaps:Map x:Name="BackMap" IsHitTestVisible="False" Visibility="Visible" VerticalAlignment="Center" HorizontalAlignment="Center" RenderTransformOrigin="0.5,0.5" Width="934" Height="934" LoadingError="BackMap_LoadingError" CacheMode="BitmapCache">
-                    <BingMaps:Map.RenderTransform>
+            <Grid x:Name="MapLayer"
+                  Background="#CCCCCC">
+                <bing:Map x:Name="BackMap" 
+                          IsHitTestVisible="False" 
+                          Visibility="Visible" 
+                          VerticalAlignment="Center" 
+                          HorizontalAlignment="Center" 
+                          RenderTransformOrigin="0.5,0.5" 
+                          Width="934" 
+                          Height="934" 
+                          LoadingError="BackMap_LoadingError" 
+                          CacheMode="BitmapCache">
+                    <bing:Map.RenderTransform>
                         <RotateTransform x:Name="BackMapRotateTransform" Angle="0" />
-                    </BingMaps:Map.RenderTransform>
-                </BingMaps:Map>
-                <Rectangle Fill="{StaticResource PhoneBackgroundBrush}" Opacity="0.65" />
+                    </bing:Map.RenderTransform>
+                </bing:Map>
+                <Rectangle Fill="{StaticResource PhoneBackgroundBrush}" 
+                           Opacity="0.65" />
             </Grid>
 
-            <Grid x:Name="Content" VerticalAlignment="Center" Margin="0,-70,0,0" RenderTransformOrigin="0.5,0.5">
+            <Grid x:Name="Content" 
+                  VerticalAlignment="Center" 
+                  Margin="0,-70,0,0" 
+                  RenderTransformOrigin="0.5,0.5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Margin="10,0,10,0" Height="300">
-
-                    <TextBlock x:Name="StatusTextBlock" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,0,0,20">Status</TextBlock>
-                    <TextBlock x:Name="SpeedTextBlock" FontSize="260" LineHeight="240" LineStackingStrategy="BlockLineHeight" Margin="0,30,0,0" FontFamily="Segoe WP SemiLight" HorizontalAlignment="Center" VerticalAlignment="Center">0</TextBlock>
-                    <TextBlock x:Name="UnitTextBlock" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,14" Style="{StaticResource PhoneTextSmallStyle}">km/h</TextBlock>
-
+                <Grid Margin="10,0,10,0" 
+                      Height="300">
+                    <TextBlock x:Name="StatusTextBlock" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Top" 
+                               Margin="0,0,0,20" 
+                               Text="Status" />
+                    <TextBlock x:Name="SpeedTextBlock" 
+                               FontSize="260" 
+                               LineHeight="240" 
+                               LineStackingStrategy="BlockLineHeight" 
+                               Margin="0,30,0,0" 
+                               FontFamily="Segoe WP SemiLight" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center" Text="0" />
+                    <TextBlock x:Name="UnitTextBlock" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Bottom" 
+                               Margin="0,0,0,14" 
+                               Style="{StaticResource PhoneTextSmallStyle}" 
+                               Text="km/h" />
                 </Grid>
 
-                <Grid Margin="10,0,10,0" Grid.Row="1">
+                <Grid Margin="10,0,10,0" 
+                      Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />
                         <RowDefinition Height="64" />
                     </Grid.RowDefinitions>
 
-                    <Grid x:Name="SpeedChart" Grid.Row="0">
-                        <Polyline x:Name="SpeedGraph" Stretch="Fill" Stroke="{StaticResource PhoneForegroundBrush}" Height="30" StrokeThickness="1" VerticalAlignment="Bottom">
+                    <Grid x:Name="SpeedChart">
+                        <Polyline x:Name="SpeedGraph" 
+                                  Stretch="Fill" 
+                                  Stroke="{StaticResource PhoneForegroundBrush}" 
+                                  Height="30" 
+                                  StrokeThickness="1" 
+                                  VerticalAlignment="Bottom">
                             <Polyline.Points>
                             </Polyline.Points>
                         </Polyline>
                     </Grid>
 
-                    <Grid Grid.Row="1" x:Name="Direction" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <Path x:Name="DirectionIcon" Width="24" Height="28" Fill="{StaticResource PhoneAccentBrush}" Stretch="Fill" Data="F1 M 383.125,183.208L 395.625,214.208L 383.125,204.708L 370.625,214.208L 383.125,183.208 Z " Margin="-150,10,0,0" RenderTransformOrigin="0.5,0.5">
+                    <Grid Grid.Row="1" 
+                          x:Name="Direction" 
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Bottom">
+                        <Path x:Name="DirectionIcon" 
+                              Width="24" 
+                              Height="28" 
+                              Fill="{StaticResource PhoneAccentBrush}" 
+                              Stretch="Fill" 
+                              Data="F1 M 383.125,183.208L 395.625,214.208L 383.125,204.708L 370.625,214.208L 383.125,183.208 Z " 
+                              Margin="-150,10,0,0" 
+                              RenderTransformOrigin="0.5,0.5">
                             <Path.RenderTransform>
                                 <RotateTransform x:Name="DirectionRotateTransform" Angle="0" />
                             </Path.RenderTransform>
                         </Path>
-                        <TextBlock x:Name="DirectionTextBlock" FontSize="50" Foreground="{StaticResource PhoneAccentBrush}">N</TextBlock>
+                        <TextBlock x:Name="DirectionTextBlock" 
+                                   FontSize="50" 
+                                   Foreground="{StaticResource PhoneAccentBrush}"
+                                   Text="N" />
                     </Grid>
                 </Grid>
                 <Grid.RenderTransform>
@@ -77,12 +122,23 @@
                 </Grid.RenderTransform>
             </Grid>
 
-            <Grid x:Name="settingsGrid" Margin="0,0,0,0">
-                <Grid x:Name="windscreenRoot" HorizontalAlignment="Left" VerticalAlignment="Top">
-                    <my:BubbleButton x:Name="windscreenButton" MouseLeftButtonDown="windscreenButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
+            <Grid x:Name="settingsGrid" 
+                  Margin="0,0,0,0">
+                <Grid x:Name="windscreenRoot" 
+                      HorizontalAlignment="Left" 
+                      VerticalAlignment="Top">
+                    <my:BubbleButton x:Name="windscreenButton" 
+                                     MouseLeftButtonDown="windscreenButton_MouseLeftButtonDown" 
+                                     Style="{StaticResource RoundIconButton}" 
+                                     tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/windscreen.png" />
                     </my:BubbleButton>
-                    <Grid x:Name="windsreenIndicator" Visibility="Collapsed" IsHitTestVisible="False" Background="{StaticResource PhoneAccentBrush}" Width="48" Height="48" Margin="16">
+                    <Grid x:Name="windsreenIndicator" 
+                          Visibility="Collapsed" 
+                          IsHitTestVisible="False" 
+                          Background="{StaticResource PhoneAccentBrush}" 
+                          Width="48" Height="48" 
+                          Margin="16">
                         <Grid.OpacityMask>
                             <ImageBrush ImageSource="Resources/windscreen.png"/>
                         </Grid.OpacityMask>
@@ -96,8 +152,13 @@
                         </TransformGroup>
                     </Grid.RenderTransform>
                 </Grid>
-                <Grid x:Name="mapRoot" HorizontalAlignment="Right" VerticalAlignment="Top">
-                    <my:BubbleButton x:Name="mapButton" MouseLeftButtonDown="mapButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
+                <Grid x:Name="mapRoot" 
+                      HorizontalAlignment="Right" 
+                      VerticalAlignment="Top">
+                    <my:BubbleButton x:Name="mapButton" 
+                                     MouseLeftButtonDown="mapButton_MouseLeftButtonDown" 
+                                     Style="{StaticResource RoundIconButton}" 
+                                     tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/map.png" />
                     </my:BubbleButton>
                     <Grid.RenderTransform>
@@ -109,11 +170,21 @@
                         </TransformGroup>
                     </Grid.RenderTransform>
                 </Grid>
-                <Grid x:Name="alertRoot" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                    <my:BubbleButton x:Name="alertButton" MouseLeftButtonDown="AlertButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
+                <Grid x:Name="alertRoot" 
+                      HorizontalAlignment="Left" 
+                      VerticalAlignment="Bottom">
+                    <my:BubbleButton x:Name="alertButton" 
+                                     MouseLeftButtonDown="AlertButton_MouseLeftButtonDown" 
+                                     Style="{StaticResource RoundIconButton}" 
+                                     tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/alert.png" />
                     </my:BubbleButton>
-                    <Grid x:Name="alertIndicator" Visibility="Collapsed" IsHitTestVisible="False" Background="{StaticResource PhoneAccentBrush}" Width="48" Height="48" Margin="16">
+                    <Grid x:Name="alertIndicator" 
+                          Visibility="Collapsed" 
+                          IsHitTestVisible="False" 
+                          Background="{StaticResource PhoneAccentBrush}" 
+                          Width="48" Height="48" 
+                          Margin="16">
                         <Grid.OpacityMask>
                             <ImageBrush ImageSource="Resources/alert.png"/>
                         </Grid.OpacityMask>
@@ -127,31 +198,47 @@
                         </TransformGroup>
                     </Grid.RenderTransform>
                 </Grid>
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,15">
-                    <TextBlock x:Name="DistanceTextBlock" HorizontalAlignment="Center"></TextBlock>
-                    <TextBlock HorizontalAlignment="Center" Style="{StaticResource PhoneTextSmallStyle}">distance</TextBlock>
+                <StackPanel HorizontalAlignment="Center" 
+                            VerticalAlignment="Bottom" 
+                            Margin="0,15">
+                    <TextBlock x:Name="DistanceTextBlock" 
+                               HorizontalAlignment="Center" />
+                    <TextBlock HorizontalAlignment="Center" 
+                               Style="{StaticResource PhoneTextSmallStyle}"
+                               Text="distance" />
                 </StackPanel>
-                <Grid Margin="0,36,0,0" VerticalAlignment="Center">
+                <Grid Margin="0,36,0,0" 
+                      VerticalAlignment="Center">
                     <StackPanel HorizontalAlignment="Left">
-                        <TextBlock x:Name="AvgSpeedTextBlock" Margin="12,0" FontSize="30">0</TextBlock>
-                        <TextBlock Style="{StaticResource PhoneTextSmallStyle}">average</TextBlock>
+                        <TextBlock x:Name="AvgSpeedTextBlock" 
+                                   Margin="12,0" 
+                                   FontSize="30"
+                                   Text="0" />
+                        <TextBlock Style="{StaticResource PhoneTextSmallStyle}"
+                                   Text="average" />
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Right">
-                        <TextBlock x:Name="MaxSpeedTextBlock" HorizontalAlignment="Right" Margin="12,0" FontSize="30">0</TextBlock>
-                        <TextBlock HorizontalAlignment="Right" Style="{StaticResource PhoneTextSmallStyle}">max</TextBlock>
+                        <TextBlock x:Name="MaxSpeedTextBlock" 
+                                   HorizontalAlignment="Right" 
+                                   Margin="12,0" 
+                                   FontSize="30"
+                                   Text="0" />
+                        <TextBlock HorizontalAlignment="Right" 
+                                   Style="{StaticResource PhoneTextSmallStyle}"
+                                   Text="max" />
                     </StackPanel>
                 </Grid>
             </Grid>
 
-            <toolkit:GestureService.GestureListener>
-                <toolkit:GestureListener PinchStarted="GestureListener_PinchStarted" PinchDelta="GestureListener_PinchDelta" PinchCompleted="GestureListener_PinchCompleted" />
-            </toolkit:GestureService.GestureListener>
-
+            <tool:GestureService.GestureListener>
+                <tool:GestureListener PinchStarted="GestureListener_PinchStarted" 
+                                         PinchDelta="GestureListener_PinchDelta" 
+                                         PinchCompleted="GestureListener_PinchCompleted" />
+            </tool:GestureService.GestureListener>
         </Grid>
 
         <Grid x:Name="PopupHost">
-            <Grid x:Name="PopupContent">
-            </Grid>
+            <Grid x:Name="PopupContent" />
             <Grid.Projection>
                 <PlaneProjection CenterOfRotationY="0.5" RotationX="0"></PlaneProjection>
             </Grid.Projection>
@@ -161,69 +248,102 @@
             <VisualStateGroup x:Name="CustomStates">
                 <VisualState x:Name="HideControls">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="windscreenButton" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2" />
-                        <DoubleAnimation Storyboard.TargetName="mapButton" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2" />
-                        <DoubleAnimation Storyboard.TargetName="alertButton" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.2" />
+                        <DoubleAnimation Storyboard.TargetName="windscreenButton" 
+                                         Storyboard.TargetProperty="Opacity" 
+                                         To="0" 
+                                         Duration="0:0:0.2" />
+                        <DoubleAnimation Storyboard.TargetName="mapButton" 
+                                         Storyboard.TargetProperty="Opacity" 
+                                         To="0" 
+                                         Duration="0:0:0.2" />
+                        <DoubleAnimation Storyboard.TargetName="alertButton" 
+                                         Storyboard.TargetProperty="Opacity" 
+                                         To="0" 
+                                         Duration="0:0:0.2" />
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="ShowControls">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="windscreenButton" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2" />
-                        <DoubleAnimation Storyboard.TargetName="mapButton" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2" />
-                        <DoubleAnimation Storyboard.TargetName="alertButton" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.2" />
+                        <DoubleAnimation Storyboard.TargetName="windscreenButton" 
+                                         Storyboard.TargetProperty="Opacity" 
+                                         To="1" 
+                                         Duration="0:0:0.2" />
+                        <DoubleAnimation Storyboard.TargetName="mapButton" 
+                                         Storyboard.TargetProperty="Opacity" 
+                                         To="1" 
+                                         Duration="0:0:0.2" />
+                        <DoubleAnimation Storyboard.TargetName="alertButton" 
+                                         Storyboard.TargetProperty="Opacity" 
+                                         To="1" 
+                                         Duration="0:0:0.2" />
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
-            
+
             <VisualStateGroup x:Name="OrientationStates">
                 <VisualState x:Name="PortraitUp" />
                 <VisualState x:Name="LandscapeRight">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="alertRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" To="80" Duration="0" />
-                        <DoubleAnimation Storyboard.TargetName="windscreenRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" To="80" Duration="0" />
+                        <DoubleAnimation Storyboard.TargetName="alertRoot" 
+                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
+                                         To="80" 
+                                         Duration="0" />
+                        <DoubleAnimation Storyboard.TargetName="windscreenRoot" 
+                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
+                                         To="80" 
+                                         Duration="0" />
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="LandscapeLeft">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="mapRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" To="-80" Duration="0" />
+                        <DoubleAnimation Storyboard.TargetName="mapRoot" 
+                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
+                                         To="-80" 
+                                         Duration="0" />
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <toolkit:TransitionService.NavigationInTransition>
-            <toolkit:NavigationInTransition>
-                <toolkit:NavigationInTransition.Backward>
-                    <toolkit:TurnstileTransition Mode="BackwardIn"/>
-                </toolkit:NavigationInTransition.Backward>
-                <toolkit:NavigationInTransition.Forward>
-                    <toolkit:TurnstileTransition Mode="ForwardIn"/>
-                </toolkit:NavigationInTransition.Forward>
-            </toolkit:NavigationInTransition>
-        </toolkit:TransitionService.NavigationInTransition>
-        <toolkit:TransitionService.NavigationOutTransition>
-            <toolkit:NavigationOutTransition>
-                <toolkit:NavigationOutTransition.Backward>
-                    <toolkit:TurnstileTransition Mode="BackwardOut"/>
-                </toolkit:NavigationOutTransition.Backward>
-                <toolkit:NavigationOutTransition.Forward>
-                    <toolkit:TurnstileTransition Mode="ForwardOut"/>
-                </toolkit:NavigationOutTransition.Forward>
-            </toolkit:NavigationOutTransition>
-        </toolkit:TransitionService.NavigationOutTransition>
-
+        <tool:TransitionService.NavigationInTransition>
+            <tool:NavigationInTransition>
+                <tool:NavigationInTransition.Backward>
+                    <tool:TurnstileTransition Mode="BackwardIn"/>
+                </tool:NavigationInTransition.Backward>
+                <tool:NavigationInTransition.Forward>
+                    <tool:TurnstileTransition Mode="ForwardIn"/>
+                </tool:NavigationInTransition.Forward>
+            </tool:NavigationInTransition>
+        </tool:TransitionService.NavigationInTransition>
+        <tool:TransitionService.NavigationOutTransition>
+            <tool:NavigationOutTransition>
+                <tool:NavigationOutTransition.Backward>
+                    <tool:TurnstileTransition Mode="BackwardOut"/>
+                </tool:NavigationOutTransition.Backward>
+                <tool:NavigationOutTransition.Forward>
+                    <tool:TurnstileTransition Mode="ForwardOut"/>
+                </tool:NavigationOutTransition.Forward>
+            </tool:NavigationOutTransition>
+        </tool:TransitionService.NavigationOutTransition>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Mode="Minimized" Opacity="0" StateChanged="ApplicationBar_StateChanged">
-
+        <shell:ApplicationBar IsVisible="True" 
+                              IsMenuEnabled="True" 
+                              Mode="Minimized" 
+                              Opacity="0" 
+                              StateChanged="ApplicationBar_StateChanged">
             <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem x:Name="SwitchMetric" Text="switch to metric (km/h)" Click="SwitchMetric_Click" />
-                <shell:ApplicationBarMenuItem x:Name="DisableLocation" Text="disable location access" Click="DisableLocation_Click" />
-                <shell:ApplicationBarMenuItem x:Name="About" Text="about" Click="About_Click" />
+                <shell:ApplicationBarMenuItem x:Name="SwitchMetric" 
+                                              Text="switch to metric (km/h)" 
+                                              Click="SwitchMetric_Click" />
+                <shell:ApplicationBarMenuItem x:Name="DisableLocation" 
+                                              Text="disable location access" 
+                                              Click="DisableLocation_Click" />
+                <shell:ApplicationBarMenuItem x:Name="About" 
+                                              Text="about" 
+                                              Click="About_Click" />
             </shell:ApplicationBar.MenuItems>
-
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
-
 </phone:PhoneApplicationPage>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
