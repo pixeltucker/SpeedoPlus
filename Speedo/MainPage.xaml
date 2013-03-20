@@ -110,7 +110,7 @@
                     </Grid.RenderTransform>
                 </Grid>
                 <Grid x:Name="alertRoot" HorizontalAlignment="Left" VerticalAlignment="Bottom">
-                    <my:BubbleButton x:Name="alertButton" MouseLeftButtonDown="alertButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
+                    <my:BubbleButton x:Name="alertButton" MouseLeftButtonDown="AlertButton_MouseLeftButtonDown" Style="{StaticResource RoundIconButton}" toolkit:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/alert.png" />
                     </my:BubbleButton>
                     <Grid x:Name="alertIndicator" Visibility="Collapsed" IsHitTestVisible="False" Background="{StaticResource PhoneAccentBrush}" Width="48" Height="48" Margin="16">
