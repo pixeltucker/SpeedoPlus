@@ -757,12 +757,12 @@ namespace Speedo
                 LayoutRoot.IsHitTestVisible = false;
                 ApplicationBar.IsVisible = false;
 
-                alertPopup.closeCompleted += ( int SpeedAlert ) =>
+                alertPopup.CloseCompleted += ( s, _ ) =>
                 {
                     PopupContent.Children.Clear();
                     LayoutRoot.IsHitTestVisible = true;
                     ApplicationBar.IsVisible = true;
-                    speedAlertSpeed = SpeedAlert;
+                    speedAlertSpeed = alertPopup.AlertSpeed;
                     settings["SpeedAlertSpeedConfig"] = speedAlertSpeed.ToString();
                     speedAlertConfig = "on";
                     settings["SpeedAlertConfig"] = speedAlertConfig;
