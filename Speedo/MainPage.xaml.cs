@@ -23,7 +23,7 @@ namespace Speedo
 {
     public partial class MainPage : PhoneApplicationPage
     {
-        public string unitConfig;
+        public LengthUnit lengthUnit;
         private GeoCoordinateWatcher watcher;
         private double currentSpeed = 0;
         private double currentCourse = 0;
@@ -35,14 +35,13 @@ namespace Speedo
         private double mapScale = 17;
         private GeoCoordinate lastKnownPos;
         private bool windscreenMode = false;
-        private string mapConfig;
-        private string warningConfig;
+        private MapStatus mapStatus;
         private IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
         private int speedGraphMaxCount = 360;
         private bool errorMap = false;
-        private string locationAccess;
-        private string speedAlertConfig;
+        private bool accessLocation;
+        private bool isSpeedAlertEnabled;
         private string speedAlertSpeedConfig;
         private double speedAlertSpeed;
         private SoundEffect speedAlertEffect;
@@ -53,39 +52,24 @@ namespace Speedo
         public MainPage()
         {
             InitializeComponent();
-
-            // show GPS warning
-            settings.TryGetValue<string>( "warning", out warningConfig );
-            if ( warningConfig != "seen" )
-            {
-                var warningMsg = MessageBox.Show( "This software uses GPS signals to calculate your speed and direction which is subject to interference and results may be skewed.\n\nThe information provided can only be used as a guide.", "Accuracy warning", MessageBoxButton.OK );
-                if ( warningMsg == MessageBoxResult.OK )
-                {
-                    var privacyMsg = MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
-                    if ( privacyMsg == MessageBoxResult.OK )
-                    {
-                        settings["warning"] = "seen";
-                    }
-                }
-            }
+            ShowWarnings();
 
             // no idling here
             PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
 
-            // get our unit setting
-            settings.TryGetValue<string>( "unit", out unitConfig );
-            if ( unitConfig != "km" && unitConfig != "mi" )
+            // get our unit setting        
+            if ( !settings.TryGetValue<LengthUnit>( "unit", out lengthUnit ) )
             {
                 // get our region
                 if ( CultureInfo.CurrentCulture.Name == "en-US" )
                 {
                     // this is English US, default to miles
-                    unitConfig = "mi";
+                    lengthUnit = LengthUnit.Miles;
                 }
                 else
                 {
                     // elsewhere, default to KM
-                    unitConfig = "km";
+                    lengthUnit = LengthUnit.Kilometers;
                 }
             }
             UpdateUnit();
@@ -105,20 +89,16 @@ namespace Speedo
             BackMap.ZoomLevel = mapScale;
 
             // get our map setting
-            settings.TryGetValue<string>( "map", out mapConfig );
-            if ( mapConfig != "on" && mapConfig != "off" )
+            if ( !settings.TryGetValue<MapStatus>( "map", out mapStatus ) )
             {
-                mapConfig = "on";
-                settings["map"] = "on";
+                settings["map"] = mapStatus = MapStatus.On;
             }
             UpdateMap();
 
             // get our speed alert speed setting
-            settings.TryGetValue<string>( "SpeedAlertConfig", out speedAlertConfig );
-            if ( speedAlertConfig != "on" && speedAlertConfig != "off" )
+            if ( !settings.TryGetValue<bool>( "SpeedAlertConfig", out isSpeedAlertEnabled ) )
             {
-                speedAlertConfig = "off";
-                settings["SpeedAlertConfig"] = "off";
+                settings["SpeedAlertConfig"] = isSpeedAlertEnabled = false;
             }
             UpdateSpeedAlert();
 
@@ -142,33 +122,43 @@ namespace Speedo
                 speedAlertSpeed = Convert.ToDouble( speedAlertSpeedConfig );
             }
 
-            Stream AlertStream = TitleContainer.OpenStream( "Resources/alert.wav" );
-            speedAlertEffect = SoundEffect.FromStream( AlertStream );
+            var alertStream = TitleContainer.OpenStream( "Resources/alert.wav" );
+            speedAlertEffect = SoundEffect.FromStream( alertStream );
             FrameworkDispatcher.Update();
-            speedAlertTimer.Tick +=
-                        delegate( object s, EventArgs args )
-                        {
-                            speedAlertEffect.Play();
-                        };
-            speedAlertTimer.Interval = new TimeSpan( 0, 0, 5 );
+            speedAlertTimer.Tick += ( s, e ) =>
+            {
+                speedAlertEffect.Play();
+            };
+            speedAlertTimer.Interval = TimeSpan.FromSeconds( 5 );
 
             // initialize our GPS watcher
             if ( watcher == null )
             {
-                watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High ); // using high accuracy
+                watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
                 watcher.StatusChanged += new EventHandler<GeoPositionStatusChangedEventArgs>( Watcher_StatusChanged );
                 watcher.PositionChanged += new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>( Watcher_PositionChanged );
             }
             watcher.Start();
 
             // get our location setting
-            settings.TryGetValue<string>( "LocationAccess", out locationAccess );
-            if ( locationAccess != "on" && locationAccess != "off" )
+            if ( !settings.TryGetValue<bool>( "LocationAccess", out accessLocation ) )
             {
-                locationAccess = "on";
+                settings["LocationAccess"] = accessLocation = true;
             }
             UpdateLocationAccess();
 
+        }
+
+        private void ShowWarnings()
+        {
+            bool warning;
+            settings.TryGetValue<bool>( "warning", out warning );
+            if ( !warning )
+            {
+                MessageBox.Show( "This software uses GPS signals to calculate your speed and direction which is subject to interference and results may be skewed.\n\nThe information provided can only be used as a guide.", "Accuracy warning", MessageBoxButton.OK );
+                MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
+                settings["warning"] = true;
+            }
         }
 
         private string CourseDirection( double course )
@@ -345,16 +335,7 @@ namespace Speedo
         {
             if ( !Double.IsNaN( currentSpeed ) )
             {
-                double unitFactor = 1;
-
-                if ( unitConfig == "km" )
-                {
-                    unitFactor = 1;
-                }
-                else if ( unitConfig == "mi" )
-                {
-                    unitFactor = 0.621371192;
-                }
+                double unitFactor = lengthUnit == LengthUnit.Miles ? 0.621371192 : 1;
 
                 double CurrentSpeedFactored = Math.Ceiling( currentSpeed * unitFactor );
                 double AvgSpeedFactored = Math.Floor( avgSpeed * unitFactor );
@@ -404,7 +385,7 @@ namespace Speedo
                 }
 
                 // speed alert
-                if ( speedAlertConfig == "on" && CurrentSpeedFactored > speedAlertSpeed )
+                if ( isSpeedAlertEnabled && CurrentSpeedFactored > speedAlertSpeed )
                 {
                     if ( !speedAlertTimer.IsEnabled )
                     {
@@ -428,13 +409,13 @@ namespace Speedo
 
         private void UpdateUnit()
         {
-            switch ( unitConfig )
+            switch ( lengthUnit )
             {
-                case "km":
+                case LengthUnit.Kilometers:
                     ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[0] ).Text = "switch to imperial (mph)";
                     UnitTextBlock.Text = "km/h";
                     break;
-                case "mi":
+                case LengthUnit.Miles:
                     ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[0] ).Text = "switch to metric (km/h)";
                     UnitTextBlock.Text = "mph";
                     break;
@@ -497,12 +478,12 @@ namespace Speedo
         {
             if ( errorMap )
             {
-                mapConfig = "disabled";
+                mapStatus = MapStatus.Disabled;
             }
 
-            switch ( mapConfig )
+            switch ( mapStatus )
             {
-                case "on":
+                case MapStatus.On:
                     if ( !windscreenMode )
                     {
                         MapLayer.Visibility = System.Windows.Visibility.Visible;
@@ -511,7 +492,7 @@ namespace Speedo
                         mapButton.IsEnabled = true;
                     }
                     break;
-                case "off":
+                case MapStatus.Off:
                     if ( !windscreenMode )
                     {
                         MapLayer.Visibility = System.Windows.Visibility.Collapsed;
@@ -520,7 +501,7 @@ namespace Speedo
                         mapButton.IsEnabled = true;
                     }
                     break;
-                case "disabled":
+                case MapStatus.Disabled:
                     MapLayer.Visibility = System.Windows.Visibility.Collapsed;
                     BackMap.Visibility = System.Windows.Visibility.Collapsed;
                     BackMap.IsEnabled = false;
@@ -531,19 +512,18 @@ namespace Speedo
 
         private void UpdateSpeedAlert()
         {
-            if ( speedAlertConfig == "on" )
-            {
-                alertIndicator.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                alertIndicator.Visibility = Visibility.Collapsed;
-            }
+            alertIndicator.Visibility = isSpeedAlertEnabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateLocationAccess()
         {
-            if ( locationAccess == "off" )
+            if ( accessLocation )
+            {
+                settings["LocationAccess"] = "on";
+                watcher.Start();
+                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "disable location access";
+            }
+            else
             {
                 settings["LocationAccess"] = "off";
                 watcher.Stop();
@@ -552,14 +532,8 @@ namespace Speedo
                 StatusTextBlock.Text = "location inaccessible";
                 currentSpeed = Double.NaN;
                 UpdateSpeed();
-                mapConfig = "disabled";
+                mapStatus = MapStatus.Disabled;
                 UpdateMap();
-            }
-            else
-            {
-                settings["LocationAccess"] = "on";
-                watcher.Start();
-                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "disable location access";
             }
             settings.Save();
         }
@@ -584,7 +558,7 @@ namespace Speedo
                 mapScale = (double) stateSettings["mapScale"];
                 SpeedGraph.Points = (PointCollection) stateSettings["SpeedGraphPoints"];
                 prevSpeeds = (List<Double>) stateSettings["prevSpeeds"];
-                speedAlertConfig = (string) stateSettings["SpeedAlertConfig"];
+                isSpeedAlertEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
                 UpdateSpeedAlert();
             }
@@ -600,7 +574,7 @@ namespace Speedo
             stateSettings["mapScale"] = mapScale;
             stateSettings["SpeedGraphPoints"] = SpeedGraph.Points;
             stateSettings["prevSpeeds"] = prevSpeeds;
-            stateSettings["SpeedAlertConfig"] = speedAlertConfig;
+            stateSettings["SpeedAlertConfig"] = isSpeedAlertEnabled;
         }
 
         protected override void OnBackKeyPress( CancelEventArgs e )
@@ -645,7 +619,7 @@ namespace Speedo
                     LocatingIndicator.IsVisible = false;
                     currentSpeed = Double.NaN;
                     UpdateSpeed();
-                    mapConfig = "disabled";
+                    mapStatus = MapStatus.Disabled;
                     UpdateMap();
                     break;
 
@@ -656,7 +630,7 @@ namespace Speedo
                     LocatingIndicator.IsVisible = true;
                     currentSpeed = Double.NaN;
                     UpdateSpeed();
-                    mapConfig = "disabled";
+                    mapStatus = MapStatus.Disabled;
                     UpdateMap();
                     break;
 
@@ -664,7 +638,7 @@ namespace Speedo
                     // The Location Service is working, but it cannot get location data.
                     StatusTextBlock.Text = "GPS not available";
                     LocatingIndicator.IsVisible = false;
-                    mapConfig = "disabled";
+                    mapStatus = MapStatus.Disabled;
                     UpdateMap();
                     break;
 
@@ -673,7 +647,7 @@ namespace Speedo
                     // Show the current position and enable the Stop Location button.
                     StatusTextBlock.Text = "";
                     LocatingIndicator.IsVisible = false;
-                    settings.TryGetValue<string>( "map", out mapConfig );
+                    settings.TryGetValue<MapStatus>( "map", out mapStatus );
                     UpdateMap();
                     break;
             }
@@ -719,18 +693,18 @@ namespace Speedo
 
         private void DisableLocation_Click( object sender, EventArgs e )
         {
-            if ( locationAccess == "on" )
+            if ( accessLocation )
             {
                 var warningMsg = MessageBox.Show( "This application will not work without location access. Are you sure you still want to disable it?", "Disable location", MessageBoxButton.OKCancel );
                 if ( warningMsg == MessageBoxResult.OK )
                 {
-                    locationAccess = "off";
+                    accessLocation = false;
                     UpdateLocationAccess();
                 }
             }
             else
             {
-                locationAccess = "on";
+                accessLocation = true;
                 UpdateLocationAccess();
             }
         }
@@ -742,7 +716,7 @@ namespace Speedo
 
         private void AlertButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
-            if ( speedAlertConfig == "off" )
+            if ( !isSpeedAlertEnabled )
             {
                 AlertPopup alertPopup = new AlertPopup( UnitTextBlock.Text ) { AlertSpeed = (int) speedAlertSpeed };
                 PopupContent.Children.Add( alertPopup );
@@ -756,16 +730,14 @@ namespace Speedo
                     ApplicationBar.IsVisible = true;
                     speedAlertSpeed = alertPopup.AlertSpeed;
                     settings["SpeedAlertSpeedConfig"] = speedAlertSpeed.ToString();
-                    speedAlertConfig = "on";
-                    settings["SpeedAlertConfig"] = speedAlertConfig;
+                    settings["SpeedAlertConfig"] = isSpeedAlertEnabled = true;
                     settings.Save();
                     UpdateSpeedAlert();
                 };
             }
             else
             {
-                speedAlertConfig = "off";
-                settings["SpeedAlertConfig"] = speedAlertConfig;
+                settings["SpeedAlertConfig"] = isSpeedAlertEnabled = false;
                 settings.Save();
                 UpdateSpeedAlert();
             }
@@ -774,16 +746,11 @@ namespace Speedo
 
         private void MapButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
-            switch ( mapConfig )
-            {
-                case "off":
-                    mapConfig = "on";
-                    break;
-                case "on":
-                    mapConfig = "off";
-                    break;
-            }
-            settings["map"] = mapConfig;
+            mapStatus = mapStatus == MapStatus.On ? MapStatus.Off
+                      : mapStatus == MapStatus.Off ? MapStatus.On
+                                                   : MapStatus.Disabled;
+
+            settings["map"] = mapStatus;
             settings.Save();
             UpdateMap();
         }
@@ -817,16 +784,8 @@ namespace Speedo
 
         private void SwitchMetric_Click( object sender, EventArgs e )
         {
-            switch ( unitConfig )
-            {
-                case "km":
-                    unitConfig = "mi";
-                    break;
-                case "mi":
-                    unitConfig = "km";
-                    break;
-            }
-            settings["unit"] = unitConfig;
+            lengthUnit = lengthUnit == LengthUnit.Kilometers ? LengthUnit.Miles : LengthUnit.Kilometers;
+            settings["unit"] = lengthUnit;
             settings.Save();
             UpdateUnit();
             UpdateSpeed();
