@@ -11,8 +11,7 @@
                             Foreground="{StaticResource PhoneForegroundBrush}"
                             SupportedOrientations="PortraitOrLandscape"
                             Orientation="Portrait"
-                            shell:SystemTray.IsVisible="True"
-                            OrientationChanged="OnOrientationChanged">
+                            shell:SystemTray.IsVisible="True">
     <shell:SystemTray.ProgressIndicator>
         <shell:ProgressIndicator x:Name="LocatingIndicator" 
                                  IsIndeterminate="True" 
@@ -128,7 +127,7 @@
                       HorizontalAlignment="Left" 
                       VerticalAlignment="Top">
                     <my:BubbleButton x:Name="windscreenButton" 
-                                     MouseLeftButtonDown="windscreenButton_MouseLeftButtonDown" 
+                                     MouseLeftButtonDown="WindscreenButton_MouseLeftButtonDown" 
                                      Style="{StaticResource RoundIconButton}" 
                                      tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/windscreen.png" />
@@ -156,7 +155,7 @@
                       HorizontalAlignment="Right" 
                       VerticalAlignment="Top">
                     <my:BubbleButton x:Name="mapButton" 
-                                     MouseLeftButtonDown="mapButton_MouseLeftButtonDown" 
+                                     MouseLeftButtonDown="MapButton_MouseLeftButtonDown" 
                                      Style="{StaticResource RoundIconButton}" 
                                      tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/map.png" />

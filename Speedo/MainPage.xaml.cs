@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -36,7 +37,6 @@ namespace Speedo
         private bool windscreenMode = false;
         private string mapConfig;
         private string warningConfig;
-        private DispatcherTimer settingsTimer = new DispatcherTimer();
         private IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
         private int speedGraphMaxCount = 360;
@@ -47,6 +47,7 @@ namespace Speedo
         private double speedAlertSpeed;
         private SoundEffect speedAlertEffect;
         private DispatcherTimer speedAlertTimer = new DispatcherTimer();
+        private int settingsDisplayCount;
 
         // Constructor
         public MainPage()
@@ -155,8 +156,8 @@ namespace Speedo
             if ( watcher == null )
             {
                 watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High ); // using high accuracy
-                watcher.StatusChanged += new EventHandler<GeoPositionStatusChangedEventArgs>( watcher_StatusChanged );
-                watcher.PositionChanged += new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>( watcher_PositionChanged );
+                watcher.StatusChanged += new EventHandler<GeoPositionStatusChangedEventArgs>( Watcher_StatusChanged );
+                watcher.PositionChanged += new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>( Watcher_PositionChanged );
             }
             watcher.Start();
 
@@ -168,57 +169,6 @@ namespace Speedo
             }
             UpdateLocationAccess();
 
-        }
-
-        // Event handler for the GeoCoordinateWatcher.StatusChanged event.
-        private void watcher_StatusChanged( object sender, GeoPositionStatusChangedEventArgs e )
-        {
-            switch ( e.Status )
-            {
-                case GeoPositionStatus.Disabled:
-                    // The Location Service is disabled or unsupported.
-                    // Check to see whether the user has disabled the Location Service.
-                    StatusTextBlock.Text = "location inaccessible";
-                    LocatingIndicator.IsVisible = false;
-                    currentSpeed = Double.NaN;
-                    UpdateSpeed();
-                    mapConfig = "disabled";
-                    UpdateMap();
-                    break;
-
-                case GeoPositionStatus.Initializing:
-                    // The Location Service is initializing.
-                    // Disable the Start Location button.
-                    StatusTextBlock.Text = "GPS initializating";
-                    LocatingIndicator.IsVisible = true;
-                    currentSpeed = Double.NaN;
-                    UpdateSpeed();
-                    mapConfig = "disabled";
-                    UpdateMap();
-                    break;
-
-                case GeoPositionStatus.NoData:
-                    // The Location Service is working, but it cannot get location data.
-                    StatusTextBlock.Text = "GPS not available";
-                    LocatingIndicator.IsVisible = false;
-                    mapConfig = "disabled";
-                    UpdateMap();
-                    break;
-
-                case GeoPositionStatus.Ready:
-                    // The Location Service is working and is receiving location data.
-                    // Show the current position and enable the Stop Location button.
-                    StatusTextBlock.Text = "";
-                    LocatingIndicator.IsVisible = false;
-                    settings.TryGetValue<string>( "map", out mapConfig );
-                    UpdateMap();
-                    break;
-            }
-        }
-
-        private void watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
-        {
-            Dispatcher.BeginInvoke( () => PositionChanged( e ) );
         }
 
         private string CourseDirection( double course )
@@ -476,21 +426,6 @@ namespace Speedo
             }
         }
 
-        private void LayoutRoot_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
-        {
-            settingsTimer.Stop();
-            VisualStateManager.GoToState( this, "ShowControls", true );
-            settingsTimer.Tick +=
-                delegate( object s, EventArgs args )
-                {
-                    VisualStateManager.GoToState( this, "HideControls", true );
-                    settingsTimer.Stop();
-                };
-
-            settingsTimer.Interval = new TimeSpan( 0, 0, 2 );
-            settingsTimer.Start();
-        }
-
         private void UpdateUnit()
         {
             switch ( unitConfig )
@@ -504,12 +439,6 @@ namespace Speedo
                     UnitTextBlock.Text = "mph";
                     break;
             }
-        }
-
-        private void windscreenButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
-        {
-            windscreenMode = !windscreenMode;
-            UpdateWindscreen();
         }
 
         private void UpdateWindscreen()
@@ -531,12 +460,12 @@ namespace Speedo
                 SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
-                SpeedChart.Visibility = System.Windows.Visibility.Collapsed;
+                SpeedChart.Visibility = Visibility.Collapsed;
                 UnitTextBlock.Opacity = 0;
-                windsreenIndicator.Visibility = System.Windows.Visibility.Visible;
+                windsreenIndicator.Visibility = Visibility.Visible;
 
-                MapLayer.Visibility = System.Windows.Visibility.Collapsed;
-                BackMap.Visibility = System.Windows.Visibility.Collapsed;
+                MapLayer.Visibility = Visibility.Collapsed;
+                BackMap.Visibility = Visibility.Collapsed;
                 BackMap.IsEnabled = false;
                 mapButton.IsEnabled = false;
             }
@@ -557,9 +486,9 @@ namespace Speedo
                 SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
                 DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
                 DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
-                SpeedChart.Visibility = System.Windows.Visibility.Visible;
+                SpeedChart.Visibility = Visibility.Visible;
                 UnitTextBlock.Opacity = 1;
-                windsreenIndicator.Visibility = System.Windows.Visibility.Collapsed;
+                windsreenIndicator.Visibility = Visibility.Collapsed;
                 UpdateMap();
             }
         }
@@ -600,47 +529,47 @@ namespace Speedo
             }
         }
 
-        private void mapButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
+        private void UpdateSpeedAlert()
         {
-            switch ( mapConfig )
+            if ( speedAlertConfig == "on" )
             {
-                case "off":
-                    mapConfig = "on";
-                    break;
-                case "on":
-                    mapConfig = "off";
-                    break;
-            }
-            settings["map"] = mapConfig;
-            settings.Save();
-            UpdateMap();
-        }
-
-        private void GestureListener_PinchStarted( object sender, PinchStartedGestureEventArgs e )
-        {
-            mapScale = BackMap.ZoomLevel;
-        }
-
-        private void GestureListener_PinchDelta( object sender, PinchGestureEventArgs e )
-        {
-            double desiredZoom = mapScale * Math.Pow( e.DistanceRatio, 0.5 );
-            if ( desiredZoom < 1 )
-            {
-                BackMap.ZoomLevel = 1;
-            }
-            else if ( desiredZoom > 19 )
-            {
-                BackMap.ZoomLevel = 19;
+                alertIndicator.Visibility = Visibility.Visible;
             }
             else
             {
-                BackMap.ZoomLevel = desiredZoom;
+                alertIndicator.Visibility = Visibility.Collapsed;
             }
         }
 
-        private void GestureListener_PinchCompleted( object sender, PinchGestureEventArgs e )
+        private void UpdateLocationAccess()
         {
-            mapScale = BackMap.ZoomLevel;
+            if ( locationAccess == "off" )
+            {
+                settings["LocationAccess"] = "off";
+                watcher.Stop();
+                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "enable location access";
+
+                StatusTextBlock.Text = "location inaccessible";
+                currentSpeed = Double.NaN;
+                UpdateSpeed();
+                mapConfig = "disabled";
+                UpdateMap();
+            }
+            else
+            {
+                settings["LocationAccess"] = "on";
+                watcher.Start();
+                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "disable location access";
+            }
+            settings.Save();
+        }
+
+        private void ResetSpeedGraph()
+        {
+            for ( int i = 0; i <= speedGraphMaxCount; i++ )
+            {
+                SpeedGraph.Points.Add( new System.Windows.Point( i, 0 ) );
+            }
         }
 
         protected override void OnNavigatedTo( NavigationEventArgs e )
@@ -674,18 +603,85 @@ namespace Speedo
             stateSettings["SpeedAlertConfig"] = speedAlertConfig;
         }
 
+        protected override void OnBackKeyPress( CancelEventArgs e )
+        {
+            if ( PopupContent.Children.Count > 0 )
+            {
+                Storyboard hidePopup = (Storyboard) App.Current.Resources["SwivelOut"];
+                Storyboard.SetTarget( hidePopup, PopupHost );
+                hidePopup.Begin();
+                hidePopup.Completed += ( s, _ ) =>
+                {
+                    PopupContent.Children.Clear();
+                    LayoutRoot.IsHitTestVisible = true;
+                    ApplicationBar.IsVisible = true;
+                    hidePopup.Stop();
+                };
+                e.Cancel = true;
+            }
+        }
+
+        protected override void OnOrientationChanged( OrientationChangedEventArgs e )
+        {
+            base.OnOrientationChanged( e );
+            VisualStateManager.GoToState( this, e.Orientation.ToString(), true );
+        }
+
         //private void BackMap_LoadingError( object sender, LoadingErrorEventArgs e )
         //{
         //    errorMap = true;
         //    UpdateMap();
         //}
 
-        private void ResetSpeedGraph()
+        // Event handler for the GeoCoordinateWatcher.StatusChanged event.
+        private void Watcher_StatusChanged( object sender, GeoPositionStatusChangedEventArgs e )
         {
-            for ( int i = 0; i <= speedGraphMaxCount; i++ )
+            switch ( e.Status )
             {
-                SpeedGraph.Points.Add( new System.Windows.Point( i, 0 ) );
+                case GeoPositionStatus.Disabled:
+                    // The Location Service is disabled or unsupported.
+                    // Check to see whether the user has disabled the Location Service.
+                    StatusTextBlock.Text = "location inaccessible";
+                    LocatingIndicator.IsVisible = false;
+                    currentSpeed = Double.NaN;
+                    UpdateSpeed();
+                    mapConfig = "disabled";
+                    UpdateMap();
+                    break;
+
+                case GeoPositionStatus.Initializing:
+                    // The Location Service is initializing.
+                    // Disable the Start Location button.
+                    StatusTextBlock.Text = "GPS initializating";
+                    LocatingIndicator.IsVisible = true;
+                    currentSpeed = Double.NaN;
+                    UpdateSpeed();
+                    mapConfig = "disabled";
+                    UpdateMap();
+                    break;
+
+                case GeoPositionStatus.NoData:
+                    // The Location Service is working, but it cannot get location data.
+                    StatusTextBlock.Text = "GPS not available";
+                    LocatingIndicator.IsVisible = false;
+                    mapConfig = "disabled";
+                    UpdateMap();
+                    break;
+
+                case GeoPositionStatus.Ready:
+                    // The Location Service is working and is receiving location data.
+                    // Show the current position and enable the Stop Location button.
+                    StatusTextBlock.Text = "";
+                    LocatingIndicator.IsVisible = false;
+                    settings.TryGetValue<string>( "map", out mapConfig );
+                    UpdateMap();
+                    break;
             }
+        }
+
+        private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
+        {
+            Dispatcher.BeginInvoke( () => PositionChanged( e ) );
         }
 
         private void ResetTrip_Click( object sender, EventArgs e )
@@ -701,27 +697,24 @@ namespace Speedo
             UpdateSpeed();
         }
 
-        private void UpdateLocationAccess()
+        private async void LayoutRoot_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
-            if ( locationAccess == "off" )
-            {
-                settings["LocationAccess"] = "off";
-                watcher.Stop();
-                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "enable location access";
+            settingsDisplayCount++;
+            int oldCount = settingsDisplayCount;
+            VisualStateManager.GoToState( this, "ShowControls", true );
 
-                StatusTextBlock.Text = "location inaccessible";
-                currentSpeed = Double.NaN;
-                UpdateSpeed();
-                mapConfig = "disabled";
-                UpdateMap();
-            }
-            else
+            await Task.Delay( 2000 );
+
+            if ( settingsDisplayCount == oldCount ) // the user didn't touch again
             {
-                settings["LocationAccess"] = "on";
-                watcher.Start();
-                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "disable location access";
+                VisualStateManager.GoToState( this, "HideControls", true );
             }
-            settings.Save();
+        }
+
+        private void WindscreenButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
+        {
+            windscreenMode = !windscreenMode;
+            UpdateWindscreen();
         }
 
         private void DisableLocation_Click( object sender, EventArgs e )
@@ -779,34 +772,47 @@ namespace Speedo
 
         }
 
-        protected override void OnBackKeyPress( CancelEventArgs e )
+        private void MapButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
-            if ( PopupContent.Children.Count > 0 )
+            switch ( mapConfig )
             {
-                Storyboard hidePopup = (Storyboard) App.Current.Resources["SwivelOut"];
-                Storyboard.SetTarget( hidePopup, PopupHost );
-                hidePopup.Begin();
-                hidePopup.Completed += ( object sender, EventArgs ea ) =>
-                    {
-                        PopupContent.Children.Clear();
-                        LayoutRoot.IsHitTestVisible = true;
-                        ApplicationBar.IsVisible = true;
-                        hidePopup.Stop();
-                    };
-                e.Cancel = true;
+                case "off":
+                    mapConfig = "on";
+                    break;
+                case "on":
+                    mapConfig = "off";
+                    break;
             }
+            settings["map"] = mapConfig;
+            settings.Save();
+            UpdateMap();
         }
 
-        private void UpdateSpeedAlert()
+        private void GestureListener_PinchStarted( object sender, PinchStartedGestureEventArgs e )
         {
-            if ( speedAlertConfig == "on" )
+            mapScale = BackMap.ZoomLevel;
+        }
+
+        private void GestureListener_PinchDelta( object sender, PinchGestureEventArgs e )
+        {
+            double desiredZoom = mapScale * Math.Pow( e.DistanceRatio, 0.5 );
+            if ( desiredZoom < 1 )
             {
-                alertIndicator.Visibility = System.Windows.Visibility.Visible;
+                BackMap.ZoomLevel = 1;
+            }
+            else if ( desiredZoom > 19 )
+            {
+                BackMap.ZoomLevel = 19;
             }
             else
             {
-                alertIndicator.Visibility = System.Windows.Visibility.Collapsed;
+                BackMap.ZoomLevel = desiredZoom;
             }
+        }
+
+        private void GestureListener_PinchCompleted( object sender, PinchGestureEventArgs e )
+        {
+            mapScale = BackMap.ZoomLevel;
         }
 
         private void SwitchMetric_Click( object sender, EventArgs e )
@@ -838,12 +844,6 @@ namespace Speedo
                 appbar.Opacity = 0;
             }
 
-        }
-
-        private void OnOrientationChanged( object sender, OrientationChangedEventArgs e )
-        {
-            // Switch to the visual state that corresponds to our target orientation
-            VisualStateManager.GoToState( this, e.Orientation.ToString(), true );
         }
     }
 }
