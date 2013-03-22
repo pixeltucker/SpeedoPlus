@@ -3,6 +3,7 @@
                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                             xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
                             xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+                            xmlns:bar="clr-namespace:BindableApplicationBar;assembly=BindableApplicationBar"
                             xmlns:my="clr-namespace:Speedo.Controls"
                             xmlns:maps="clr-namespace:Microsoft.Phone.Maps.Controls;assembly=Microsoft.Phone.Maps"
                             xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
@@ -206,7 +207,7 @@
 
             <tool:GestureService.GestureListener>
                 <tool:GestureListener PinchStarted="GestureListener_PinchStarted" 
-                                         PinchDelta="GestureListener_PinchDelta" 
+                                   PinchDelta="GestureListener_PinchDelta" 
                                          PinchCompleted="GestureListener_PinchCompleted" />
             </tool:GestureService.GestureListener>
         </Grid>
@@ -301,12 +302,30 @@
         </tool:TransitionService.NavigationOutTransition>
     </Grid>
 
-    <phone:PhoneApplicationPage.ApplicationBar>
+    <bar:Bindable.ApplicationBar>
+        <bar:BindableApplicationBar IsVisible="True"
+                                    IsMenuEnabled="True"
+                                    Mode="Minimized"
+                                    Opacity="{Binding IsMenuVisible, RelativeSource={RelativeSource Self}, 
+                                                      Converter={StaticResource BoolToAppBarOpacity}}">
+            <bar:BindableApplicationBar.MenuItems>
+                <bar:BindableApplicationBarMenuItem Text="{Binding SwitchUnitsText}"
+                                                    Command="{Binding SwitchUnitsCommand}" />
+                <bar:BindableApplicationBarMenuItem Text="{Binding SwitchLocationAccessText}" 
+                                                    Command="{Binding SwitchLocationAccessCommand}" />
+                <bar:BindableApplicationBarMenuItem Text="about" 
+                                                    Command="{Binding AboutCommand}" />
+            </bar:BindableApplicationBar.MenuItems>
+
+        </bar:BindableApplicationBar>
+    </bar:Bindable.ApplicationBar>
+    
+    <!--<phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" 
                               IsMenuEnabled="True" 
                               Mode="Minimized" 
-                              Opacity="0" 
-                              StateChanged="ApplicationBar_StateChanged">
+                              StateChanged="ApplicationBar_StateChanged" 
+                              Opacity="0">
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem x:Name="SwitchMetric" 
                                               Text="switch to metric (km/h)" 
@@ -319,5 +338,5 @@
                                               Click="About_Click" />
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>-->
 </phone:PhoneApplicationPage>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       

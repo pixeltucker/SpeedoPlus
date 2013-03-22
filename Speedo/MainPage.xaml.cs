@@ -34,6 +34,24 @@ namespace Speedo
             set { SetProperty( ref allowLocationAccess, value ); }
         }
 
+        private string switchUnitsText;
+        public string SwitchUnitsText
+        {
+            get { return switchUnitsText; }
+            set { SetProperty( ref switchUnitsText, value ); }
+        }
+
+        private string switchLocationAccessText;
+        public string SwitchLocationAccessText
+        {
+            get { return switchLocationAccessText; }
+            set { SetProperty( ref switchLocationAccessText, value ); }
+        }
+
+        public ICommand SwitchUnitsCommand { get; private set; }
+        public ICommand SwitchLocationAccessCommand { get; private set; }
+        public ICommand AboutCommand { get; private set; }
+
         public LengthUnit lengthUnit;
         private double currentSpeed = 0;
         private double currentCourse = 0;
@@ -63,6 +81,11 @@ namespace Speedo
             SpeedSource = new SpeedSource();
             ShowSpeedGraph = true;
             DataContext = this;
+
+            SwitchUnitsCommand = new RelayCommand( ExecuteSwitchUnitsCommand );
+            SwitchLocationAccessCommand = new RelayCommand( ExecuteSwitchLocationAccessCommand );
+            AboutCommand = new RelayCommand( ExecuteAboutCommand );
+
             settings.Clear();
 
             InitializeComponent();
@@ -351,11 +374,11 @@ namespace Speedo
             switch ( lengthUnit )
             {
                 case LengthUnit.Kilometers:
-                    ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[0] ).Text = "switch to imperial (mph)";
+                    SwitchUnitsText = "switch to imperial (mph)";
                     UnitTextBlock.Text = "km/h";
                     break;
                 case LengthUnit.Miles:
-                    ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[0] ).Text = "switch to metric (km/h)";
+                    SwitchUnitsText = "switch to metric (km/h)";
                     UnitTextBlock.Text = "mph";
                     break;
             }
@@ -462,11 +485,11 @@ namespace Speedo
             settings["LocationAccess"] = AllowLocationAccess;
             if ( AllowLocationAccess )
             {
-                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "disable location access";
+                SwitchLocationAccessText = "disable location access";
             }
             else
             {
-                ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "enable location access";
+                SwitchLocationAccessText = "enable location access";
 
                 StatusTextBlock.Text = "location inaccessible";
                 currentSpeed = Double.NaN;
@@ -533,6 +556,38 @@ namespace Speedo
         {
             base.OnOrientationChanged( e );
             VisualStateManager.GoToState( this, e.Orientation.ToString(), true );
+        }
+
+        private void ExecuteSwitchUnitsCommand( object parameter )
+        {
+            var newUnit = lengthUnit == LengthUnit.Kilometers ? LengthUnit.Miles : LengthUnit.Kilometers;
+            settings["unit"] = lengthUnit = newUnit;
+            settings.Save();
+            UpdateUnit();
+            UpdateSpeed();
+        }
+
+        private void ExecuteSwitchLocationAccessCommand( object parameter )
+        {
+            if ( AllowLocationAccess )
+            {
+                var warningMsg = MessageBox.Show( "This application will not work without location access. Are you sure you still want to disable it?", "Disable location", MessageBoxButton.OKCancel );
+                if ( warningMsg == MessageBoxResult.OK )
+                {
+                    AllowLocationAccess = false;
+                    UpdateLocationAccess();
+                }
+            }
+            else
+            {
+                AllowLocationAccess = true;
+                UpdateLocationAccess();
+            }
+        }
+
+        private void ExecuteAboutCommand( object parameter )
+        {
+            NavigationService.Navigate( new Uri( "/AboutPage.xaml", UriKind.Relative ) );
         }
 
         //private void BackMap_LoadingError( object sender, LoadingErrorEventArgs e )
@@ -619,29 +674,6 @@ namespace Speedo
             UpdateWindscreen();
         }
 
-        private void DisableLocation_Click( object sender, EventArgs e )
-        {
-            if ( AllowLocationAccess )
-            {
-                var warningMsg = MessageBox.Show( "This application will not work without location access. Are you sure you still want to disable it?", "Disable location", MessageBoxButton.OKCancel );
-                if ( warningMsg == MessageBoxResult.OK )
-                {
-                    AllowLocationAccess = false;
-                    UpdateLocationAccess();
-                }
-            }
-            else
-            {
-                AllowLocationAccess = true;
-                UpdateLocationAccess();
-            }
-        }
-
-        private void About_Click( object sender, EventArgs e )
-        {
-            NavigationService.Navigate( new Uri( "/AboutPage.xaml", UriKind.Relative ) );
-        }
-
         private void AlertButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
             if ( !isSpeedAlertEnabled )
@@ -708,29 +740,6 @@ namespace Speedo
         private void GestureListener_PinchCompleted( object sender, PinchGestureEventArgs e )
         {
             mapScale = BackMap.ZoomLevel;
-        }
-
-        private void SwitchMetric_Click( object sender, EventArgs e )
-        {
-            lengthUnit = lengthUnit == LengthUnit.Kilometers ? LengthUnit.Miles : LengthUnit.Kilometers;
-            settings["unit"] = lengthUnit;
-            settings.Save();
-            UpdateUnit();
-            UpdateSpeed();
-        }
-
-        private void ApplicationBar_StateChanged( object sender, ApplicationBarStateChangedEventArgs e )
-        {
-            ApplicationBar appbar = sender as ApplicationBar;
-            if ( e.IsMenuVisible )
-            {
-                appbar.Opacity = 0.8;
-            }
-            else
-            {
-                appbar.Opacity = 0;
-            }
-
         }
 
         #region INotifyPropertyChanged implementation

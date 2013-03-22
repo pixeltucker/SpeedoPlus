@@ -15,6 +15,7 @@
             
             
             <my:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+            <my:BooleanToOpacityConverter x:Key="BoolToAppBarOpacity" Opacity="0.8" />
         </ResourceDictionary>
     </Application.Resources>
 
