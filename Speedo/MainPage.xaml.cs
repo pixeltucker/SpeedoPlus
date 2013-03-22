@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Device.Location;
 using System.Globalization;
@@ -13,10 +12,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 using Microsoft.Phone.Controls;
-using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Speedo.Controls;
 
 namespace Speedo
@@ -66,17 +62,13 @@ namespace Speedo
         public ICommand AboutCommand { get; private set; }
 
         private MapStatus previousStatus;
+        private SpeedAlert speedAlert;
 
         private double accuracy = 0;
         private double mapScale = 17;
         private bool windscreenMode = false;
-        private IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
+        private IsolatedStorageSettings settings;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
-        private bool isSpeedAlertEnabled;
-        private string speedAlertSpeedConfig;
-        private double speedAlertSpeed;
-        private SoundEffect speedAlertEffect;
-        private DispatcherTimer speedAlertTimer = new DispatcherTimer();
         private int settingsDisplayCount;
 
         public MainPage()
@@ -92,7 +84,9 @@ namespace Speedo
             SwitchLocationAccessCommand = new RelayCommand( ExecuteSwitchLocationAccessCommand );
             AboutCommand = new RelayCommand( ExecuteAboutCommand );
 
+            settings = IsolatedStorageSettings.ApplicationSettings;
             settings.Clear();
+            speedAlert = new SpeedAlert( MovementSource, SpeedAlert.SoundProvider );
 
             InitializeComponent();
             ShowWarnings();
@@ -116,56 +110,38 @@ namespace Speedo
                 }
             }
 
-            //MovementSource.Clear();
-
             // hide settings button
             VisualStateManager.GoToState( this, "HideControls", false );
-
-            // initialize Bing map with our API
-            //BackMap.ZoomLevel = mapScale;
 
             // get our map setting
             if ( !settings.TryGetValue<MapStatus>( "map", out mapStatus ) )
             {
                 settings["map"] = MapStatus = MapStatus.On;
             }
-            //UpdateMap();
 
             // get our speed alert speed setting
-            if ( !settings.TryGetValue<bool>( "SpeedAlertConfig", out isSpeedAlertEnabled ) )
+            bool isSpeedAlertEnabled = false;
+            if ( settings.TryGetValue<bool>( "SpeedAlertConfig", out isSpeedAlertEnabled ) )
             {
-                settings["SpeedAlertConfig"] = isSpeedAlertEnabled = false;
+                speedAlert.IsEnabled = isSpeedAlertEnabled;
             }
             UpdateSpeedAlert();
 
-            settings.TryGetValue<string>( "SpeedAlertSpeedConfig", out speedAlertSpeedConfig );
-            if ( speedAlertSpeedConfig == null )
+            int speedLimit;
+            if ( !settings.TryGetValue( "SpeedLimit", out speedLimit ) )
             {
-                // get our region
                 if ( CultureInfo.CurrentCulture.Name == "en-US" )
                 {
                     // this is English US, default to 65
-                    speedAlertSpeed = 65;
+                    speedLimit = 65;
                 }
                 else
                 {
                     // elsewhere, default to 80
-                    speedAlertSpeed = 100;
+                    speedLimit = 100;
                 }
             }
-            else
-            {
-                speedAlertSpeed = Convert.ToDouble( speedAlertSpeedConfig );
-            }
-
-            var alertStream = TitleContainer.OpenStream( "Resources/alert.wav" );
-            speedAlertEffect = SoundEffect.FromStream( alertStream );
-            FrameworkDispatcher.Update();
-            speedAlertTimer.Tick += ( s, e ) =>
-            {
-                speedAlertEffect.Play();
-            };
-            speedAlertTimer.Interval = TimeSpan.FromSeconds( 5 );
+            speedAlert.Limit = speedLimit;
 
             // get our location setting
             if ( !settings.TryGetValue<bool>( "LocationAccess", out allowLocationAccess ) )
@@ -220,50 +196,6 @@ namespace Speedo
             {
                 StatusTextBlock.Text = "weak GPS signal";
             }
-
-            //MovementSource.ChangeSpeed( currentSpeed, e.Position.Location );
-            //UpdateSpeed();
-            //UpdateMapRender();
-        }
-
-        //private void UpdateMapRender()
-        //{
-        //    BackMap.Center = lastKnownPos;
-        //    if ( !Double.IsNaN( currentCourse ) )
-        //    {
-        //        Storyboard BackMapSB = new Storyboard();
-        //        DoubleAnimation BackMapAngleAnim = new DoubleAnimation();
-        //        BackMapAngleAnim.EasingFunction = new ExponentialEase { Exponent = 6, EasingMode = EasingMode.EaseOut };
-        //        BackMapAngleAnim.Duration = new Duration( TimeSpan.FromSeconds( 0.6 ) );
-        //        BackMapAngleAnim.To = 360 - currentCourse;
-        //        Storyboard.SetTarget( BackMapAngleAnim, BackMapRotateTransform );
-        //        Storyboard.SetTargetProperty( BackMapAngleAnim, new PropertyPath( RotateTransform.AngleProperty ) );
-        //        BackMapSB.Children.Add( BackMapAngleAnim );
-        //        BackMapSB.Begin();
-        //    }
-        //}
-
-        private void UpdateSpeed( double speed )
-        {
-            if ( !Double.IsNaN( speed ) )
-            {
-                double speedFactored = speed * SpeedUtils.GetFactor( SpeedUnit ); ;
-
-                // speed alert
-                if ( isSpeedAlertEnabled && speedFactored > speedAlertSpeed )
-                {
-                    if ( !speedAlertTimer.IsEnabled )
-                    {
-                        speedAlertEffect.Play();
-                        speedAlertTimer.Start();
-                    }
-                }
-                else
-                {
-                    speedAlertTimer.Stop();
-                }
-
-            }
         }
 
         private void UpdateWindscreen()
@@ -293,10 +225,6 @@ namespace Speedo
                 ShowSpeedGraph = false;
                 windsreenIndicator.Visibility = Visibility.Visible;
 
-                //MapLayer.Visibility = Visibility.Collapsed;
-                //BackMap.Visibility = Visibility.Collapsed;
-                //BackMap.IsEnabled = false;
-                //mapButton.IsEnabled = false;
                 previousStatus = MapStatus;
                 MapStatus = MapStatus.Disabled;
             }
@@ -309,62 +237,23 @@ namespace Speedo
                     SolidColorBrush backgroundbrush = (SolidColorBrush) App.Current.Resources["PhoneBackgroundBrush"];
                     SolidColorBrush subtlebrush = (SolidColorBrush) App.Current.Resources["PhoneSubtleBrush"];
                     SolidColorBrush disabledbrush = (SolidColorBrush) App.Current.Resources["PhoneDisabledBrush"];
-                    foregroundbrush.Color = (System.Windows.Media.Color) App.Current.Resources["PhoneForegroundColor"];
-                    backgroundbrush.Color = (System.Windows.Media.Color) App.Current.Resources["PhoneBackgroundColor"];
-                    subtlebrush.Color = (System.Windows.Media.Color) App.Current.Resources["PhoneSubtleColor"];
-                    disabledbrush.Color = (System.Windows.Media.Color) App.Current.Resources["PhoneDisabledColor"];
+                    foregroundbrush.Color = (Color) App.Current.Resources["PhoneForegroundColor"];
+                    backgroundbrush.Color = (Color) App.Current.Resources["PhoneBackgroundColor"];
+                    subtlebrush.Color = (Color) App.Current.Resources["PhoneSubtleColor"];
+                    disabledbrush.Color = (Color) App.Current.Resources["PhoneDisabledColor"];
                 }
                 //SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
                 //DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
                 //DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
-                //SpeedChart.Visibility = Visibility.Visible;
                 ShowSpeedGraph = true;
-                //UnitTextBlock.Opacity = 1;
                 windsreenIndicator.Visibility = Visibility.Collapsed;
                 MapStatus = previousStatus;
-                //UpdateMap();
             }
         }
 
-        //private void UpdateMap()
-        //{
-        //    if ( errorMap )
-        //    {
-        //        mapStatus = MapStatus.Disabled;
-        //    }
-
-        //    switch ( mapStatus )
-        //    {
-        //        case MapStatus.On:
-        //            if ( !windscreenMode )
-        //            {
-        //                MapLayer.Visibility = System.Windows.Visibility.Visible;
-        //                BackMap.Visibility = System.Windows.Visibility.Visible;
-        //                BackMap.IsEnabled = true;
-        //                mapButton.IsEnabled = true;
-        //            }
-        //            break;
-        //        case MapStatus.Off:
-        //            if ( !windscreenMode )
-        //            {
-        //                MapLayer.Visibility = System.Windows.Visibility.Collapsed;
-        //                BackMap.Visibility = System.Windows.Visibility.Collapsed;
-        //                BackMap.IsEnabled = false;
-        //                mapButton.IsEnabled = true;
-        //            }
-        //            break;
-        //        case MapStatus.Disabled:
-        //            MapLayer.Visibility = System.Windows.Visibility.Collapsed;
-        //            BackMap.Visibility = System.Windows.Visibility.Collapsed;
-        //            BackMap.IsEnabled = false;
-        //            mapButton.IsEnabled = false;
-        //            break;
-        //    }
-        //}
-
         private void UpdateSpeedAlert()
         {
-            alertIndicator.Visibility = isSpeedAlertEnabled ? Visibility.Visible : Visibility.Collapsed;
+            alertIndicator.Visibility = speedAlert.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdateLocationAccess()
@@ -392,7 +281,7 @@ namespace Speedo
                 var stateSettings = PhoneApplicationService.Current.State;
                 windscreenMode = (bool) stateSettings["windscreenMode"];
                 mapScale = (double) stateSettings["mapScale"];
-                isSpeedAlertEnabled = (bool) stateSettings["SpeedAlertConfig"];
+                speedAlert.IsEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
                 UpdateSpeedAlert();
             }
@@ -403,7 +292,7 @@ namespace Speedo
             var stateSettings = PhoneApplicationService.Current.State;
             stateSettings["windscreenMode"] = windscreenMode;
             stateSettings["mapScale"] = mapScale;
-            stateSettings["SpeedAlertConfig"] = isSpeedAlertEnabled;
+            stateSettings["SpeedAlertConfig"] = speedAlert.IsEnabled;
         }
 
         protected override void OnBackKeyPress( CancelEventArgs e )
@@ -458,12 +347,6 @@ namespace Speedo
         {
             NavigationService.Navigate( new Uri( "/AboutPage.xaml", UriKind.Relative ) );
         }
-
-        //private void BackMap_LoadingError( object sender, LoadingErrorEventArgs e )
-        //{
-        //    errorMap = true;
-        //    UpdateMap();
-        //}
 
         private void MovementSource_GeoStatusChanged( object sender, GeoPositionStatusChangedEventArgs e )
         {
@@ -534,9 +417,16 @@ namespace Speedo
 
         private void AlertButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
-            if ( !isSpeedAlertEnabled )
+            if ( speedAlert.IsEnabled )
             {
-                var alertPopup = new AlertPopup( SpeedUnit ) { AlertSpeed = (int) speedAlertSpeed };
+                settings["SpeedAlertConfig"] = speedAlert.IsEnabled = false;
+                settings.Save();
+                UpdateSpeedAlert();
+            }
+            else
+            {
+                var alertPopup = new AlertPopup( SpeedUnit ) { AlertSpeed = speedAlert.Limit };
+
                 PopupContent.Children.Add( alertPopup );
                 LayoutRoot.IsHitTestVisible = false;
                 ApplicationBar.IsVisible = false;
@@ -546,20 +436,12 @@ namespace Speedo
                     PopupContent.Children.Clear();
                     LayoutRoot.IsHitTestVisible = true;
                     ApplicationBar.IsVisible = true;
-                    speedAlertSpeed = alertPopup.AlertSpeed;
-                    settings["SpeedAlertSpeedConfig"] = speedAlertSpeed.ToString();
-                    settings["SpeedAlertConfig"] = isSpeedAlertEnabled = true;
+                    settings["SpeedLimit"] = speedAlert.Limit = alertPopup.AlertSpeed; ;
+                    settings["SpeedAlertConfig"] = speedAlert.IsEnabled = true;
                     settings.Save();
                     UpdateSpeedAlert();
                 };
             }
-            else
-            {
-                settings["SpeedAlertConfig"] = isSpeedAlertEnabled = false;
-                settings.Save();
-                UpdateSpeedAlert();
-            }
-
         }
 
         private void MapButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
@@ -570,35 +452,7 @@ namespace Speedo
 
             settings["map"] = MapStatus;
             settings.Save();
-            //UpdateMap();
         }
-
-        //private void GestureListener_PinchStarted( object sender, PinchStartedGestureEventArgs e )
-        //{
-        //    mapScale = BackMap.ZoomLevel;
-        //}
-
-        //private void GestureListener_PinchDelta( object sender, PinchGestureEventArgs e )
-        //{
-        //    double desiredZoom = mapScale * Math.Pow( e.DistanceRatio, 0.5 );
-        //    if ( desiredZoom < 1 )
-        //    {
-        //        BackMap.ZoomLevel = 1;
-        //    }
-        //    else if ( desiredZoom > 19 )
-        //    {
-        //        BackMap.ZoomLevel = 19;
-        //    }
-        //    else
-        //    {
-        //        BackMap.ZoomLevel = desiredZoom;
-        //    }
-        //}
-
-        //private void GestureListener_PinchCompleted( object sender, PinchGestureEventArgs e )
-        //{
-        //    mapScale = BackMap.ZoomLevel;
-        //}
 
         #region INotifyPropertyChanged implementation
         // TODO: find a way to reuse the code...
