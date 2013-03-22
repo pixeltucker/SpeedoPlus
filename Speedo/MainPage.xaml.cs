@@ -41,6 +41,13 @@ namespace Speedo
             set { SetProperty( ref isLocating, value ); }
         }
 
+        private SpeedUnit speedUnit;
+        public SpeedUnit SpeedUnit
+        {
+            get { return speedUnit; }
+            set { SetProperty( ref speedUnit, value ); }
+        }
+
         private string switchUnitsText;
         public string SwitchUnitsText
         {
@@ -59,12 +66,9 @@ namespace Speedo
         public ICommand SwitchLocationAccessCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
-        public LengthUnit lengthUnit;
         private double currentSpeed = 0;
         private double currentCourse = 0;
-        private double maxSpeed = 0;
         private List<double> prevSpeeds = new List<double>();
-        private double avgSpeed = 0;
         private double accuracy = 0;
         private double distance = 0;
         private double mapScale = 17;
@@ -73,7 +77,6 @@ namespace Speedo
         private MapStatus mapStatus;
         private IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
-        private int speedGraphMaxCount = 360;
         private bool errorMap = false;
         private bool isSpeedAlertEnabled;
         private string speedAlertSpeedConfig;
@@ -105,18 +108,18 @@ namespace Speedo
             PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
 
             // get our unit setting        
-            if ( !settings.TryGetValue<LengthUnit>( "unit", out lengthUnit ) )
+            if ( !settings.TryGetValue<SpeedUnit>( "unit", out speedUnit ) )
             {
                 // get our region
                 if ( CultureInfo.CurrentCulture.Name == "en-US" )
                 {
                     // this is English US, default to miles
-                    lengthUnit = LengthUnit.Miles;
+                    SpeedUnit = SpeedUnit.Miles;
                 }
                 else
                 {
                     // elsewhere, default to KM
-                    lengthUnit = LengthUnit.Kilometers;
+                    SpeedUnit = SpeedUnit.Kilometers;
                 }
             }
             UpdateUnit();
@@ -181,7 +184,8 @@ namespace Speedo
                 settings["LocationAccess"] = AllowLocationAccess = true;
 
             }
-            if ( AllowLocationAccess )
+
+            if ( !DesignerProperties.IsInDesignTool ) // Cider really, really hates GeoCoordinateWatcher
             {
                 watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
                 watcher.StatusChanged += Watcher_StatusChanged;
@@ -219,7 +223,6 @@ namespace Speedo
                 {
                     currentSpeed = e.Position.Location.Speed * 3.6; // convert M/s into KM/h
                     currentCourse = e.Position.Location.Course;
-                    UpdateAverage();
                 }
 
                 if ( Microsoft.Devices.Environment.DeviceType == Microsoft.Devices.DeviceType.Emulator )
@@ -239,7 +242,6 @@ namespace Speedo
                             currentCourse = ( 180.0 * brng / Math.PI + 360 ) % 360;
                         }
                     }
-                    UpdateAverage();
                 }
 
                 if ( lastKnownPos != null )
@@ -253,15 +255,8 @@ namespace Speedo
             else
             {
                 StatusTextBlock.Text = "weak GPS signal";
-                SpeedTextBlock.Text = "-";
                 currentSpeed = 0;
                 currentCourse = 0;
-            }
-
-            // if current speed is faster than maxspeed, override it
-            if ( currentSpeed > maxSpeed )
-            {
-                maxSpeed = currentSpeed;
             }
 
             SpeedSource.ChangeSpeed( currentSpeed );
@@ -286,90 +281,22 @@ namespace Speedo
             }
         }
 
-        private void UpdateAverage()
-        {
-            if ( currentSpeed > 0 )
-            {
-                if ( prevSpeeds.Count > 0 )
-                {
-                    double exponent = ( 2 / ( prevSpeeds.Count + 1 ) );
-                    avgSpeed = ( currentSpeed * exponent ) + ( prevSpeeds.Average() * ( 1 - exponent ) );
-                }
-                else
-                {
-                    avgSpeed = 0;
-                }
-
-                if ( prevSpeeds.Count >= speedGraphMaxCount )
-                {
-                    prevSpeeds[1] = ( prevSpeeds[0] + prevSpeeds[1] ) / 2;
-                    prevSpeeds.RemoveAt( 0 );
-                }
-                prevSpeeds.Add( currentSpeed );
-            }
-
-        }
-
         private void UpdateSpeed()
         {
             if ( !Double.IsNaN( currentSpeed ) )
             {
-                double unitFactor = lengthUnit == LengthUnit.Miles ? 0.621371192 : 1;
+                double factor = SpeedUtils.GetFactor( SpeedUnit );
+                double speedFactored = Math.Ceiling( currentSpeed * factor );
+                double distanceFactored = Math.Round( distance * factor, 1 );
 
-                double CurrentSpeedFactored = Math.Ceiling( currentSpeed * unitFactor );
-                double AvgSpeedFactored = Math.Floor( avgSpeed * unitFactor );
-                double MaxSpeedFactored = Math.Ceiling( maxSpeed * unitFactor );
-                double DistanceFactored = Math.Round( distance * unitFactor, 1 );
-
-                SpeedTextBlock.Text = CurrentSpeedFactored.ToString();
-
-                if ( this.Orientation == PageOrientation.PortraitUp || this.Orientation == PageOrientation.PortraitDown )
-                {
-                    if ( CurrentSpeedFactored >= 1000 )
-                    {
-                        SpeedTextBlock.FontSize = 180;
-                    }
-                    else if ( CurrentSpeedFactored >= 200 )
-                    {
-                        SpeedTextBlock.FontSize = 230;
-                    }
-                    else
-                    {
-                        SpeedTextBlock.FontSize = 260;
-                    }
-                }
-
-                MaxSpeedTextBlock.Text = MaxSpeedFactored.ToString();
-                DistanceTextBlock.Text = DistanceFactored.ToString();
-                AvgSpeedTextBlock.Text = AvgSpeedFactored.ToString();
-
-                //// only show compass if we're actually moving
-                //if ( currentSpeed == 0 )
-                //{
-                //    //Direction.Opacity = 0;
-                //}
-                //else
-                //{
-                //    Direction.Opacity = 1;
-                //    DirectionTextBlock.Text = CourseDirection( currentCourse );
-                //    Storyboard DirectionSB = new Storyboard();
-                //    DoubleAnimation DirectionAnim = new DoubleAnimation();
-                //    DirectionAnim.EasingFunction = new ExponentialEase { Exponent = 6, EasingMode = EasingMode.EaseOut };
-                //    DirectionAnim.Duration = new Duration( TimeSpan.FromSeconds( 0.6 ) );
-                //    DirectionAnim.To = 360 - currentCourse;
-                //    Storyboard.SetTarget( DirectionAnim, DirectionRotateTransform );
-                //    Storyboard.SetTargetProperty( DirectionAnim, new PropertyPath( RotateTransform.AngleProperty ) );
-                //    DirectionSB.Children.Add( DirectionAnim );
-                //    DirectionSB.Begin();
-                //}
+                DistanceTextBlock.Text = distanceFactored.ToString();
 
                 // speed alert
-                if ( isSpeedAlertEnabled && CurrentSpeedFactored > speedAlertSpeed )
+                if ( isSpeedAlertEnabled && speedFactored > speedAlertSpeed )
                 {
                     if ( !speedAlertTimer.IsEnabled )
                     {
                         speedAlertEffect.Play();
-
                         speedAlertTimer.Start();
                     }
                 }
@@ -379,24 +306,17 @@ namespace Speedo
                 }
 
             }
-            else
-            {
-                SpeedTextBlock.Text = "-";
-                //Direction.Opacity = 0;
-            }
         }
 
         private void UpdateUnit()
         {
-            switch ( lengthUnit )
+            switch ( SpeedUnit )
             {
-                case LengthUnit.Kilometers:
+                case SpeedUnit.Kilometers:
                     SwitchUnitsText = "switch to imperial (mph)";
-                    UnitTextBlock.Text = "km/h";
                     break;
-                case LengthUnit.Miles:
+                case SpeedUnit.Miles:
                     SwitchUnitsText = "switch to metric (km/h)";
-                    UnitTextBlock.Text = "mph";
                     break;
             }
         }
@@ -417,13 +337,15 @@ namespace Speedo
                     subtlebrush.Color = Colors.LightGray;
                     disabledbrush.Color = Colors.Gray;
                 }
-                SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 // TODO fix that
+
+                //SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 //DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 //DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 //SpeedChart.Visibility = Visibility.Collapsed;
+                //UnitTextBlock.Opacity = 0;
+
                 ShowSpeedGraph = false;
-                UnitTextBlock.Opacity = 0;
                 windsreenIndicator.Visibility = Visibility.Visible;
 
                 MapLayer.Visibility = Visibility.Collapsed;
@@ -445,12 +367,12 @@ namespace Speedo
                     subtlebrush.Color = (System.Windows.Media.Color) App.Current.Resources["PhoneSubtleColor"];
                     disabledbrush.Color = (System.Windows.Media.Color) App.Current.Resources["PhoneDisabledColor"];
                 }
-                SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
+                //SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
                 //DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
                 //DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
                 //SpeedChart.Visibility = Visibility.Visible;
                 ShowSpeedGraph = true;
-                UnitTextBlock.Opacity = 1;
+                //UnitTextBlock.Opacity = 1;
                 windsreenIndicator.Visibility = Visibility.Collapsed;
                 UpdateMap();
             }
@@ -524,8 +446,6 @@ namespace Speedo
             {
                 var stateSettings = PhoneApplicationService.Current.State;
                 distance = (double) stateSettings["distance"];
-                maxSpeed = (double) stateSettings["MaxSpeed"];
-                avgSpeed = (double) stateSettings["AvgSpeed"];
                 windscreenMode = (bool) stateSettings["windscreenMode"];
                 mapScale = (double) stateSettings["mapScale"];
                 prevSpeeds = (List<Double>) stateSettings["prevSpeeds"];
@@ -544,8 +464,6 @@ namespace Speedo
         {
             var stateSettings = PhoneApplicationService.Current.State;
             stateSettings["distance"] = distance;
-            stateSettings["MaxSpeed"] = maxSpeed;
-            stateSettings["AvgSpeed"] = avgSpeed;
             stateSettings["windscreenMode"] = windscreenMode;
             stateSettings["mapScale"] = mapScale;
             stateSettings["prevSpeeds"] = prevSpeeds;
@@ -578,8 +496,8 @@ namespace Speedo
 
         private void ExecuteSwitchUnitsCommand( object parameter )
         {
-            var newUnit = lengthUnit == LengthUnit.Kilometers ? LengthUnit.Miles : LengthUnit.Kilometers;
-            settings["unit"] = lengthUnit = newUnit;
+            var newUnit = SpeedUnit == SpeedUnit.Kilometers ? SpeedUnit.Miles : SpeedUnit.Kilometers;
+            settings["unit"] = SpeedUnit = newUnit;
             settings.Save();
             UpdateUnit();
             UpdateSpeed();
@@ -662,17 +580,14 @@ namespace Speedo
 
         private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
         {
-            BackMap.Center = e.Position.Location;
+            Dispatcher.BeginInvoke( () => PositionChanged( e ) );
         }
 
         private void ResetTrip_Click( object sender, EventArgs e )
         {
             distance = 0;
-            maxSpeed = 0;
-            avgSpeed = 0;
             SpeedSource.Clear();
             prevSpeeds.Clear();
-            UpdateAverage();
             SpeedSource.ChangeSpeed( currentSpeed );
             UpdateSpeed();
         }
@@ -701,7 +616,7 @@ namespace Speedo
         {
             if ( !isSpeedAlertEnabled )
             {
-                var alertPopup = new AlertPopup( UnitTextBlock.Text ) { AlertSpeed = (int) speedAlertSpeed };
+                var alertPopup = new AlertPopup( SpeedUnit ) { AlertSpeed = (int) speedAlertSpeed };
                 PopupContent.Children.Add( alertPopup );
                 LayoutRoot.IsHitTestVisible = false;
                 ApplicationBar.IsVisible = false;

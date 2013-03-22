@@ -16,6 +16,7 @@
             
             <my:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
             <my:BooleanToOpacityConverter x:Key="BoolToAppBarOpacity" Opacity="0.8" />
+            <my:SpeedUnitToStringConverter x:Key="SpeedToString" />
         </ResourceDictionary>
     </Application.Resources>
 

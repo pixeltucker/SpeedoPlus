@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using System.Windows;
 
-// TODO: Remove SpeedUnit, inject it via app settings
+// TODO: there's probably a better way to show units than by converting them to string here...
+// but there are no custom markupextensions :(
 
 namespace Speedo.Controls
 {
@@ -19,20 +20,22 @@ namespace Speedo.Controls
             }
         }
 
+        public string Unit { get; private set; }
+
         public IntLoopingDataSource UnitsSource { get; private set; }
         public IntLoopingDataSource TensSource { get; private set; }
         public RelayCommand CloseCommand { get; private set; }
 
-        public AlertPopup( string SpeedUnit )
+        public AlertPopup( SpeedUnit unit )
         {
+            Unit = SpeedUtils.GetString( unit );
+
             TensSource = new IntLoopingDataSource( 0, 24, 1 );
             UnitsSource = new IntLoopingDataSource( 0, 5, 5 ) { Loop = false };
             CloseCommand = new RelayCommand( _ => ClosePopup(), _ => AlertSpeed != 0 );
 
             InitializeComponent();
             LayoutRoot.DataContext = this;
-
-            TextSpeedUnit.Text = SpeedUnit;
             VisualStateManager.GoToState( this, "Open", true );
         }
 

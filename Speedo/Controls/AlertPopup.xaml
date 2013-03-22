@@ -23,10 +23,9 @@
             <my:NumberPicker TensSource="{Binding TensSource}" 
                              UnitsSource="{Binding UnitsSource}" 
                              Value="{Binding AlertSpeed, Mode=TwoWay}" />
-            <TextBlock x:Name="TextSpeedUnit" 
-                       VerticalAlignment="Center"
+            <TextBlock VerticalAlignment="Center"
                        FontSize="100"
-                       Text="km/h" />
+                       Text="{Binding Unit}" />
         </StackPanel>
 
         <Button Grid.Row="2" 

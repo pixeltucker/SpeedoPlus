@@ -22,7 +22,6 @@
         <Grid x:Name="LayoutRoot" 
               Background="{StaticResource PhoneBackgroundBrush}" 
               MouseLeftButtonDown="LayoutRoot_MouseLeftButtonDown">
-
             <Grid x:Name="MapLayer"
                   Background="#CCCCCC">
                 <!-- TODO: LoadingError isn't supported any more, fix it? -->
@@ -52,27 +51,15 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Margin="10,0,10,0" 
-                      Height="300">
+                <Grid Margin="10,0,10,0">
                     <TextBlock x:Name="StatusTextBlock" 
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Top" 
                                Margin="0,0,0,20" 
                                Text="Status" />
-                    <TextBlock x:Name="SpeedTextBlock" 
-                               FontSize="260" 
-                               LineHeight="240" 
-                               LineStackingStrategy="BlockLineHeight" 
-                               Margin="0,30,0,0" 
-                               FontFamily="Segoe WP SemiLight" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Center" Text="0" />
-                    <TextBlock x:Name="UnitTextBlock" 
-                               HorizontalAlignment="Center" 
-                               VerticalAlignment="Bottom" 
-                               Margin="0,0,0,14" 
-                               Style="{StaticResource PhoneTextSmallStyle}" 
-                               Text="km/h" />
+                    
+                    <my:SpeedDisplay Source="{Binding SpeedSource}"
+                                     Unit="{Binding SpeedUnit}" />
                 </Grid>
 
                 <Grid Margin="10,0,10,0" 
@@ -181,33 +168,12 @@
                                Style="{StaticResource PhoneTextSmallStyle}"
                                Text="distance" />
                 </StackPanel>
-                <Grid Margin="0,36,0,0" 
-                      VerticalAlignment="Center">
-                    <StackPanel HorizontalAlignment="Left">
-                        <TextBlock x:Name="AvgSpeedTextBlock" 
-                                   Margin="12,0" 
-                                   FontSize="30"
-                                   Text="0" />
-                        <TextBlock Style="{StaticResource PhoneTextSmallStyle}"
-                                   Text="average" />
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Right">
-                        <TextBlock x:Name="MaxSpeedTextBlock" 
-                                   HorizontalAlignment="Right" 
-                                   Margin="12,0" 
-                                   FontSize="30"
-                                   Text="0" />
-                        <TextBlock HorizontalAlignment="Right" 
-                                   Style="{StaticResource PhoneTextSmallStyle}"
-                                   Text="max" />
-                    </StackPanel>
-                </Grid>
             </Grid>
 
             <tool:GestureService.GestureListener>
                 <tool:GestureListener PinchStarted="GestureListener_PinchStarted" 
-                                   PinchDelta="GestureListener_PinchDelta" 
-                                         PinchCompleted="GestureListener_PinchCompleted" />
+                                      PinchDelta="GestureListener_PinchDelta" 
+                                      PinchCompleted="GestureListener_PinchCompleted" />
             </tool:GestureService.GestureListener>
         </Grid>
 
@@ -318,24 +284,4 @@
 
         </bar:BindableApplicationBar>
     </bar:Bindable.ApplicationBar>
-    
-    <!--<phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" 
-                              IsMenuEnabled="True" 
-                              Mode="Minimized" 
-                              StateChanged="ApplicationBar_StateChanged" 
-                              Opacity="0">
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem x:Name="SwitchMetric" 
-                                              Text="switch to metric (km/h)" 
-                                              Click="SwitchMetric_Click" />
-                <shell:ApplicationBarMenuItem x:Name="DisableLocation" 
-                                              Text="disable location access" 
-                                              Click="DisableLocation_Click" />
-                <shell:ApplicationBarMenuItem x:Name="About" 
-                                              Text="about" 
-                                              Click="About_Click" />
-            </shell:ApplicationBar.MenuItems>
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>-->
 </phone:PhoneApplicationPage>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       

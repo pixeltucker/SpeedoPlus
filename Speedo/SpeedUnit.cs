@@ -2,7 +2,7 @@
 
 namespace Speedo
 {
-    public enum LengthUnit
+    public enum SpeedUnit
     {
         Kilometers,
         Miles

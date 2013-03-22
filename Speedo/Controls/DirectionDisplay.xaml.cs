@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// new
+
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Device.Location;
 using System.Linq;
 using System.Windows;
@@ -75,11 +78,14 @@ namespace Speedo.Controls
             compass = Compass.GetDefault();
             if ( compass == null )
             {
-                watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
-                watcher.PositionChanged += Watcher_PositionChanged;
-                watcher.StatusChanged += Watcher_StatusChanged;
-                watcher.MovementThreshold = 1;
-                watcher.Start();
+                if ( !DesignerProperties.IsInDesignTool ) // Cider really, really hates GeoCoordinateWatcher
+                {
+                    watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
+                    watcher.PositionChanged += Watcher_PositionChanged;
+                    watcher.StatusChanged += Watcher_StatusChanged;
+                    watcher.MovementThreshold = 1;
+                    watcher.Start();
+                }
             }
             else
             {
