@@ -5,13 +5,13 @@ using Microsoft.Phone.Tasks;
 
 namespace Speedo
 {
-    public partial class About : PhoneApplicationPage
+    public partial class AboutPage : PhoneApplicationPage
     {
         public RelayCommand WebsiteCommand { get; private set; }
         public RelayCommand ReviewAppCommand { get; private set; }
         public RelayCommand AwesomeCommand { get; private set; }
 
-        public About()
+        public AboutPage()
         {
             DataContext = this;
             WebsiteCommand = new RelayCommand( ExecuteWebsiteCommand );
