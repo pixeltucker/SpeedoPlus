@@ -81,18 +81,11 @@
                         <RowDefinition Height="30" />
                         <RowDefinition Height="64" />
                     </Grid.RowDefinitions>
-
-                    <Grid x:Name="SpeedChart">
-                        <Polyline x:Name="SpeedGraph" 
-                                  Stretch="Fill" 
-                                  Stroke="{StaticResource PhoneForegroundBrush}" 
-                                  Height="30" 
-                                  StrokeThickness="1" 
-                                  VerticalAlignment="Bottom">
-                            <Polyline.Points>
-                            </Polyline.Points>
-                        </Polyline>
-                    </Grid>
+                    
+                    <my:SpeedGraph Source="{Binding SpeedSource}"
+                                   PointsCount="360"
+                                   Height="30"
+                                   Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
 
                     <Grid Grid.Row="1" 
                           x:Name="Direction" 

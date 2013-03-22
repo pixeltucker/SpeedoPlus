@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -23,6 +24,9 @@ namespace Speedo
 {
     public partial class MainPage : PhoneApplicationPage
     {
+        public SpeedSource SpeedSource { get; private set; }
+        public bool ShowSpeedGraph { get; private set; }
+
         public LengthUnit lengthUnit;
         private GeoCoordinateWatcher watcher;
         private double currentSpeed = 0;
@@ -51,6 +55,11 @@ namespace Speedo
         // Constructor
         public MainPage()
         {
+            SpeedSource = new SpeedSource();
+            ShowSpeedGraph = true;
+            DataContext = this;
+            settings.Clear();
+
             InitializeComponent();
             ShowWarnings();
 
@@ -74,10 +83,7 @@ namespace Speedo
             }
             UpdateUnit();
 
-            if ( SpeedGraph.Points.Count == 0 )
-            {
-                ResetSpeedGraph();
-            }
+            SpeedSource.Clear();
 
             // update all the speed text
             UpdateSpeed();
@@ -271,10 +277,9 @@ namespace Speedo
                 maxSpeed = currentSpeed;
             }
 
-            UpdateSpeedChart();
+            SpeedSource.ChangeSpeed( currentSpeed );
             UpdateSpeed();
             UpdateMapRender();
-
         }
 
         private void UpdateMapRender()
@@ -292,19 +297,6 @@ namespace Speedo
                 BackMapSB.Children.Add( BackMapAngleAnim );
                 BackMapSB.Begin();
             }
-        }
-
-        private void UpdateSpeedChart()
-        {
-            SpeedGraph.Points.RemoveAt( 0 );
-
-            for ( int i = 0; i < SpeedGraph.Points.Count; i++ )
-            {
-                SpeedGraph.Points[i] = new System.Windows.Point( SpeedGraph.Points[i].X - 1, SpeedGraph.Points[i].Y );
-            }
-
-            SpeedGraph.Points.Add( new System.Windows.Point( speedGraphMaxCount, -Math.Ceiling( currentSpeed ) ) );
-
         }
 
         private void UpdateAverage()
@@ -441,7 +433,8 @@ namespace Speedo
                 SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
-                SpeedChart.Visibility = Visibility.Collapsed;
+                //SpeedChart.Visibility = Visibility.Collapsed;
+                ShowSpeedGraph = false;
                 UnitTextBlock.Opacity = 0;
                 windsreenIndicator.Visibility = Visibility.Visible;
 
@@ -467,7 +460,8 @@ namespace Speedo
                 SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
                 DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
                 DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
-                SpeedChart.Visibility = Visibility.Visible;
+                //SpeedChart.Visibility = Visibility.Visible;
+                ShowSpeedGraph = true;
                 UnitTextBlock.Opacity = 1;
                 windsreenIndicator.Visibility = Visibility.Collapsed;
                 UpdateMap();
@@ -538,14 +532,6 @@ namespace Speedo
             settings.Save();
         }
 
-        private void ResetSpeedGraph()
-        {
-            for ( int i = 0; i <= speedGraphMaxCount; i++ )
-            {
-                SpeedGraph.Points.Add( new System.Windows.Point( i, 0 ) );
-            }
-        }
-
         protected override void OnNavigatedTo( NavigationEventArgs e )
         {
             if ( PhoneApplicationService.Current.StartupMode == StartupMode.Activate )
@@ -556,8 +542,12 @@ namespace Speedo
                 avgSpeed = (double) stateSettings["AvgSpeed"];
                 windscreenMode = (bool) stateSettings["windscreenMode"];
                 mapScale = (double) stateSettings["mapScale"];
-                SpeedGraph.Points = (PointCollection) stateSettings["SpeedGraphPoints"];
                 prevSpeeds = (List<Double>) stateSettings["prevSpeeds"];
+                SpeedSource.Clear();
+                foreach ( var speed in prevSpeeds )
+                {
+                    SpeedSource.ChangeSpeed( speed );
+                }
                 isSpeedAlertEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
                 UpdateSpeedAlert();
@@ -572,7 +562,6 @@ namespace Speedo
             stateSettings["AvgSpeed"] = avgSpeed;
             stateSettings["windscreenMode"] = windscreenMode;
             stateSettings["mapScale"] = mapScale;
-            stateSettings["SpeedGraphPoints"] = SpeedGraph.Points;
             stateSettings["prevSpeeds"] = prevSpeeds;
             stateSettings["SpeedAlertConfig"] = isSpeedAlertEnabled;
         }
@@ -663,11 +652,10 @@ namespace Speedo
             distance = 0;
             maxSpeed = 0;
             avgSpeed = 0;
-            SpeedGraph.Points.Clear();
-            ResetSpeedGraph();
+            SpeedSource.Clear();
             prevSpeeds.Clear();
             UpdateAverage();
-            UpdateSpeedChart();
+            SpeedSource.ChangeSpeed( currentSpeed );
             UpdateSpeed();
         }
 

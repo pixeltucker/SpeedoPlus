@@ -1,0 +1,12 @@
+﻿<UserControl x:Class="Speedo.SpeedGraph"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid x:Name="LayoutRoot">
+        <Polyline Points="{Binding Points}"
+                  Stretch="Fill"
+                  Stroke="{StaticResource PhoneForegroundBrush}" 
+                  StrokeThickness="1"
+                  Height="30"
+                  VerticalAlignment="Bottom" />
+    </Grid>
+</UserControl>

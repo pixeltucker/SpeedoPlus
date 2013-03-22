@@ -115,6 +115,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="BooleanToVisibilityConverter.cs" />
     <Compile Include="BubbleButton.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -128,6 +129,11 @@
     <Compile Include="IntLoopingDataSource.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="LengthUnit.cs" />
+    <Compile Include="SpeedEventArgs.cs" />
+    <Compile Include="SpeedGraph.xaml.cs">
+      <DependentUpon>SpeedGraph.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SpeedSource.cs" />
     <Page Include="About.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -141,6 +147,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SpeedGraph.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
