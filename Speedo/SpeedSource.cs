@@ -1,18 +1,19 @@
 ﻿// new
 
 using System;
+using System.Device.Location;
 
 namespace Speedo
 {
     public sealed class SpeedSource
     {
         public event EventHandler<SpeedEventArgs> SpeedChanged;
-        public void ChangeSpeed( double currentSpeed )
+        public void ChangeSpeed( double currentSpeed, GeoCoordinate currentPosition )
         {
             var evt = SpeedChanged;
             if ( evt != null )
             {
-                evt( this, new SpeedEventArgs( currentSpeed ) );
+                evt( this, new SpeedEventArgs( currentSpeed, currentPosition ) );
             }
         }
 

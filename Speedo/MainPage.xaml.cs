@@ -60,7 +60,6 @@ namespace Speedo
 
         private double currentSpeed = 0;
         private double currentCourse = 0;
-        private List<double> prevSpeeds = new List<double>();
         private double accuracy = 0;
         private double distance = 0;
         private double mapScale = 17;
@@ -249,7 +248,7 @@ namespace Speedo
                 currentCourse = 0;
             }
 
-            SpeedSource.ChangeSpeed( currentSpeed );
+            SpeedSource.ChangeSpeed( currentSpeed, e.Position.Location );
             UpdateSpeed();
             UpdateMapRender();
         }
@@ -277,9 +276,6 @@ namespace Speedo
             {
                 double factor = SpeedUtils.GetFactor( SpeedUnit );
                 double speedFactored = Math.Ceiling( currentSpeed * factor );
-                double distanceFactored = Math.Round( distance * factor, 1 );
-
-                DistanceTextBlock.Text = distanceFactored.ToString();
 
                 // speed alert
                 if ( isSpeedAlertEnabled && speedFactored > speedAlertSpeed )
@@ -425,12 +421,6 @@ namespace Speedo
                 distance = (double) stateSettings["distance"];
                 windscreenMode = (bool) stateSettings["windscreenMode"];
                 mapScale = (double) stateSettings["mapScale"];
-                prevSpeeds = (List<Double>) stateSettings["prevSpeeds"];
-                SpeedSource.Clear();
-                foreach ( var speed in prevSpeeds )
-                {
-                    SpeedSource.ChangeSpeed( speed );
-                }
                 isSpeedAlertEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
                 UpdateSpeedAlert();
@@ -443,7 +433,6 @@ namespace Speedo
             stateSettings["distance"] = distance;
             stateSettings["windscreenMode"] = windscreenMode;
             stateSettings["mapScale"] = mapScale;
-            stateSettings["prevSpeeds"] = prevSpeeds;
             stateSettings["SpeedAlertConfig"] = isSpeedAlertEnabled;
         }
 
@@ -562,8 +551,6 @@ namespace Speedo
         {
             distance = 0;
             SpeedSource.Clear();
-            prevSpeeds.Clear();
-            SpeedSource.ChangeSpeed( currentSpeed );
             UpdateSpeed();
         }
 

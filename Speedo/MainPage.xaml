@@ -159,7 +159,11 @@
                         </TransformGroup>
                     </Grid.RenderTransform>
                 </Grid>
-                <StackPanel HorizontalAlignment="Center" 
+                <my:DistanceDisplay HorizontalAlignment="Center"
+                                    VerticalAlignment="Bottom"
+                                    Margin="0,15"
+                                    Source="{Binding SpeedSource}" />
+                <!--<StackPanel HorizontalAlignment="Center" 
                             VerticalAlignment="Bottom" 
                             Margin="0,15">
                     <TextBlock x:Name="DistanceTextBlock" 
@@ -167,7 +171,7 @@
                     <TextBlock HorizontalAlignment="Center" 
                                Style="{StaticResource PhoneTextSmallStyle}"
                                Text="distance" />
-                </StackPanel>
+                </StackPanel>-->
             </Grid>
 
             <tool:GestureService.GestureListener>
