@@ -34,6 +34,13 @@ namespace Speedo
             set { SetProperty( ref allowLocationAccess, value ); }
         }
 
+        private bool isLocating;
+        public bool IsLocating
+        {
+            get { return isLocating; }
+            set { SetProperty( ref isLocating, value ); }
+        }
+
         private string switchUnitsText;
         public string SwitchUnitsText
         {
@@ -74,6 +81,7 @@ namespace Speedo
         private SoundEffect speedAlertEffect;
         private DispatcherTimer speedAlertTimer = new DispatcherTimer();
         private int settingsDisplayCount;
+        private GeoCoordinateWatcher watcher;
 
         // Constructor
         public MainPage()
@@ -81,6 +89,8 @@ namespace Speedo
             SpeedSource = new SpeedSource();
             ShowSpeedGraph = true;
             DataContext = this;
+
+            IsLocating = true;
 
             SwitchUnitsCommand = new RelayCommand( ExecuteSwitchUnitsCommand );
             SwitchLocationAccessCommand = new RelayCommand( ExecuteSwitchLocationAccessCommand );
@@ -169,6 +179,13 @@ namespace Speedo
             if ( !settings.TryGetValue<bool>( "LocationAccess", out allowLocationAccess ) )
             {
                 settings["LocationAccess"] = AllowLocationAccess = true;
+
+            }
+            if ( AllowLocationAccess )
+            {
+                watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
+                watcher.StatusChanged += Watcher_StatusChanged;
+                watcher.PositionChanged += Watcher_PositionChanged;
             }
             UpdateLocationAccess();
         }
@@ -486,11 +503,12 @@ namespace Speedo
             if ( AllowLocationAccess )
             {
                 SwitchLocationAccessText = "disable location access";
+                watcher.Start();
             }
             else
             {
                 SwitchLocationAccessText = "enable location access";
-
+                watcher.Stop();
                 StatusTextBlock.Text = "location inaccessible";
                 currentSpeed = Double.NaN;
                 UpdateSpeed();
@@ -605,7 +623,7 @@ namespace Speedo
                     // The Location Service is disabled or unsupported.
                     // Check to see whether the user has disabled the Location Service.
                     StatusTextBlock.Text = "location inaccessible";
-                    LocatingIndicator.IsVisible = false;
+                    IsLocating = false;
                     currentSpeed = Double.NaN;
                     UpdateSpeed();
                     mapStatus = MapStatus.Disabled;
@@ -616,7 +634,7 @@ namespace Speedo
                     // The Location Service is initializing.
                     // Disable the Start Location button.
                     StatusTextBlock.Text = "GPS initializating";
-                    LocatingIndicator.IsVisible = true;
+                    IsLocating = true;
                     currentSpeed = Double.NaN;
                     UpdateSpeed();
                     mapStatus = MapStatus.Disabled;
@@ -626,7 +644,7 @@ namespace Speedo
                 case GeoPositionStatus.NoData:
                     // The Location Service is working, but it cannot get location data.
                     StatusTextBlock.Text = "GPS not available";
-                    LocatingIndicator.IsVisible = false;
+                    IsLocating = false;
                     mapStatus = MapStatus.Disabled;
                     UpdateMap();
                     break;
@@ -635,11 +653,16 @@ namespace Speedo
                     // The Location Service is working and is receiving location data.
                     // Show the current position and enable the Stop Location button.
                     StatusTextBlock.Text = "";
-                    LocatingIndicator.IsVisible = false;
+                    IsLocating = false;
                     settings.TryGetValue<MapStatus>( "map", out mapStatus );
                     UpdateMap();
                     break;
             }
+        }
+
+        private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
+        {
+            BackMap.Center = e.Position.Location;
         }
 
         private void ResetTrip_Click( object sender, EventArgs e )

@@ -14,9 +14,8 @@
                             Orientation="Portrait"
                             shell:SystemTray.IsVisible="True">
     <shell:SystemTray.ProgressIndicator>
-        <shell:ProgressIndicator x:Name="LocatingIndicator" 
-                                 IsIndeterminate="True" 
-                                 IsVisible="False" 
+        <shell:ProgressIndicator IsIndeterminate="True" 
+                                 IsVisible="{Binding IsLocating}" 
                                  Text="Locating..." />
     </shell:SystemTray.ProgressIndicator>
     <Grid>

@@ -75,7 +75,7 @@ namespace Speedo.Controls
             compass = Compass.GetDefault();
             if ( compass == null )
             {
-                watcher = new GeoCoordinateWatcher();
+                watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
                 watcher.PositionChanged += Watcher_PositionChanged;
                 watcher.StatusChanged += Watcher_StatusChanged;
                 watcher.MovementThreshold = 1;
