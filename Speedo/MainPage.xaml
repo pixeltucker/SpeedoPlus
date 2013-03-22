@@ -87,27 +87,9 @@
                                    Height="30"
                                    Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
 
-                    <Grid Grid.Row="1" 
-                          x:Name="Direction" 
-                          HorizontalAlignment="Center" 
-                          VerticalAlignment="Bottom">
-                        <Path x:Name="DirectionIcon" 
-                              Width="24" 
-                              Height="28" 
-                              Fill="{StaticResource PhoneAccentBrush}" 
-                              Stretch="Fill" 
-                              Data="F1 M 383.125,183.208L 395.625,214.208L 383.125,204.708L 370.625,214.208L 383.125,183.208 Z " 
-                              Margin="-150,10,0,0" 
-                              RenderTransformOrigin="0.5,0.5">
-                            <Path.RenderTransform>
-                                <RotateTransform x:Name="DirectionRotateTransform" Angle="0" />
-                            </Path.RenderTransform>
-                        </Path>
-                        <TextBlock x:Name="DirectionTextBlock" 
-                                   FontSize="50" 
-                                   Foreground="{StaticResource PhoneAccentBrush}"
-                                   Text="N" />
-                    </Grid>
+                    <my:DirectionDisplay Grid.Row="1"
+                                         AllowLocationAccess="{Binding AllowLocationAccess}"
+                                         HorizontalAlignment="Center" />
                 </Grid>
                 <Grid.RenderTransform>
                     <ScaleTransform x:Name="ContentScaleTransform" />

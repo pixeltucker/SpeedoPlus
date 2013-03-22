@@ -117,6 +117,9 @@
     </Compile>
     <Compile Include="BooleanToVisibilityConverter.cs" />
     <Compile Include="BubbleButton.cs" />
+    <Compile Include="DirectionDisplay.xaml.cs">
+      <DependentUpon>DirectionDisplay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
     <Page Include="AlertPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="DirectionDisplay.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="NumberPicker.xaml">
       <SubType>Designer</SubType>

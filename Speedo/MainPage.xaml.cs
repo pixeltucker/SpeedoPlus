@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Device.Location;
 using System.Globalization;
-using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -22,13 +21,19 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace Speedo
 {
-    public partial class MainPage : PhoneApplicationPage
+    public partial class MainPage : PhoneApplicationPage, INotifyPropertyChanged
     {
         public SpeedSource SpeedSource { get; private set; }
         public bool ShowSpeedGraph { get; private set; }
 
+        private bool allowLocationAccess;
+        public bool AllowLocationAccess
+        {
+            get { return allowLocationAccess; }
+            set { SetProperty( ref allowLocationAccess, value ); }
+        }
+
         public LengthUnit lengthUnit;
-        private GeoCoordinateWatcher watcher;
         private double currentSpeed = 0;
         private double currentCourse = 0;
         private double maxSpeed = 0;
@@ -44,7 +49,6 @@ namespace Speedo
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
         private int speedGraphMaxCount = 360;
         private bool errorMap = false;
-        private bool accessLocation;
         private bool isSpeedAlertEnabled;
         private string speedAlertSpeedConfig;
         private double speedAlertSpeed;
@@ -137,22 +141,12 @@ namespace Speedo
             };
             speedAlertTimer.Interval = TimeSpan.FromSeconds( 5 );
 
-            // initialize our GPS watcher
-            if ( watcher == null )
-            {
-                watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
-                watcher.StatusChanged += new EventHandler<GeoPositionStatusChangedEventArgs>( Watcher_StatusChanged );
-                watcher.PositionChanged += new EventHandler<GeoPositionChangedEventArgs<GeoCoordinate>>( Watcher_PositionChanged );
-            }
-            watcher.Start();
-
             // get our location setting
-            if ( !settings.TryGetValue<bool>( "LocationAccess", out accessLocation ) )
+            if ( !settings.TryGetValue<bool>( "LocationAccess", out allowLocationAccess ) )
             {
-                settings["LocationAccess"] = accessLocation = true;
+                settings["LocationAccess"] = AllowLocationAccess = true;
             }
             UpdateLocationAccess();
-
         }
 
         private void ShowWarnings()
@@ -164,54 +158,6 @@ namespace Speedo
                 MessageBox.Show( "This software uses GPS signals to calculate your speed and direction which is subject to interference and results may be skewed.\n\nThe information provided can only be used as a guide.", "Accuracy warning", MessageBoxButton.OK );
                 MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
                 settings["warning"] = true;
-            }
-        }
-
-        private string CourseDirection( double course )
-        {
-            if ( double.IsNaN( course ) )
-            {
-                return "";
-            }
-            else if ( 0 <= course && course <= 22.50 )
-            {
-                return "N";
-            }
-            else if ( 22.50 < course && course <= 67.50 )
-            {
-                return "NE";
-            }
-            else if ( 67.50 < course && course <= 112.50 )
-            {
-                return "E";
-            }
-            else if ( 112.50 < course && course <= 157.50 )
-            {
-                return "SE";
-            }
-            else if ( 157.50 < course && course <= 202.50 )
-            {
-                return "S";
-            }
-            else if ( 202.50 < course && course <= 247.50 )
-            {
-                return "SW";
-            }
-            else if ( 247.50 < course && course <= 292.50 )
-            {
-                return "W";
-            }
-            else if ( 292.50 < course && course <= 337.50 )
-            {
-                return "NW";
-            }
-            else if ( 337.50 < course && course <= 360 )
-            {
-                return "N";
-            }
-            else
-            {
-                return null;
             }
         }
 
@@ -356,25 +302,25 @@ namespace Speedo
                 DistanceTextBlock.Text = DistanceFactored.ToString();
                 AvgSpeedTextBlock.Text = AvgSpeedFactored.ToString();
 
-                // only show compass if we're actually moving
-                if ( currentSpeed == 0 )
-                {
-                    Direction.Opacity = 0;
-                }
-                else
-                {
-                    Direction.Opacity = 1;
-                    DirectionTextBlock.Text = CourseDirection( currentCourse );
-                    Storyboard DirectionSB = new Storyboard();
-                    DoubleAnimation DirectionAnim = new DoubleAnimation();
-                    DirectionAnim.EasingFunction = new ExponentialEase { Exponent = 6, EasingMode = EasingMode.EaseOut };
-                    DirectionAnim.Duration = new Duration( TimeSpan.FromSeconds( 0.6 ) );
-                    DirectionAnim.To = 360 - currentCourse;
-                    Storyboard.SetTarget( DirectionAnim, DirectionRotateTransform );
-                    Storyboard.SetTargetProperty( DirectionAnim, new PropertyPath( RotateTransform.AngleProperty ) );
-                    DirectionSB.Children.Add( DirectionAnim );
-                    DirectionSB.Begin();
-                }
+                //// only show compass if we're actually moving
+                //if ( currentSpeed == 0 )
+                //{
+                //    //Direction.Opacity = 0;
+                //}
+                //else
+                //{
+                //    Direction.Opacity = 1;
+                //    DirectionTextBlock.Text = CourseDirection( currentCourse );
+                //    Storyboard DirectionSB = new Storyboard();
+                //    DoubleAnimation DirectionAnim = new DoubleAnimation();
+                //    DirectionAnim.EasingFunction = new ExponentialEase { Exponent = 6, EasingMode = EasingMode.EaseOut };
+                //    DirectionAnim.Duration = new Duration( TimeSpan.FromSeconds( 0.6 ) );
+                //    DirectionAnim.To = 360 - currentCourse;
+                //    Storyboard.SetTarget( DirectionAnim, DirectionRotateTransform );
+                //    Storyboard.SetTargetProperty( DirectionAnim, new PropertyPath( RotateTransform.AngleProperty ) );
+                //    DirectionSB.Children.Add( DirectionAnim );
+                //    DirectionSB.Begin();
+                //}
 
                 // speed alert
                 if ( isSpeedAlertEnabled && CurrentSpeedFactored > speedAlertSpeed )
@@ -395,7 +341,7 @@ namespace Speedo
             else
             {
                 SpeedTextBlock.Text = "-";
-                Direction.Opacity = 0;
+                //Direction.Opacity = 0;
             }
         }
 
@@ -431,8 +377,9 @@ namespace Speedo
                     disabledbrush.Color = Colors.Gray;
                 }
                 SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
-                DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
-                DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
+                // TODO fix that
+                //DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
+                //DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
                 //SpeedChart.Visibility = Visibility.Collapsed;
                 ShowSpeedGraph = false;
                 UnitTextBlock.Opacity = 0;
@@ -458,8 +405,8 @@ namespace Speedo
                     disabledbrush.Color = (System.Windows.Media.Color) App.Current.Resources["PhoneDisabledColor"];
                 }
                 SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
-                DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
-                DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
+                //DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
+                //DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
                 //SpeedChart.Visibility = Visibility.Visible;
                 ShowSpeedGraph = true;
                 UnitTextBlock.Opacity = 1;
@@ -511,16 +458,13 @@ namespace Speedo
 
         private void UpdateLocationAccess()
         {
-            if ( accessLocation )
+            settings["LocationAccess"] = AllowLocationAccess;
+            if ( AllowLocationAccess )
             {
-                settings["LocationAccess"] = "on";
-                watcher.Start();
                 ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "disable location access";
             }
             else
             {
-                settings["LocationAccess"] = "off";
-                watcher.Stop();
                 ( (ApplicationBarMenuItem) ApplicationBar.MenuItems[1] ).Text = "enable location access";
 
                 StatusTextBlock.Text = "location inaccessible";
@@ -642,11 +586,6 @@ namespace Speedo
             }
         }
 
-        private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
-        {
-            Dispatcher.BeginInvoke( () => PositionChanged( e ) );
-        }
-
         private void ResetTrip_Click( object sender, EventArgs e )
         {
             distance = 0;
@@ -681,18 +620,18 @@ namespace Speedo
 
         private void DisableLocation_Click( object sender, EventArgs e )
         {
-            if ( accessLocation )
+            if ( AllowLocationAccess )
             {
                 var warningMsg = MessageBox.Show( "This application will not work without location access. Are you sure you still want to disable it?", "Disable location", MessageBoxButton.OKCancel );
                 if ( warningMsg == MessageBoxResult.OK )
                 {
-                    accessLocation = false;
+                    AllowLocationAccess = false;
                     UpdateLocationAccess();
                 }
             }
             else
             {
-                accessLocation = true;
+                AllowLocationAccess = true;
                 UpdateLocationAccess();
             }
         }
@@ -792,5 +731,37 @@ namespace Speedo
             }
 
         }
+
+        #region INotifyPropertyChanged implementation
+        // TODO: find a way to reuse the code...
+
+        /// <summary>
+        /// Occurs when a property value changes.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Fires the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        private void FirePropertyChanged( [CallerMemberName] string propertyName = "" )
+        {
+            var evt = this.PropertyChanged;
+            if ( evt != null )
+            {
+                evt( this, new PropertyChangedEventArgs( propertyName ) );
+            }
+        }
+
+        /// <summary>
+        /// Sets the specified field to the specified value and raises <see cref="PropertyChanged"/> if needed.
+        /// </summary>
+        private void SetProperty<T>( ref T field, T value, [CallerMemberName] string propertyName = "" )
+        {
+            if ( !object.Equals( field, value ) )
+            {
+                field = value;
+                this.FirePropertyChanged( propertyName );
+            }
+        }
+        #endregion
     }
 }
