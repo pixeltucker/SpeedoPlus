@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace Speedo.Controls
 {
-    public partial class SpeedGraph : SpeedControl
+    public partial class SpeedGraph : MovementControl
     {
         #region PointsCount DependencyProperty
         public int PointsCount
@@ -34,12 +34,7 @@ namespace Speedo.Controls
             LayoutRoot.DataContext = this;
         }
 
-        protected override void ChangeUnits( double factor )
-        {
-            // nothing; the graph is relative
-        }
-
-        protected override void ChangeSpeed( double speed, GeoCoordinate position )
+        protected override void ChangeSpeed( double speed )
         {
             Points.RemoveAt( 0 );
             for ( int n = 0; n < Points.Count; n++ )

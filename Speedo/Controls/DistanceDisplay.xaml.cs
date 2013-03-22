@@ -4,7 +4,7 @@ using System.Device.Location;
 
 namespace Speedo.Controls
 {
-    public partial class DistanceDisplay : SpeedControl
+    public partial class DistanceDisplay : MovementControl
     {
         private GeoCoordinate lastPosition;
 
@@ -26,9 +26,9 @@ namespace Speedo.Controls
             Distance *= factor;
         }
 
-        protected override void ChangeSpeed( double speed, GeoCoordinate position )
+        protected override void ChangePosition( GeoCoordinate position )
         {
-            if ( lastPosition != null )
+            if ( lastPosition != null && lastPosition != GeoCoordinate.Unknown && position != GeoCoordinate.Unknown )
             {
                 Distance += lastPosition.GetDistanceTo( position );
             }

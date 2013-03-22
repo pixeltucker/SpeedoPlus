@@ -22,9 +22,11 @@
         <Grid x:Name="LayoutRoot" 
               Background="{StaticResource PhoneBackgroundBrush}" 
               MouseLeftButtonDown="LayoutRoot_MouseLeftButtonDown">
-            <Grid x:Name="MapLayer"
+            <!-- TODO: LoadingError isn't supported any more, fix it? -->
+
+            <my:BackgroundMap Source="{Binding MovementSource}" />
+            <!--<Grid x:Name="MapLayer"
                   Background="#CCCCCC">
-                <!-- TODO: LoadingError isn't supported any more, fix it? -->
                 <maps:Map x:Name="BackMap" 
                           IsHitTestVisible="False" 
                           Visibility="Visible" 
@@ -41,7 +43,7 @@
                 </maps:Map>
                 <Rectangle Fill="{StaticResource PhoneBackgroundBrush}" 
                            Opacity="0.65" />
-            </Grid>
+            </Grid>-->
 
             <Grid VerticalAlignment="Center" 
                   Margin="0,-70,0,0" 
@@ -58,7 +60,7 @@
                                Margin="0,0,0,20" 
                                Text="Status" />
                     
-                    <my:SpeedDisplay Source="{Binding SpeedSource}"
+                    <my:SpeedDisplay Source="{Binding MovementSource}"
                                      Unit="{Binding SpeedUnit}" />
                 </Grid>
 
@@ -69,13 +71,13 @@
                         <RowDefinition Height="64" />
                     </Grid.RowDefinitions>
                     
-                    <my:SpeedGraph Source="{Binding SpeedSource}"
+                    <my:SpeedGraph Source="{Binding MovementSource}"
                                    PointsCount="360"
                                    Height="30"
                                    Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
 
                     <my:DirectionDisplay Grid.Row="1"
-                                         AllowLocationAccess="{Binding AllowLocationAccess}"
+                                         Source="{Binding MovementSource}"
                                          HorizontalAlignment="Center" />
                 </Grid>
                 <Grid.RenderTransform>
@@ -162,7 +164,7 @@
                 <my:DistanceDisplay HorizontalAlignment="Center"
                                     VerticalAlignment="Bottom"
                                     Margin="0,15"
-                                    Source="{Binding SpeedSource}" />
+                                    Source="{Binding MovementSource}" />
                 <!--<StackPanel HorizontalAlignment="Center" 
                             VerticalAlignment="Bottom" 
                             Margin="0,15">
@@ -174,11 +176,11 @@
                 </StackPanel>-->
             </Grid>
 
-            <tool:GestureService.GestureListener>
+            <!--<tool:GestureService.GestureListener>
                 <tool:GestureListener PinchStarted="GestureListener_PinchStarted" 
                                       PinchDelta="GestureListener_PinchDelta" 
                                       PinchCompleted="GestureListener_PinchCompleted" />
-            </tool:GestureService.GestureListener>
+            </tool:GestureService.GestureListener>-->
         </Grid>
 
         <Grid x:Name="PopupHost">

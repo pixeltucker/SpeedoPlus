@@ -5,7 +5,7 @@ using System.Device.Location;
 
 namespace Speedo.Controls
 {
-    public partial class SpeedDisplay : SpeedControl
+    public partial class SpeedDisplay : MovementControl
     {
         private int dataCount;
 
@@ -43,7 +43,7 @@ namespace Speedo.Controls
             Current *= factor;
         }
 
-        protected override void ChangeSpeed( double speed, GeoCoordinate position )
+        protected override void ChangeSpeed( double speed )
         {
             int factoredSpeed = (int) Math.Round( speed * SpeedUtils.GetFactor( Unit ) );
             Average = ( Average * dataCount + factoredSpeed ) / ( dataCount + 1 );

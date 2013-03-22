@@ -120,6 +120,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BooleanToVisibilityConverter.cs" />
+    <Compile Include="Controls\BackgroundMap.xaml.cs">
+      <DependentUpon>BackgroundMap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\BubbleButton.cs" />
     <Compile Include="Controls\DirectionDisplay.xaml.cs">
       <DependentUpon>DirectionDisplay.xaml</DependentUpon>
@@ -127,7 +130,7 @@
     <Compile Include="Controls\DistanceDisplay.xaml.cs">
       <DependentUpon>DistanceDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SpeedControl.cs" />
+    <Compile Include="Controls\MovementControl.cs" />
     <Compile Include="Controls\SpeedDisplay.xaml.cs">
       <DependentUpon>SpeedDisplay.xaml</DependentUpon>
     </Compile>
@@ -145,11 +148,10 @@
     <Compile Include="IntLoopingDataSource.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SpeedUnit.cs" />
-    <Compile Include="SpeedEventArgs.cs" />
     <Compile Include="Controls\SpeedGraph.xaml.cs">
       <DependentUpon>SpeedGraph.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SpeedSource.cs" />
+    <Compile Include="MovementSource.cs" />
     <Page Include="AboutPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -157,6 +159,10 @@
     <Page Include="Controls\AlertPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\BackgroundMap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DirectionDisplay.xaml">
       <SubType>Designer</SubType>

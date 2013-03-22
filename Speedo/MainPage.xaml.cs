@@ -23,7 +23,7 @@ namespace Speedo
 {
     public partial class MainPage : PhoneApplicationPage, INotifyPropertyChanged
     {
-        public SpeedSource SpeedSource { get; private set; }
+        public MovementSource MovementSource { get; private set; }
         public bool ShowSpeedGraph { get; private set; }
 
         private bool allowLocationAccess;
@@ -54,32 +54,35 @@ namespace Speedo
             set { SetProperty( ref switchLocationAccessText, value ); }
         }
 
+        private MapStatus mapStatus;
+        public MapStatus MapStatus
+        {
+            get { return mapStatus; }
+            set { SetProperty( ref mapStatus, value ); }
+        }
+
         public ICommand SwitchUnitsCommand { get; private set; }
         public ICommand SwitchLocationAccessCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
-        private double currentSpeed = 0;
-        private double currentCourse = 0;
+        private MapStatus previousStatus;
+
         private double accuracy = 0;
-        private double distance = 0;
         private double mapScale = 17;
-        private GeoCoordinate lastKnownPos;
         private bool windscreenMode = false;
-        private MapStatus mapStatus;
         private IsolatedStorageSettings settings = IsolatedStorageSettings.ApplicationSettings;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
-        private bool errorMap = false;
         private bool isSpeedAlertEnabled;
         private string speedAlertSpeedConfig;
         private double speedAlertSpeed;
         private SoundEffect speedAlertEffect;
         private DispatcherTimer speedAlertTimer = new DispatcherTimer();
         private int settingsDisplayCount;
-        private GeoCoordinateWatcher watcher;
 
         public MainPage()
         {
-            SpeedSource = new SpeedSource();
+            MovementSource = new MovementSource();
+            MovementSource.GeoStatusChanged += MovementSource_GeoStatusChanged;
             ShowSpeedGraph = true;
             DataContext = this;
 
@@ -113,23 +116,20 @@ namespace Speedo
                 }
             }
 
-            SpeedSource.Clear();
-
-            // update all the speed text
-            UpdateSpeed();
+            //MovementSource.Clear();
 
             // hide settings button
             VisualStateManager.GoToState( this, "HideControls", false );
 
             // initialize Bing map with our API
-            BackMap.ZoomLevel = mapScale;
+            //BackMap.ZoomLevel = mapScale;
 
             // get our map setting
             if ( !settings.TryGetValue<MapStatus>( "map", out mapStatus ) )
             {
-                settings["map"] = mapStatus = MapStatus.On;
+                settings["map"] = MapStatus = MapStatus.On;
             }
-            UpdateMap();
+            //UpdateMap();
 
             // get our speed alert speed setting
             if ( !settings.TryGetValue<bool>( "SpeedAlertConfig", out isSpeedAlertEnabled ) )
@@ -171,15 +171,8 @@ namespace Speedo
             if ( !settings.TryGetValue<bool>( "LocationAccess", out allowLocationAccess ) )
             {
                 settings["LocationAccess"] = AllowLocationAccess = true;
-
             }
 
-            if ( !DesignerProperties.IsInDesignTool ) // Cider really, really hates GeoCoordinateWatcher
-            {
-                watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
-                watcher.StatusChanged += Watcher_StatusChanged;
-                watcher.PositionChanged += Watcher_PositionChanged;
-            }
             UpdateLocationAccess();
         }
 
@@ -204,78 +197,57 @@ namespace Speedo
             if ( accuracy <= 70 )
             {
                 StatusTextBlock.Text = "";
-                if ( Double.IsNaN( e.Position.Location.Speed ) )
-                {
-                    currentSpeed = 0;
-                }
-                else
-                {
-                    currentSpeed = e.Position.Location.Speed * 3.6; // convert M/s into KM/h
-                    currentCourse = e.Position.Location.Course;
-                }
-
-                if ( Microsoft.Devices.Environment.DeviceType == Microsoft.Devices.DeviceType.Emulator )
-                {
-                    StatusTextBlock.Text = "Emulator mode";
-                    if ( lastKnownPos != null )
-                    {
-                        currentSpeed = ( e.Position.Location.GetDistanceTo( lastKnownPos ) );
-                        if ( currentSpeed > 0 )
-                        {
-                            var lat1 = Math.PI * lastKnownPos.Latitude / 180.0;
-                            var lat2 = Math.PI * e.Position.Location.Latitude / 180.0;
-                            var dLon = Math.PI * e.Position.Location.Longitude / 180.0 - Math.PI * lastKnownPos.Longitude / 180.0;
-                            var y = Math.Sin( dLon ) * Math.Cos( lat2 );
-                            var x = Math.Cos( lat1 ) * Math.Sin( lat2 ) - Math.Sin( lat1 ) * Math.Cos( lat2 ) * Math.Cos( dLon );
-                            var brng = Math.Atan2( y, x );
-                            currentCourse = ( 180.0 * brng / Math.PI + 360 ) % 360;
-                        }
-                    }
-                }
-
-                if ( lastKnownPos != null )
-                {
-                    double travelled = ( e.Position.Location.GetDistanceTo( lastKnownPos ) ) / 1000;
-                    distance = distance + travelled;
-                }
-                lastKnownPos = e.Position.Location;
-
+                //if ( Microsoft.Devices.Environment.DeviceType == Microsoft.Devices.DeviceType.Emulator )
+                //{
+                //    StatusTextBlock.Text = "Emulator mode";
+                //    if ( lastKnownPos != null )
+                //    {
+                //        currentSpeed = ( e.Position.Location.GetDistanceTo( lastKnownPos ) );
+                //        if ( currentSpeed > 0 )
+                //        {
+                //            var lat1 = Math.PI * lastKnownPos.Latitude / 180.0;
+                //            var lat2 = Math.PI * e.Position.Location.Latitude / 180.0;
+                //            var dLon = Math.PI * e.Position.Location.Longitude / 180.0 - Math.PI * lastKnownPos.Longitude / 180.0;
+                //            var y = Math.Sin( dLon ) * Math.Cos( lat2 );
+                //            var x = Math.Cos( lat1 ) * Math.Sin( lat2 ) - Math.Sin( lat1 ) * Math.Cos( lat2 ) * Math.Cos( dLon );
+                //            var brng = Math.Atan2( y, x );
+                //            currentCourse = ( 180.0 * brng / Math.PI + 360 ) % 360;
+                //        }
+                //    }
+                //}
             }
             else
             {
                 StatusTextBlock.Text = "weak GPS signal";
-                currentSpeed = 0;
-                currentCourse = 0;
             }
 
-            SpeedSource.ChangeSpeed( currentSpeed, e.Position.Location );
-            UpdateSpeed();
-            UpdateMapRender();
+            //MovementSource.ChangeSpeed( currentSpeed, e.Position.Location );
+            //UpdateSpeed();
+            //UpdateMapRender();
         }
 
-        private void UpdateMapRender()
-        {
-            BackMap.Center = lastKnownPos;
-            if ( !Double.IsNaN( currentCourse ) )
-            {
-                Storyboard BackMapSB = new Storyboard();
-                DoubleAnimation BackMapAngleAnim = new DoubleAnimation();
-                BackMapAngleAnim.EasingFunction = new ExponentialEase { Exponent = 6, EasingMode = EasingMode.EaseOut };
-                BackMapAngleAnim.Duration = new Duration( TimeSpan.FromSeconds( 0.6 ) );
-                BackMapAngleAnim.To = 360 - currentCourse;
-                Storyboard.SetTarget( BackMapAngleAnim, BackMapRotateTransform );
-                Storyboard.SetTargetProperty( BackMapAngleAnim, new PropertyPath( RotateTransform.AngleProperty ) );
-                BackMapSB.Children.Add( BackMapAngleAnim );
-                BackMapSB.Begin();
-            }
-        }
+        //private void UpdateMapRender()
+        //{
+        //    BackMap.Center = lastKnownPos;
+        //    if ( !Double.IsNaN( currentCourse ) )
+        //    {
+        //        Storyboard BackMapSB = new Storyboard();
+        //        DoubleAnimation BackMapAngleAnim = new DoubleAnimation();
+        //        BackMapAngleAnim.EasingFunction = new ExponentialEase { Exponent = 6, EasingMode = EasingMode.EaseOut };
+        //        BackMapAngleAnim.Duration = new Duration( TimeSpan.FromSeconds( 0.6 ) );
+        //        BackMapAngleAnim.To = 360 - currentCourse;
+        //        Storyboard.SetTarget( BackMapAngleAnim, BackMapRotateTransform );
+        //        Storyboard.SetTargetProperty( BackMapAngleAnim, new PropertyPath( RotateTransform.AngleProperty ) );
+        //        BackMapSB.Children.Add( BackMapAngleAnim );
+        //        BackMapSB.Begin();
+        //    }
+        //}
 
-        private void UpdateSpeed()
+        private void UpdateSpeed( double speed )
         {
-            if ( !Double.IsNaN( currentSpeed ) )
+            if ( !Double.IsNaN( speed ) )
             {
-                double factor = SpeedUtils.GetFactor( SpeedUnit );
-                double speedFactored = Math.Ceiling( currentSpeed * factor );
+                double speedFactored = speed * SpeedUtils.GetFactor( SpeedUnit ); ;
 
                 // speed alert
                 if ( isSpeedAlertEnabled && speedFactored > speedAlertSpeed )
@@ -321,10 +293,12 @@ namespace Speedo
                 ShowSpeedGraph = false;
                 windsreenIndicator.Visibility = Visibility.Visible;
 
-                MapLayer.Visibility = Visibility.Collapsed;
-                BackMap.Visibility = Visibility.Collapsed;
-                BackMap.IsEnabled = false;
-                mapButton.IsEnabled = false;
+                //MapLayer.Visibility = Visibility.Collapsed;
+                //BackMap.Visibility = Visibility.Collapsed;
+                //BackMap.IsEnabled = false;
+                //mapButton.IsEnabled = false;
+                previousStatus = MapStatus;
+                MapStatus = MapStatus.Disabled;
             }
             else
             {
@@ -347,45 +321,46 @@ namespace Speedo
                 ShowSpeedGraph = true;
                 //UnitTextBlock.Opacity = 1;
                 windsreenIndicator.Visibility = Visibility.Collapsed;
-                UpdateMap();
+                MapStatus = previousStatus;
+                //UpdateMap();
             }
         }
 
-        private void UpdateMap()
-        {
-            if ( errorMap )
-            {
-                mapStatus = MapStatus.Disabled;
-            }
+        //private void UpdateMap()
+        //{
+        //    if ( errorMap )
+        //    {
+        //        mapStatus = MapStatus.Disabled;
+        //    }
 
-            switch ( mapStatus )
-            {
-                case MapStatus.On:
-                    if ( !windscreenMode )
-                    {
-                        MapLayer.Visibility = System.Windows.Visibility.Visible;
-                        BackMap.Visibility = System.Windows.Visibility.Visible;
-                        BackMap.IsEnabled = true;
-                        mapButton.IsEnabled = true;
-                    }
-                    break;
-                case MapStatus.Off:
-                    if ( !windscreenMode )
-                    {
-                        MapLayer.Visibility = System.Windows.Visibility.Collapsed;
-                        BackMap.Visibility = System.Windows.Visibility.Collapsed;
-                        BackMap.IsEnabled = false;
-                        mapButton.IsEnabled = true;
-                    }
-                    break;
-                case MapStatus.Disabled:
-                    MapLayer.Visibility = System.Windows.Visibility.Collapsed;
-                    BackMap.Visibility = System.Windows.Visibility.Collapsed;
-                    BackMap.IsEnabled = false;
-                    mapButton.IsEnabled = false;
-                    break;
-            }
-        }
+        //    switch ( mapStatus )
+        //    {
+        //        case MapStatus.On:
+        //            if ( !windscreenMode )
+        //            {
+        //                MapLayer.Visibility = System.Windows.Visibility.Visible;
+        //                BackMap.Visibility = System.Windows.Visibility.Visible;
+        //                BackMap.IsEnabled = true;
+        //                mapButton.IsEnabled = true;
+        //            }
+        //            break;
+        //        case MapStatus.Off:
+        //            if ( !windscreenMode )
+        //            {
+        //                MapLayer.Visibility = System.Windows.Visibility.Collapsed;
+        //                BackMap.Visibility = System.Windows.Visibility.Collapsed;
+        //                BackMap.IsEnabled = false;
+        //                mapButton.IsEnabled = true;
+        //            }
+        //            break;
+        //        case MapStatus.Disabled:
+        //            MapLayer.Visibility = System.Windows.Visibility.Collapsed;
+        //            BackMap.Visibility = System.Windows.Visibility.Collapsed;
+        //            BackMap.IsEnabled = false;
+        //            mapButton.IsEnabled = false;
+        //            break;
+        //    }
+        //}
 
         private void UpdateSpeedAlert()
         {
@@ -398,17 +373,14 @@ namespace Speedo
             if ( AllowLocationAccess )
             {
                 SwitchLocationAccessText = "disable location access";
-                watcher.Start();
+                MovementSource.Start();
             }
             else
             {
                 SwitchLocationAccessText = "enable location access";
-                watcher.Stop();
+                MovementSource.Stop();
                 StatusTextBlock.Text = "location inaccessible";
-                currentSpeed = Double.NaN;
-                UpdateSpeed();
                 mapStatus = MapStatus.Disabled;
-                UpdateMap();
             }
             settings.Save();
         }
@@ -418,7 +390,6 @@ namespace Speedo
             if ( PhoneApplicationService.Current.StartupMode == StartupMode.Activate )
             {
                 var stateSettings = PhoneApplicationService.Current.State;
-                distance = (double) stateSettings["distance"];
                 windscreenMode = (bool) stateSettings["windscreenMode"];
                 mapScale = (double) stateSettings["mapScale"];
                 isSpeedAlertEnabled = (bool) stateSettings["SpeedAlertConfig"];
@@ -430,7 +401,6 @@ namespace Speedo
         protected override void OnNavigatedFrom( NavigationEventArgs e )
         {
             var stateSettings = PhoneApplicationService.Current.State;
-            stateSettings["distance"] = distance;
             stateSettings["windscreenMode"] = windscreenMode;
             stateSettings["mapScale"] = mapScale;
             stateSettings["SpeedAlertConfig"] = isSpeedAlertEnabled;
@@ -464,7 +434,6 @@ namespace Speedo
         {
             settings["unit"] = SpeedUnit = SpeedUtils.Switch( SpeedUnit );
             settings.Save();
-            UpdateSpeed();
         }
 
         private void ExecuteSwitchLocationAccessCommand( object parameter )
@@ -496,8 +465,7 @@ namespace Speedo
         //    UpdateMap();
         //}
 
-        // Event handler for the GeoCoordinateWatcher.StatusChanged event.
-        private void Watcher_StatusChanged( object sender, GeoPositionStatusChangedEventArgs e )
+        private void MovementSource_GeoStatusChanged( object sender, GeoPositionStatusChangedEventArgs e )
         {
             switch ( e.Status )
             {
@@ -506,10 +474,7 @@ namespace Speedo
                     // Check to see whether the user has disabled the Location Service.
                     StatusTextBlock.Text = "location inaccessible";
                     IsLocating = false;
-                    currentSpeed = Double.NaN;
-                    UpdateSpeed();
                     mapStatus = MapStatus.Disabled;
-                    UpdateMap();
                     break;
 
                 case GeoPositionStatus.Initializing:
@@ -517,10 +482,7 @@ namespace Speedo
                     // Disable the Start Location button.
                     StatusTextBlock.Text = "GPS initializating";
                     IsLocating = true;
-                    currentSpeed = Double.NaN;
-                    UpdateSpeed();
                     mapStatus = MapStatus.Disabled;
-                    UpdateMap();
                     break;
 
                 case GeoPositionStatus.NoData:
@@ -528,7 +490,6 @@ namespace Speedo
                     StatusTextBlock.Text = "GPS not available";
                     IsLocating = false;
                     mapStatus = MapStatus.Disabled;
-                    UpdateMap();
                     break;
 
                 case GeoPositionStatus.Ready:
@@ -537,7 +498,6 @@ namespace Speedo
                     StatusTextBlock.Text = "";
                     IsLocating = false;
                     settings.TryGetValue<MapStatus>( "map", out mapStatus );
-                    UpdateMap();
                     break;
             }
         }
@@ -549,9 +509,7 @@ namespace Speedo
 
         private void ResetTrip_Click( object sender, EventArgs e )
         {
-            distance = 0;
-            SpeedSource.Clear();
-            UpdateSpeed();
+            MovementSource.Start();
         }
 
         private async void LayoutRoot_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
@@ -606,41 +564,41 @@ namespace Speedo
 
         private void MapButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
-            mapStatus = mapStatus == MapStatus.On ? MapStatus.Off
-                      : mapStatus == MapStatus.Off ? MapStatus.On
+            MapStatus = MapStatus == MapStatus.On ? MapStatus.Off
+                      : MapStatus == MapStatus.Off ? MapStatus.On
                                                    : MapStatus.Disabled;
 
-            settings["map"] = mapStatus;
+            settings["map"] = MapStatus;
             settings.Save();
-            UpdateMap();
+            //UpdateMap();
         }
 
-        private void GestureListener_PinchStarted( object sender, PinchStartedGestureEventArgs e )
-        {
-            mapScale = BackMap.ZoomLevel;
-        }
+        //private void GestureListener_PinchStarted( object sender, PinchStartedGestureEventArgs e )
+        //{
+        //    mapScale = BackMap.ZoomLevel;
+        //}
 
-        private void GestureListener_PinchDelta( object sender, PinchGestureEventArgs e )
-        {
-            double desiredZoom = mapScale * Math.Pow( e.DistanceRatio, 0.5 );
-            if ( desiredZoom < 1 )
-            {
-                BackMap.ZoomLevel = 1;
-            }
-            else if ( desiredZoom > 19 )
-            {
-                BackMap.ZoomLevel = 19;
-            }
-            else
-            {
-                BackMap.ZoomLevel = desiredZoom;
-            }
-        }
+        //private void GestureListener_PinchDelta( object sender, PinchGestureEventArgs e )
+        //{
+        //    double desiredZoom = mapScale * Math.Pow( e.DistanceRatio, 0.5 );
+        //    if ( desiredZoom < 1 )
+        //    {
+        //        BackMap.ZoomLevel = 1;
+        //    }
+        //    else if ( desiredZoom > 19 )
+        //    {
+        //        BackMap.ZoomLevel = 19;
+        //    }
+        //    else
+        //    {
+        //        BackMap.ZoomLevel = desiredZoom;
+        //    }
+        //}
 
-        private void GestureListener_PinchCompleted( object sender, PinchGestureEventArgs e )
-        {
-            mapScale = BackMap.ZoomLevel;
-        }
+        //private void GestureListener_PinchCompleted( object sender, PinchGestureEventArgs e )
+        //{
+        //    mapScale = BackMap.ZoomLevel;
+        //}
 
         #region INotifyPropertyChanged implementation
         // TODO: find a way to reuse the code...

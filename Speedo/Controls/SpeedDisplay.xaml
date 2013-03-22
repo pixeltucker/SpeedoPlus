@@ -1,4 +1,4 @@
-﻿<my:SpeedControl x:Class="Speedo.Controls.SpeedDisplay"
+﻿<my:MovementControl x:Class="Speedo.Controls.SpeedDisplay"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:my="clr-namespace:Speedo.Controls"
@@ -49,4 +49,4 @@
                    Style="{StaticResource PhoneTextSmallStyle}"
                    Text="max" />
     </Grid>
-</my:SpeedControl>
+</my:MovementControl>

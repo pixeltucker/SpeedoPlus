@@ -1,17 +1,11 @@
 ﻿// new
 
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Device.Location;
 using System.Linq;
-using System.Windows;
-using Windows.Devices.Sensors;
-
-// TODO: Test the geocoordinate code well
 
 namespace Speedo.Controls
 {
-    public partial class DirectionDisplay : ObservableControl
+    public partial class DirectionDisplay : MovementControl
     {
         private static readonly Dictionary<double, string> Directions = new Dictionary<double, string>
         {
@@ -25,39 +19,6 @@ namespace Speedo.Controls
             { 292.5, "NW" },
             { 337.5, "N" }
         };
-
-        private Compass compass;
-        private GeoCoordinateWatcher watcher;
-
-        #region AllowLocationAccess DependencyProperty
-        public bool AllowLocationAccess
-        {
-            get { return (bool) GetValue( AllowLocationAccessProperty ); }
-            set { SetValue( AllowLocationAccessProperty, value ); }
-        }
-
-        public static readonly DependencyProperty AllowLocationAccessProperty =
-            DependencyProperty.Register( "AllowLocationAccess", typeof( bool ), typeof( DirectionDisplay ), new PropertyMetadata( OnAllowLocationAccessPropertyChanged ) );
-
-        private static void OnAllowLocationAccessPropertyChanged( DependencyObject obj, DependencyPropertyChangedEventArgs args )
-        {
-            var display = (DirectionDisplay) obj;
-
-            if ( display.watcher != null )
-            {
-                if ( (bool) args.NewValue )
-                {
-                    display.IsEnabled = true;
-                    display.watcher.Start();
-                }
-                else
-                {
-                    display.IsEnabled = false;
-                    display.watcher.Stop();
-                }
-            }
-        }
-        #endregion
 
         private double directionAngle;
         public double DirectionAngle
@@ -75,53 +36,17 @@ namespace Speedo.Controls
 
         public DirectionDisplay()
         {
-            compass = Compass.GetDefault();
-            if ( compass == null )
-            {
-                if ( !DesignerProperties.IsInDesignTool ) // Cider really, really hates GeoCoordinateWatcher
-                {
-                    watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
-                    watcher.PositionChanged += Watcher_PositionChanged;
-                    watcher.StatusChanged += Watcher_StatusChanged;
-                    watcher.MovementThreshold = 1;
-                    watcher.Start();
-                }
-            }
-            else
-            {
-                IsEnabled = true;
-                compass.ReadingChanged += Compass_ReadingChanged;
-            }
-
             InitializeComponent();
             LayoutRoot.DataContext = this;
 
-            Update( 0 );
+            DirectionAngle = 0;
+            DirectionInitials = Directions.First().Value;
         }
 
-        private void Update( double direction )
+        protected override void ChangeCourse( double course )
         {
-            Dispatcher.BeginInvoke( () =>
-            {
-                DirectionAngle = direction;
-                DirectionInitials = Directions.Last( p => direction >= p.Key ).Value;
-            } );
-        }
-
-        private void Compass_ReadingChanged( object sender, CompassReadingChangedEventArgs e )
-        {
-            double reading = e.Reading.HeadingTrueNorth ?? e.Reading.HeadingMagneticNorth;
-            Update( reading );
-        }
-
-        private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
-        {
-            Update( e.Position.Location.Course );
-        }
-
-        private void Watcher_StatusChanged( object sender, GeoPositionStatusChangedEventArgs e )
-        {
-            IsEnabled = e.Status == GeoPositionStatus.Ready && AllowLocationAccess;
+            DirectionAngle = course;
+            DirectionInitials = Directions.Last( p => course >= p.Key ).Value;
         }
     }
 }

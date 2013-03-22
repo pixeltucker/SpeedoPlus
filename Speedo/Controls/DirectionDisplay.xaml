@@ -1,7 +1,7 @@
-﻿<my:ObservableControl x:Class="Speedo.Controls.DirectionDisplay"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:my="clr-namespace:Speedo.Controls">
+﻿<my:MovementControl x:Class="Speedo.Controls.DirectionDisplay"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:my="clr-namespace:Speedo.Controls">
     <StackPanel x:Name="LayoutRoot"
                 Orientation="Horizontal"
                 Visibility="{Binding IsEnabled, Converter={StaticResource BoolToVisibility}}">
@@ -22,4 +22,4 @@
             </Path.RenderTransform>
         </Path>
     </StackPanel>
-</my:ObservableControl>
+</my:MovementControl>
