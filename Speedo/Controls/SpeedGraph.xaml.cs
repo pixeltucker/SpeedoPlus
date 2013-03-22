@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Speedo
+namespace Speedo.Controls
 {
     public partial class SpeedGraph : UserControl
     {

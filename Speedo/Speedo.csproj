@@ -109,31 +109,31 @@
     <Compile Include="AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AlertPopup.xaml.cs">
+    <Compile Include="Controls\AlertPopup.xaml.cs">
       <DependentUpon>AlertPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BooleanToVisibilityConverter.cs" />
-    <Compile Include="BubbleButton.cs" />
-    <Compile Include="DirectionDisplay.xaml.cs">
+    <Compile Include="Controls\BubbleButton.cs" />
+    <Compile Include="Controls\DirectionDisplay.xaml.cs">
       <DependentUpon>DirectionDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MapStatus.cs" />
-    <Compile Include="NumberPicker.xaml.cs">
+    <Compile Include="Controls\NumberPicker.xaml.cs">
       <DependentUpon>NumberPicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ObservableControl.cs" />
+    <Compile Include="Controls\ObservableControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IntLoopingDataSource.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="LengthUnit.cs" />
     <Compile Include="SpeedEventArgs.cs" />
-    <Compile Include="SpeedGraph.xaml.cs">
+    <Compile Include="Controls\SpeedGraph.xaml.cs">
       <DependentUpon>SpeedGraph.xaml</DependentUpon>
     </Compile>
     <Compile Include="SpeedSource.cs" />
@@ -141,23 +141,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AlertPopup.xaml">
+    <Page Include="Controls\AlertPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="DirectionDisplay.xaml">
+    <Page Include="Controls\DirectionDisplay.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="NumberPicker.xaml">
+    <Page Include="Controls\NumberPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources.xaml">
+    <Page Include="Resources\Resources.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SpeedGraph.xaml">
+    <Page Include="Controls\SpeedGraph.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

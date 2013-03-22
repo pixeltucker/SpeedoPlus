@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.Phone.Controls.Primitives;
 
-namespace Speedo
+namespace Speedo.Controls
 {
     /// <summary>
     /// A simple number picker with two digits.

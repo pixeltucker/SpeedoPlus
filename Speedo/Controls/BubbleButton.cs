@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Speedo
+namespace Speedo.Controls
 {
     public class BubbleButton : Button
     {

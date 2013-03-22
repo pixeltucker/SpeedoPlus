@@ -4,7 +4,7 @@ using System.Windows;
 
 // TODO: Remove SpeedUnit, inject it via app settings
 
-namespace Speedo
+namespace Speedo.Controls
 {
     public partial class AlertPopup : ObservableControl
     {

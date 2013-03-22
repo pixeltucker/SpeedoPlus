@@ -18,6 +18,7 @@ using Microsoft.Phone.Maps.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Speedo.Controls;
 
 namespace Speedo
 {
@@ -638,14 +639,14 @@ namespace Speedo
 
         private void About_Click( object sender, EventArgs e )
         {
-            NavigationService.Navigate( new Uri( "/About.xaml", UriKind.Relative ) );
+            NavigationService.Navigate( new Uri( "/AboutPage.xaml", UriKind.Relative ) );
         }
 
         private void AlertButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
             if ( !isSpeedAlertEnabled )
             {
-                AlertPopup alertPopup = new AlertPopup( UnitTextBlock.Text ) { AlertSpeed = (int) speedAlertSpeed };
+                var alertPopup = new AlertPopup( UnitTextBlock.Text ) { AlertSpeed = (int) speedAlertSpeed };
                 PopupContent.Children.Add( alertPopup );
                 LayoutRoot.IsHitTestVisible = false;
                 ApplicationBar.IsVisible = false;

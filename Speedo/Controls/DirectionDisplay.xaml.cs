@@ -6,7 +6,7 @@ using Windows.Devices.Sensors;
 
 // TODO: Test the geocoordinate code well
 
-namespace Speedo
+namespace Speedo.Controls
 {
     public partial class DirectionDisplay : ObservableControl
     {

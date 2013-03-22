@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
-                    xmlns:my="clr-namespace:Speedo">
+                    xmlns:my="clr-namespace:Speedo.Controls">
 
     <SolidColorBrush x:Name="WindscreenColor" Color="#ffe200" />
     <SolidColorBrush x:Name="BlackBackground" Color="Black" />

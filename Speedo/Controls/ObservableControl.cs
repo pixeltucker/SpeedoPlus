@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 
-namespace Speedo
+namespace Speedo.Controls
 {
     /// <summary>
     /// A helper base class to implement INotifyPropertyChanged in a nice way.
