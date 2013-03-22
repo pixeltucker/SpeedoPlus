@@ -1,4 +1,6 @@
-﻿using System;
+﻿// new
+
+using System;
 
 namespace Speedo
 {

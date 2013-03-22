@@ -1,4 +1,6 @@
-﻿namespace Speedo
+﻿// new
+
+namespace Speedo
 {
     public enum LengthUnit
     {

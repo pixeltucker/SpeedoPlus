@@ -1,4 +1,6 @@
-﻿using System;
+﻿// new
+
+using System;
 using System.Windows;
 using System.Windows.Data;
 

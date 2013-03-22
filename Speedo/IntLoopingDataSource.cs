@@ -1,4 +1,6 @@
-﻿using System;
+﻿// new
+
+using System;
 using System.Windows.Controls;
 using Microsoft.Phone.Controls.Primitives;
 
