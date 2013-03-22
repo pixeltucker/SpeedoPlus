@@ -28,7 +28,7 @@ namespace Speedo.Controls
 
         protected override void ChangePosition( GeoCoordinate position )
         {
-            if ( lastPosition != null && lastPosition != GeoCoordinate.Unknown && position != GeoCoordinate.Unknown )
+            if ( lastPosition != null && !lastPosition.IsUnknown && !position.IsUnknown )
             {
                 Distance += lastPosition.GetDistanceTo( position );
             }

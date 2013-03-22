@@ -1,4 +1,6 @@
-﻿using System;
+﻿// new
+
+using System;
 using System.Windows.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;

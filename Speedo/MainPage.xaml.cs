@@ -64,8 +64,6 @@ namespace Speedo
         private MapStatus previousStatus;
         private SpeedAlert speedAlert;
 
-        private double accuracy = 0;
-        private double mapScale = 17;
         private bool windscreenMode = false;
         private IsolatedStorageSettings settings;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
@@ -75,6 +73,7 @@ namespace Speedo
         {
             MovementSource = new MovementSource();
             MovementSource.GeoStatusChanged += MovementSource_GeoStatusChanged;
+            MovementSource.ReadingChanged += MovementSource_ReadingChanged;
             ShowSpeedGraph = true;
             DataContext = this;
 
@@ -164,40 +163,6 @@ namespace Speedo
             }
         }
 
-        private void PositionChanged( GeoPositionChangedEventArgs<GeoCoordinate> e )
-        {
-            // store horizontal GPS accuracy
-            accuracy = e.Position.Location.HorizontalAccuracy;
-
-            // update only if accuracy <= 70m
-            if ( accuracy <= 70 )
-            {
-                StatusTextBlock.Text = "";
-                //if ( Microsoft.Devices.Environment.DeviceType == Microsoft.Devices.DeviceType.Emulator )
-                //{
-                //    StatusTextBlock.Text = "Emulator mode";
-                //    if ( lastKnownPos != null )
-                //    {
-                //        currentSpeed = ( e.Position.Location.GetDistanceTo( lastKnownPos ) );
-                //        if ( currentSpeed > 0 )
-                //        {
-                //            var lat1 = Math.PI * lastKnownPos.Latitude / 180.0;
-                //            var lat2 = Math.PI * e.Position.Location.Latitude / 180.0;
-                //            var dLon = Math.PI * e.Position.Location.Longitude / 180.0 - Math.PI * lastKnownPos.Longitude / 180.0;
-                //            var y = Math.Sin( dLon ) * Math.Cos( lat2 );
-                //            var x = Math.Cos( lat1 ) * Math.Sin( lat2 ) - Math.Sin( lat1 ) * Math.Cos( lat2 ) * Math.Cos( dLon );
-                //            var brng = Math.Atan2( y, x );
-                //            currentCourse = ( 180.0 * brng / Math.PI + 360 ) % 360;
-                //        }
-                //    }
-                //}
-            }
-            else
-            {
-                StatusTextBlock.Text = "weak GPS signal";
-            }
-        }
-
         private void UpdateWindscreen()
         {
             if ( windscreenMode )
@@ -269,7 +234,7 @@ namespace Speedo
                 SwitchLocationAccessText = "enable location access";
                 MovementSource.Stop();
                 StatusTextBlock.Text = "location inaccessible";
-                mapStatus = MapStatus.Disabled;
+                MapStatus = MapStatus.Disabled;
             }
             settings.Save();
         }
@@ -280,7 +245,6 @@ namespace Speedo
             {
                 var stateSettings = PhoneApplicationService.Current.State;
                 windscreenMode = (bool) stateSettings["windscreenMode"];
-                mapScale = (double) stateSettings["mapScale"];
                 speedAlert.IsEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
                 UpdateSpeedAlert();
@@ -291,7 +255,6 @@ namespace Speedo
         {
             var stateSettings = PhoneApplicationService.Current.State;
             stateSettings["windscreenMode"] = windscreenMode;
-            stateSettings["mapScale"] = mapScale;
             stateSettings["SpeedAlertConfig"] = speedAlert.IsEnabled;
         }
 
@@ -357,7 +320,7 @@ namespace Speedo
                     // Check to see whether the user has disabled the Location Service.
                     StatusTextBlock.Text = "location inaccessible";
                     IsLocating = false;
-                    mapStatus = MapStatus.Disabled;
+                    MapStatus = MapStatus.Disabled;
                     break;
 
                 case GeoPositionStatus.Initializing:
@@ -365,14 +328,14 @@ namespace Speedo
                     // Disable the Start Location button.
                     StatusTextBlock.Text = "GPS initializating";
                     IsLocating = true;
-                    mapStatus = MapStatus.Disabled;
+                    MapStatus = MapStatus.Disabled;
                     break;
 
                 case GeoPositionStatus.NoData:
                     // The Location Service is working, but it cannot get location data.
                     StatusTextBlock.Text = "GPS not available";
                     IsLocating = false;
-                    mapStatus = MapStatus.Disabled;
+                    MapStatus = MapStatus.Disabled;
                     break;
 
                 case GeoPositionStatus.Ready:
@@ -385,11 +348,18 @@ namespace Speedo
             }
         }
 
-        private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
+        private void MovementSource_ReadingChanged( object sender, EventArgs e )
         {
-            Dispatcher.BeginInvoke( () => PositionChanged( e ) );
+            Dispatcher.BeginInvoke( () =>
+            {
+                if ( MovementSource.Position.HorizontalAccuracy > 70 )
+                {
+                    StatusTextBlock.Text = "weak GPS signal";
+                }
+            } );
         }
 
+        // TODO: This is not bound to anything
         private void ResetTrip_Click( object sender, EventArgs e )
         {
             MovementSource.Start();
