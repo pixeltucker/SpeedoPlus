@@ -2,8 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 
-// TODO: there's probably a better way to show units than by converting them to string here...
-// but there are no custom markupextensions :(
+// TODO: Convert the speed limit when switching units
 
 namespace Speedo.Controls
 {
@@ -20,7 +19,7 @@ namespace Speedo.Controls
             }
         }
 
-        public string Unit { get; private set; }
+        public SpeedUnit Unit { get; private set; }
 
         public IntLoopingDataSource UnitsSource { get; private set; }
         public IntLoopingDataSource TensSource { get; private set; }
@@ -28,8 +27,7 @@ namespace Speedo.Controls
 
         public AlertPopup( SpeedUnit unit )
         {
-            Unit = SpeedUtils.GetString( unit );
-
+            Unit = unit;
             TensSource = new IntLoopingDataSource( 0, 24, 1 );
             UnitsSource = new IntLoopingDataSource( 0, 5, 5 ) { Loop = false };
             CloseCommand = new RelayCommand( _ => ClosePopup(), _ => AlertSpeed != 0 );

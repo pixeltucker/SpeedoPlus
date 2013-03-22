@@ -25,7 +25,7 @@
                              Value="{Binding AlertSpeed, Mode=TwoWay}" />
             <TextBlock VerticalAlignment="Center"
                        FontSize="100"
-                       Text="{Binding Unit}" />
+                       Text="{Binding Unit, Converter={StaticResource SpeedToString}}" />
         </StackPanel>
 
         <Button Grid.Row="2" 

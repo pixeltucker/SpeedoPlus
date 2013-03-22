@@ -274,7 +274,7 @@
                                     Opacity="{Binding IsMenuVisible, RelativeSource={RelativeSource Self}, 
                                                       Converter={StaticResource BoolToAppBarOpacity}}">
             <bar:BindableApplicationBar.MenuItems>
-                <bar:BindableApplicationBarMenuItem Text="{Binding SwitchUnitsText}"
+                <bar:BindableApplicationBarMenuItem Text="{Binding SpeedUnit, Converter={StaticResource SpeedToSwitchString}}"
                                                     Command="{Binding SwitchUnitsCommand}" />
                 <bar:BindableApplicationBarMenuItem Text="{Binding SwitchLocationAccessText}" 
                                                     Command="{Binding SwitchLocationAccessCommand}" />

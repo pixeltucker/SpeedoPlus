@@ -1,4 +1,6 @@
-﻿using System;
+﻿// new
+
+using System;
 using System.Windows.Data;
 
 namespace Speedo

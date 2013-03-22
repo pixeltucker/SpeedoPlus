@@ -16,7 +16,10 @@
             
             <my:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
             <my:BooleanToOpacityConverter x:Key="BoolToAppBarOpacity" Opacity="0.8" />
-            <my:SpeedUnitToStringConverter x:Key="SpeedToString" />
+            <my:SpeedUnitToStringConverter x:Key="SpeedToString" 
+                                           Kilometers="km/h" Miles="mph" />
+            <my:SpeedUnitToStringConverter x:Key="SpeedToSwitchString" 
+                                           Kilometers="switch to imperial (mph)" Miles="switch to metric (km/h)" />
         </ResourceDictionary>
     </Application.Resources>
 

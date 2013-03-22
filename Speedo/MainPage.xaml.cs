@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Device.Location;
 using System.Globalization;
 using System.IO.IsolatedStorage;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -48,13 +47,6 @@ namespace Speedo
             set { SetProperty( ref speedUnit, value ); }
         }
 
-        private string switchUnitsText;
-        public string SwitchUnitsText
-        {
-            get { return switchUnitsText; }
-            set { SetProperty( ref switchUnitsText, value ); }
-        }
-
         private string switchLocationAccessText;
         public string SwitchLocationAccessText
         {
@@ -86,7 +78,6 @@ namespace Speedo
         private int settingsDisplayCount;
         private GeoCoordinateWatcher watcher;
 
-        // Constructor
         public MainPage()
         {
             SpeedSource = new SpeedSource();
@@ -122,7 +113,6 @@ namespace Speedo
                     SpeedUnit = SpeedUnit.Kilometers;
                 }
             }
-            UpdateUnit();
 
             SpeedSource.Clear();
 
@@ -308,19 +298,6 @@ namespace Speedo
             }
         }
 
-        private void UpdateUnit()
-        {
-            switch ( SpeedUnit )
-            {
-                case SpeedUnit.Kilometers:
-                    SwitchUnitsText = "switch to imperial (mph)";
-                    break;
-                case SpeedUnit.Miles:
-                    SwitchUnitsText = "switch to metric (km/h)";
-                    break;
-            }
-        }
-
         private void UpdateWindscreen()
         {
             if ( windscreenMode )
@@ -496,10 +473,8 @@ namespace Speedo
 
         private void ExecuteSwitchUnitsCommand( object parameter )
         {
-            var newUnit = SpeedUnit == SpeedUnit.Kilometers ? SpeedUnit.Miles : SpeedUnit.Kilometers;
-            settings["unit"] = SpeedUnit = newUnit;
+            settings["unit"] = SpeedUnit = SpeedUtils.Switch( SpeedUnit );
             settings.Save();
-            UpdateUnit();
             UpdateSpeed();
         }
 
