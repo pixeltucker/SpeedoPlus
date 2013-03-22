@@ -100,6 +100,10 @@ namespace Speedo
         private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
         {
             Speed = e.Position.Location.Speed * 3.6; // m/s -> km/h
+            if ( double.IsNaN( Speed ) )
+            {
+                Speed = 0;
+            }
             Position = e.Position.Location;
             if ( compass == null )
             {
