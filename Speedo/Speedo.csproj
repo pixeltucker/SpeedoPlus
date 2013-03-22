@@ -127,6 +127,7 @@
     <Compile Include="Controls\DistanceDisplay.xaml.cs">
       <DependentUpon>DistanceDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SpeedControl.cs" />
     <Compile Include="Controls\SpeedDisplay.xaml.cs">
       <DependentUpon>SpeedDisplay.xaml</DependentUpon>
     </Compile>

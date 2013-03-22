@@ -1,42 +1,14 @@
 ﻿// new
 
 using System;
+using System.Device.Location;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Speedo.Controls
 {
-    public partial class SpeedGraph : UserControl
+    public partial class SpeedGraph : SpeedControl
     {
-        #region Source DependencyProperty
-        public SpeedSource Source
-        {
-            get { return (SpeedSource) GetValue( SourceProperty ); }
-            set { SetValue( SourceProperty, value ); }
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register( "Source", typeof( SpeedSource ), typeof( SpeedGraph ), new PropertyMetadata( OnSourcePropertyChanged ) );
-
-        private static void OnSourcePropertyChanged( DependencyObject obj, DependencyPropertyChangedEventArgs args )
-        {
-            var graph = (SpeedGraph) obj;
-            if ( args.OldValue != null )
-            {
-                var source = (SpeedSource) args.OldValue;
-                source.SpeedChanged -= graph.Source_SpeedChanged;
-                source.Cleared -= graph.Source_Cleared;
-            }
-            if ( args.NewValue != null )
-            {
-                var source = (SpeedSource) args.NewValue;
-                source.SpeedChanged += graph.Source_SpeedChanged;
-                source.Cleared += graph.Source_Cleared;
-            }
-        }
-        #endregion
-
         #region PointsCount DependencyProperty
         public int PointsCount
         {
@@ -62,7 +34,12 @@ namespace Speedo.Controls
             LayoutRoot.DataContext = this;
         }
 
-        private void AddSpeed( double speed )
+        protected override void ChangeUnits( double factor )
+        {
+            // nothing; the graph is relative
+        }
+
+        protected override void ChangeSpeed( double speed, GeoCoordinate position )
         {
             Points.RemoveAt( 0 );
             for ( int n = 0; n < Points.Count; n++ )
@@ -72,23 +49,13 @@ namespace Speedo.Controls
             Points.Add( new Point( PointsCount, -Math.Round( speed ) ) );
         }
 
-        private void Clear()
+        protected override void Clear()
         {
             Points.Clear();
             for ( int n = 0; n < PointsCount; n++ )
             {
                 Points.Add( new Point( n, 0 ) );
             }
-        }
-
-        private void Source_SpeedChanged( object sender, SpeedEventArgs e )
-        {
-            AddSpeed( e.CurrentSpeed );
-        }
-
-        private void Source_Cleared( object sender, EventArgs e )
-        {
-            Clear();
         }
     }
 }

@@ -1,40 +1,11 @@
-﻿using System;
+﻿// new
+
 using System.Device.Location;
-using System.Windows;
 
 namespace Speedo.Controls
 {
-    public partial class DistanceDisplay : ObservableControl
+    public partial class DistanceDisplay : SpeedControl
     {
-        #region Source DependencyProperty
-        public SpeedSource Source
-        {
-            get { return (SpeedSource) GetValue( SourceProperty ); }
-            set { SetValue( SourceProperty, value ); }
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register( "Source", typeof( SpeedSource ), typeof( DistanceDisplay ), new PropertyMetadata( OnSourcePropertyChanged ) );
-
-        private static void OnSourcePropertyChanged( DependencyObject obj, DependencyPropertyChangedEventArgs args )
-        {
-            var display = (DistanceDisplay) obj;
-            if ( args.OldValue != null )
-            {
-                var source = (SpeedSource) args.OldValue;
-                source.SpeedChanged -= display.Source_SpeedChanged;
-                source.Cleared -= display.Source_Cleared;
-            }
-            if ( args.NewValue != null )
-            {
-                var source = (SpeedSource) args.NewValue;
-                source.SpeedChanged += display.Source_SpeedChanged;
-                source.Cleared += display.Source_Cleared;
-            }
-            display.Clear();
-        }
-        #endregion
-
         private GeoCoordinate lastPosition;
 
         private double distance;
@@ -50,23 +21,23 @@ namespace Speedo.Controls
             LayoutRoot.DataContext = this;
         }
 
-        private void Clear()
+        protected override void ChangeUnits( double factor )
         {
-            Distance = 0;
+            Distance *= factor;
         }
 
-        private void Source_SpeedChanged( object sender, SpeedEventArgs e )
+        protected override void ChangeSpeed( double speed, GeoCoordinate position )
         {
             if ( lastPosition != null )
             {
-                Distance += lastPosition.GetDistanceTo( e.CurrentPosition );
+                Distance += lastPosition.GetDistanceTo( position );
             }
-            lastPosition = e.CurrentPosition;
+            lastPosition = position;
         }
 
-        private void Source_Cleared( object sender, EventArgs e )
+        protected override void Clear()
         {
-            Clear();
+            Distance = 0;
         }
     }
 }
