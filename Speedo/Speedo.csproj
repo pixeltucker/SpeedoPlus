@@ -134,6 +134,7 @@
     <Compile Include="Controls\SpeedDisplay.xaml.cs">
       <DependentUpon>SpeedDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="OppositeBooleanConverter.cs" />
     <Compile Include="SpeedAlert.cs" />
     <Compile Include="SpeedUnitToStringConverter.cs" />
     <Compile Include="SpeedUtils.cs" />

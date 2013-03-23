@@ -20,6 +20,7 @@
                                            Kilometers="km/h" Miles="mph" />
             <my:SpeedUnitToStringConverter x:Key="SpeedToSwitchString" 
                                            Kilometers="switch to imperial (mph)" Miles="switch to metric (km/h)" />
+            <my:OppositeBooleanConverter x:Key="OppositeBool" />
         </ResourceDictionary>
     </Application.Resources>
 

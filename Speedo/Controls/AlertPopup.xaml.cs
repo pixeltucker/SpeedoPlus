@@ -8,29 +8,39 @@ namespace Speedo.Controls
 {
     public partial class AlertPopup : ObservableControl
     {
-        private int alertspeed;
+        private int alertSpeed;
         public int AlertSpeed
         {
-            get { return alertspeed; }
+            get { return alertSpeed; }
             set
             {
-                SetProperty( ref alertspeed, value );
+                SetProperty( ref alertSpeed, value );
                 CloseCommand.OnCanExecuteChanged();
             }
         }
 
-        public SpeedUnit Unit { get; private set; }
+        private bool useSound;
+        public bool UseSound
+        {
+            get { return useSound; }
+            set { SetProperty( ref useSound, value ); }
+        }
+
+        public SpeedAlert Alert { get; private set; }
 
         public IntLoopingDataSource UnitsSource { get; private set; }
         public IntLoopingDataSource TensSource { get; private set; }
         public RelayCommand CloseCommand { get; private set; }
 
-        public AlertPopup( SpeedUnit unit )
+        public AlertPopup( SpeedAlert alert )
         {
-            Unit = unit;
             TensSource = new IntLoopingDataSource( 0, 24, 1 );
             UnitsSource = new IntLoopingDataSource( 0, 5, 5 ) { Loop = false };
             CloseCommand = new RelayCommand( _ => ClosePopup(), _ => AlertSpeed != 0 );
+
+            Alert = alert;
+            AlertSpeed = alert.Limit;
+            UseSound = Alert.NotificationProvider == SpeedAlert.SoundProvider;
 
             InitializeComponent();
             LayoutRoot.DataContext = this;
@@ -43,6 +53,10 @@ namespace Speedo.Controls
             VisualStateManager.GoToState( this, "Close", true );
             // TODO: Find a better way (without events)
             await Task.Delay( 350 );
+
+            Alert.Limit = AlertSpeed;
+            Alert.NotificationProvider = UseSound ? SpeedAlert.SoundProvider : SpeedAlert.SpeechProvider;
+
             FireCloseCompleted();
         }
 

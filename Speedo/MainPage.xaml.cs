@@ -395,7 +395,7 @@ namespace Speedo
             }
             else
             {
-                var alertPopup = new AlertPopup( SpeedUnit ) { AlertSpeed = speedAlert.Limit };
+                var alertPopup = new AlertPopup( speedAlert );
 
                 PopupContent.Children.Add( alertPopup );
                 LayoutRoot.IsHitTestVisible = false;
@@ -406,7 +406,7 @@ namespace Speedo
                     PopupContent.Children.Clear();
                     LayoutRoot.IsHitTestVisible = true;
                     ApplicationBar.IsVisible = true;
-                    settings["SpeedLimit"] = speedAlert.Limit = alertPopup.AlertSpeed; ;
+                    settings["SpeedLimit"] = speedAlert.Limit;
                     settings["SpeedAlertConfig"] = speedAlert.IsEnabled = true;
                     settings.Save();
                     UpdateSpeedAlert();
