@@ -25,25 +25,6 @@
             <!-- TODO: LoadingError isn't supported any more, fix it? -->
 
             <my:BackgroundMap Source="{Binding MovementSource}" />
-            <!--<Grid x:Name="MapLayer"
-                  Background="#CCCCCC">
-                <maps:Map x:Name="BackMap" 
-                          IsHitTestVisible="False" 
-                          Visibility="Visible" 
-                          VerticalAlignment="Center" 
-                          HorizontalAlignment="Center" 
-                          RenderTransformOrigin="0.5,0.5" 
-                          Width="934" 
-                          Height="934" 
-                          CartographicMode="Road"                         
-                          CacheMode="BitmapCache">                   
-                    <maps:Map.RenderTransform>
-                        <RotateTransform x:Name="BackMapRotateTransform" Angle="0" />
-                    </maps:Map.RenderTransform>
-                </maps:Map>
-                <Rectangle Fill="{StaticResource PhoneBackgroundBrush}" 
-                           Opacity="0.65" />
-            </Grid>-->
 
             <Grid VerticalAlignment="Center" 
                   Margin="0,-70,0,0" 
@@ -142,9 +123,8 @@
                                      tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/alert.png" />
                     </my:BubbleButton>
-                    <Grid x:Name="alertIndicator" 
-                          Visibility="Collapsed" 
-                          IsHitTestVisible="False" 
+                    <Grid IsHitTestVisible="False" 
+                          Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}"
                           Background="{StaticResource PhoneAccentBrush}" 
                           Width="48" Height="48" 
                           Margin="16">
@@ -165,22 +145,7 @@
                                     VerticalAlignment="Bottom"
                                     Margin="0,15"
                                     Source="{Binding MovementSource}" />
-                <!--<StackPanel HorizontalAlignment="Center" 
-                            VerticalAlignment="Bottom" 
-                            Margin="0,15">
-                    <TextBlock x:Name="DistanceTextBlock" 
-                               HorizontalAlignment="Center" />
-                    <TextBlock HorizontalAlignment="Center" 
-                               Style="{StaticResource PhoneTextSmallStyle}"
-                               Text="distance" />
-                </StackPanel>-->
             </Grid>
-
-            <!--<tool:GestureService.GestureListener>
-                <tool:GestureListener PinchStarted="GestureListener_PinchStarted" 
-                                      PinchDelta="GestureListener_PinchDelta" 
-                                      PinchCompleted="GestureListener_PinchCompleted" />
-            </tool:GestureService.GestureListener>-->
         </Grid>
 
         <Grid x:Name="PopupHost">

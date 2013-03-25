@@ -20,7 +20,14 @@ namespace Speedo
     public partial class MainPage : PhoneApplicationPage, INotifyPropertyChanged
     {
         public MovementSource MovementSource { get; private set; }
-        public bool ShowSpeedGraph { get; private set; }
+        public SpeedAlert SpeedAlert { get; private set; }
+
+        private bool showSpeedGraph;
+        public bool ShowSpeedGraph
+        {
+            get { return showSpeedGraph; }
+            set { SetProperty( ref showSpeedGraph, value ); }
+        }
 
         private bool allowLocationAccess;
         public bool AllowLocationAccess
@@ -62,7 +69,6 @@ namespace Speedo
         public ICommand AboutCommand { get; private set; }
 
         private MapStatus previousStatus;
-        private SpeedAlert speedAlert;
 
         private bool windscreenMode = false;
         private IsolatedStorageSettings settings;
@@ -85,7 +91,7 @@ namespace Speedo
 
             settings = IsolatedStorageSettings.ApplicationSettings;
             settings.Clear();
-            speedAlert = new SpeedAlert( MovementSource, SpeedAlert.SoundProvider );
+            SpeedAlert = new SpeedAlert( MovementSource, SpeedAlert.SoundProvider );
 
             InitializeComponent();
             ShowWarnings();
@@ -122,9 +128,8 @@ namespace Speedo
             bool isSpeedAlertEnabled = false;
             if ( settings.TryGetValue<bool>( "SpeedAlertConfig", out isSpeedAlertEnabled ) )
             {
-                speedAlert.IsEnabled = isSpeedAlertEnabled;
+                SpeedAlert.IsEnabled = isSpeedAlertEnabled;
             }
-            UpdateSpeedAlert();
 
             int speedLimit;
             if ( !settings.TryGetValue( "SpeedLimit", out speedLimit ) )
@@ -140,7 +145,7 @@ namespace Speedo
                     speedLimit = 100;
                 }
             }
-            speedAlert.Limit = speedLimit;
+            SpeedAlert.Limit = speedLimit;
 
             // get our location setting
             if ( !settings.TryGetValue<bool>( "LocationAccess", out allowLocationAccess ) )
@@ -216,11 +221,6 @@ namespace Speedo
             }
         }
 
-        private void UpdateSpeedAlert()
-        {
-            alertIndicator.Visibility = speedAlert.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-        }
-
         private void UpdateLocationAccess()
         {
             settings["LocationAccess"] = AllowLocationAccess;
@@ -245,9 +245,8 @@ namespace Speedo
             {
                 var stateSettings = PhoneApplicationService.Current.State;
                 windscreenMode = (bool) stateSettings["windscreenMode"];
-                speedAlert.IsEnabled = (bool) stateSettings["SpeedAlertConfig"];
+                SpeedAlert.IsEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
-                UpdateSpeedAlert();
             }
         }
 
@@ -255,7 +254,7 @@ namespace Speedo
         {
             var stateSettings = PhoneApplicationService.Current.State;
             stateSettings["windscreenMode"] = windscreenMode;
-            stateSettings["SpeedAlertConfig"] = speedAlert.IsEnabled;
+            stateSettings["SpeedAlertConfig"] = SpeedAlert.IsEnabled;
         }
 
         protected override void OnBackKeyPress( CancelEventArgs e )
@@ -387,15 +386,14 @@ namespace Speedo
 
         private void AlertButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
         {
-            if ( speedAlert.IsEnabled )
+            if ( SpeedAlert.IsEnabled )
             {
-                settings["SpeedAlertConfig"] = speedAlert.IsEnabled = false;
+                settings["SpeedAlertConfig"] = SpeedAlert.IsEnabled = false;
                 settings.Save();
-                UpdateSpeedAlert();
             }
             else
             {
-                var alertPopup = new AlertPopup( speedAlert );
+                var alertPopup = new AlertPopup( SpeedAlert );
 
                 PopupContent.Children.Add( alertPopup );
                 LayoutRoot.IsHitTestVisible = false;
@@ -406,10 +404,9 @@ namespace Speedo
                     PopupContent.Children.Clear();
                     LayoutRoot.IsHitTestVisible = true;
                     ApplicationBar.IsVisible = true;
-                    settings["SpeedLimit"] = speedAlert.Limit;
-                    settings["SpeedAlertConfig"] = speedAlert.IsEnabled = true;
+                    settings["SpeedLimit"] = SpeedAlert.Limit;
+                    settings["SpeedAlertConfig"] = SpeedAlert.IsEnabled = true;
                     settings.Save();
-                    UpdateSpeedAlert();
                 };
             }
         }
@@ -425,34 +422,10 @@ namespace Speedo
         }
 
         #region INotifyPropertyChanged implementation
-        // TODO: find a way to reuse the code...
-
-        /// <summary>
-        /// Occurs when a property value changes.
-        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-        /// <summary>
-        /// Fires the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        private void FirePropertyChanged( [CallerMemberName] string propertyName = "" )
-        {
-            var evt = this.PropertyChanged;
-            if ( evt != null )
-            {
-                evt( this, new PropertyChangedEventArgs( propertyName ) );
-            }
-        }
-
-        /// <summary>
-        /// Sets the specified field to the specified value and raises <see cref="PropertyChanged"/> if needed.
-        /// </summary>
         private void SetProperty<T>( ref T field, T value, [CallerMemberName] string propertyName = "" )
         {
-            if ( !object.Equals( field, value ) )
-            {
-                field = value;
-                this.FirePropertyChanged( propertyName );
-            }
+            NotifyHelper.SetProperty( ref field, value, propertyName, this, PropertyChanged );
         }
         #endregion
     }

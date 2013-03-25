@@ -1,6 +1,8 @@
 ﻿// new
 
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -8,15 +10,33 @@ using Windows.Phone.Speech.Synthesis;
 
 namespace Speedo
 {
-    public sealed class SpeedAlert
+    public sealed class SpeedAlert : INotifyPropertyChanged
     {
-        public SpeedUnit Unit { get; set; }
-        public int Limit { get; set; }
-        public bool IsEnabled { get; set; }
-        public INotificationProvider NotificationProvider { get; set; }
-
         private MovementSource source;
         private DispatcherTimer timer;
+
+        private SpeedUnit unit;
+        public SpeedUnit Unit
+        {
+            get { return unit; }
+            set { SetProperty( ref unit, value ); }
+        }
+
+        private int limit;
+        public int Limit
+        {
+            get { return limit; }
+            set { SetProperty( ref limit, value ); }
+        }
+
+        private bool isEnabled;
+        public bool IsEnabled
+        {
+            get { return isEnabled; }
+            set { SetProperty( ref isEnabled, value ); }
+        }
+
+        public INotificationProvider NotificationProvider { get; set; }
 
         public static INotificationProvider SoundProvider { get; private set; }
         public static INotificationProvider SpeechProvider { get; private set; }
@@ -55,6 +75,14 @@ namespace Speedo
         {
             NotificationProvider.Notify();
         }
+
+        #region INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void SetProperty<T>( ref T field, T value, [CallerMemberName] string propertyName = "" )
+        {
+            NotifyHelper.SetProperty( ref field, value, propertyName, this, PropertyChanged );
+        }
+        #endregion
 
         public interface INotificationProvider
         {
