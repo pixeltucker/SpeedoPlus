@@ -16,10 +16,15 @@
             
             <my:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
             <my:BooleanToOpacityConverter x:Key="BoolToAppBarOpacity" Opacity="0.8" />
+            <my:BooleanToStringConverter x:Key="LocationAccessToMenuString"
+                                         True="disable location access"
+                                         False="enable location access" />
+            <my:GpsStatusToStringConverter x:Key="GpsToString" />
             <my:SpeedUnitToStringConverter x:Key="SpeedToString" 
                                            Kilometers="km/h" Miles="mph" />
             <my:SpeedUnitToStringConverter x:Key="SpeedToSwitchString" 
-                                           Kilometers="switch to imperial (mph)" Miles="switch to metric (km/h)" />
+                                           Kilometers="switch to imperial (mph)" 
+                                           Miles="switch to metric (km/h)" />
             <my:OppositeBooleanConverter x:Key="OppositeBool" />
         </ResourceDictionary>
     </Application.Resources>

@@ -8,7 +8,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
-using System.Windows.Threading;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Speedo.Controls;
@@ -19,7 +18,6 @@ namespace Speedo
     {
         // HACK: For some reason, a Binding subclass for settings makes the app crash on startup or not show some UI parts
         public AppSettings Settings { get; private set; }
-
         public MovementSource MovementSource { get; private set; }
         public SpeedAlert SpeedAlert { get; private set; }
 
@@ -37,18 +35,18 @@ namespace Speedo
             set { SetProperty( ref isLocating, value ); }
         }
 
-        private string switchLocationAccessText;
-        public string SwitchLocationAccessText
-        {
-            get { return switchLocationAccessText; }
-            set { SetProperty( ref switchLocationAccessText, value ); }
-        }
-
         private MapStatus mapStatus;
         public MapStatus MapStatus
         {
             get { return mapStatus; }
             set { SetProperty( ref mapStatus, value ); }
+        }
+
+        private GpsStatus gpsStatus;
+        public GpsStatus GpsStatus
+        {
+            get { return gpsStatus; }
+            set { SetProperty( ref gpsStatus, value ); }
         }
 
         public ICommand SwitchUnitsCommand { get; private set; }
@@ -158,14 +156,12 @@ namespace Speedo
         {
             if ( AppSettings.Current.AllowLocationAccess )
             {
-                SwitchLocationAccessText = "disable location access";
                 MovementSource.Start();
             }
             else
             {
-                SwitchLocationAccessText = "enable location access";
                 MovementSource.Stop();
-                StatusTextBlock.Text = "location inaccessible";
+                GpsStatus = GpsStatus.Inaccessible;
                 MapStatus = MapStatus.Disabled;
             }
         }
@@ -247,7 +243,7 @@ namespace Speedo
                 case GeoPositionStatus.Disabled:
                     // The Location Service is disabled or unsupported.
                     // Check to see whether the user has disabled the Location Service.
-                    StatusTextBlock.Text = "location inaccessible";
+                    GpsStatus = GpsStatus.Inaccessible;
                     IsLocating = false;
                     MapStatus = MapStatus.Disabled;
                     break;
@@ -255,14 +251,14 @@ namespace Speedo
                 case GeoPositionStatus.Initializing:
                     // The Location Service is initializing.
                     // Disable the Start Location button.
-                    StatusTextBlock.Text = "GPS initializating";
+                    GpsStatus = GpsStatus.Initializing;
                     IsLocating = true;
                     MapStatus = MapStatus.Disabled;
                     break;
 
                 case GeoPositionStatus.NoData:
                     // The Location Service is working, but it cannot get location data.
-                    StatusTextBlock.Text = "GPS not available";
+                    GpsStatus = GpsStatus.Unavailable;
                     IsLocating = false;
                     MapStatus = MapStatus.Disabled;
                     break;
@@ -270,21 +266,16 @@ namespace Speedo
                 case GeoPositionStatus.Ready:
                     // The Location Service is working and is receiving location data.
                     // Show the current position and enable the Stop Location button.
-                    StatusTextBlock.Text = "";
+                    GpsStatus = GpsStatus.Normal;
                     IsLocating = false;
+                    MapStatus = AppSettings.Current.MapStatus;
                     break;
             }
         }
 
         private void MovementSource_ReadingChanged( object sender, EventArgs e )
         {
-            Dispatcher.BeginInvoke( () =>
-            {
-                if ( MovementSource.Position.HorizontalAccuracy > 70 )
-                {
-                    StatusTextBlock.Text = "weak GPS signal";
-                }
-            } );
+            GpsStatus = MovementSource.Position.HorizontalAccuracy < 70 ? GpsStatus.Normal : GpsStatus.Weak;
         }
 
         // TODO: This is not bound to anything

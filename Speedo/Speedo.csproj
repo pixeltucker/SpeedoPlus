@@ -114,6 +114,7 @@
     </Compile>
     <Compile Include="AppSettings.cs" />
     <Compile Include="BooleanToOpacityConverter.cs" />
+    <Compile Include="BooleanToStringConverter.cs" />
     <Compile Include="Controls\AlertPopup.xaml.cs">
       <DependentUpon>AlertPopup.xaml</DependentUpon>
     </Compile>
@@ -136,6 +137,8 @@
       <DependentUpon>SpeedDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="FakeGeoPositionWatcher.cs" />
+    <Compile Include="GpsStatus.cs" />
+    <Compile Include="GpsStatusToStringConverter.cs" />
     <Compile Include="NotifyHelper.cs" />
     <Compile Include="OppositeBooleanConverter.cs" />
     <Compile Include="SpeedAlert.cs" />

@@ -35,11 +35,10 @@
                 </Grid.RowDefinitions>
 
                 <Grid Margin="10,0,10,0">
-                    <TextBlock x:Name="StatusTextBlock" 
-                               HorizontalAlignment="Center" 
+                    <TextBlock HorizontalAlignment="Center" 
                                VerticalAlignment="Top" 
                                Margin="0,0,0,20" 
-                               Text="Status" />
+                               Text="{Binding GpsStatus, Converter={StaticResource GpsToString}}" />
 
                     <myControls:SpeedDisplay Source="{Binding MovementSource}"
                                              Unit="{Binding Settings.SpeedUnit}" />
@@ -247,7 +246,7 @@
             <bar:BindableApplicationBar.MenuItems>
                 <bar:BindableApplicationBarMenuItem Text="{Binding Settings.SpeedUnit, Converter={StaticResource SpeedToSwitchString}}"
                                                     Command="{Binding SwitchUnitsCommand}" />
-                <bar:BindableApplicationBarMenuItem Text="{Binding SwitchLocationAccessText}" 
+                <bar:BindableApplicationBarMenuItem Text="{Binding Settings.AllowLocationAccess, Converter={StaticResource LocationAccessToMenuString}}" 
                                                     Command="{Binding SwitchLocationAccessCommand}" />
                 <bar:BindableApplicationBarMenuItem Text="about" 
                                                     Command="{Binding AboutCommand}" />

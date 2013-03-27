@@ -8,7 +8,7 @@ using System.Windows.Threading;
 namespace Speedo
 {
     // This class is horribly wrong from a geographical point of view
-    // but it works, so why bother?
+    // TODO: maybe change it...
     public sealed class FakeGeoPositionWatcher : IGeoPositionWatcher<GeoCoordinate>
     {
         private const double MinimumChange = 0.00005; // lon/lat
@@ -108,8 +108,13 @@ namespace Speedo
                 newLong = 0;
             }
 
-            var newCoordinate = new GeoCoordinate( newLat, newLong );
-            newCoordinate.Course = random.Next( 360 ) + random.NextDouble();
+            var newCoordinate = new GeoCoordinate( newLat, newLong )
+            {
+                HorizontalAccuracy = 10,
+                VerticalAccuracy = 10,
+                Course = random.Next( 360 ) + random.NextDouble(),
+                Altitude = 0
+            };
             newCoordinate.Speed = newCoordinate.GetDistanceTo( Position.Location ) / TimerTick;
 
             Position = new GeoPosition<GeoCoordinate>( DateTimeOffset.Now, newCoordinate );
