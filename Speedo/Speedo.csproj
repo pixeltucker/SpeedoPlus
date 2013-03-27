@@ -135,6 +135,7 @@
     <Compile Include="Controls\SpeedDisplay.xaml.cs">
       <DependentUpon>SpeedDisplay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FakeGeoPositionWatcher.cs" />
     <Compile Include="NotifyHelper.cs" />
     <Compile Include="OppositeBooleanConverter.cs" />
     <Compile Include="SpeedAlert.cs" />

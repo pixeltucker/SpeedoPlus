@@ -12,7 +12,7 @@ namespace Speedo
     public sealed class MovementSource
     {
         private Compass compass;
-        private GeoCoordinateWatcher watcher;
+        private IGeoPositionWatcher<GeoCoordinate> watcher;
         private bool forceStop;
 
         public double Speed { get; private set; }
@@ -31,7 +31,11 @@ namespace Speedo
 
             if ( !DesignerProperties.IsInDesignTool ) // Cider hates GeoCoordinateWatcher
             {
+#if DEBUG
+                watcher = new FakeGeoPositionWatcher( 0.0, 0.0 );
+#else
                 watcher = new GeoCoordinateWatcher( GeoPositionAccuracy.High );
+#endif
                 watcher.PositionChanged += Watcher_PositionChanged;
                 watcher.StatusChanged += Watcher_StatusChanged;
                 watcher.Start();
