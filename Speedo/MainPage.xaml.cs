@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Device.Location;
-using System.Globalization;
-using System.IO.IsolatedStorage;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +17,9 @@ namespace Speedo
 {
     public partial class MainPage : PhoneApplicationPage, INotifyPropertyChanged
     {
+        // HACK: For some reason, a Binding subclass for settings makes the app crash on startup or not show some UI parts
+        public AppSettings Settings { get; private set; }
+
         public MovementSource MovementSource { get; private set; }
         public SpeedAlert SpeedAlert { get; private set; }
 
@@ -29,25 +30,11 @@ namespace Speedo
             set { SetProperty( ref showSpeedGraph, value ); }
         }
 
-        private bool allowLocationAccess;
-        public bool AllowLocationAccess
-        {
-            get { return allowLocationAccess; }
-            set { SetProperty( ref allowLocationAccess, value ); }
-        }
-
         private bool isLocating;
         public bool IsLocating
         {
             get { return isLocating; }
             set { SetProperty( ref isLocating, value ); }
-        }
-
-        private SpeedUnit speedUnit;
-        public SpeedUnit SpeedUnit
-        {
-            get { return speedUnit; }
-            set { SetProperty( ref speedUnit, value ); }
         }
 
         private string switchLocationAccessText;
@@ -69,14 +56,13 @@ namespace Speedo
         public ICommand AboutCommand { get; private set; }
 
         private MapStatus previousStatus;
-
         private bool windscreenMode = false;
-        private IsolatedStorageSettings settings;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
         private int settingsDisplayCount;
 
         public MainPage()
         {
+            Settings = AppSettings.Current;
             MovementSource = new MovementSource();
             MovementSource.GeoStatusChanged += MovementSource_GeoStatusChanged;
             MovementSource.ReadingChanged += MovementSource_ReadingChanged;
@@ -89,8 +75,6 @@ namespace Speedo
             SwitchLocationAccessCommand = new RelayCommand( ExecuteSwitchLocationAccessCommand );
             AboutCommand = new RelayCommand( ExecuteAboutCommand );
 
-            settings = IsolatedStorageSettings.ApplicationSettings;
-            settings.Clear();
             SpeedAlert = new SpeedAlert( MovementSource, SpeedAlert.SoundProvider );
 
             InitializeComponent();
@@ -99,72 +83,21 @@ namespace Speedo
             // no idling here
             PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
 
-            // get our unit setting        
-            if ( !settings.TryGetValue<SpeedUnit>( "unit", out speedUnit ) )
-            {
-                // get our region
-                if ( CultureInfo.CurrentCulture.Name == "en-US" )
-                {
-                    // this is English US, default to miles
-                    SpeedUnit = SpeedUnit.Miles;
-                }
-                else
-                {
-                    // elsewhere, default to KM
-                    SpeedUnit = SpeedUnit.Kilometers;
-                }
-            }
-
             // hide settings button
             VisualStateManager.GoToState( this, "HideControls", false );
 
-            // get our map setting
-            if ( !settings.TryGetValue<MapStatus>( "map", out mapStatus ) )
-            {
-                settings["map"] = MapStatus = MapStatus.On;
-            }
-
-            // get our speed alert speed setting
-            bool isSpeedAlertEnabled = false;
-            if ( settings.TryGetValue<bool>( "SpeedAlertConfig", out isSpeedAlertEnabled ) )
-            {
-                SpeedAlert.IsEnabled = isSpeedAlertEnabled;
-            }
-
-            int speedLimit;
-            if ( !settings.TryGetValue( "SpeedLimit", out speedLimit ) )
-            {
-                if ( CultureInfo.CurrentCulture.Name == "en-US" )
-                {
-                    // this is English US, default to 65
-                    speedLimit = 65;
-                }
-                else
-                {
-                    // elsewhere, default to 80
-                    speedLimit = 100;
-                }
-            }
-            SpeedAlert.Limit = speedLimit;
-
-            // get our location setting
-            if ( !settings.TryGetValue<bool>( "LocationAccess", out allowLocationAccess ) )
-            {
-                settings["LocationAccess"] = AllowLocationAccess = true;
-            }
+            SpeedAlert.Limit = AppSettings.Current.SpeedLimit;
 
             UpdateLocationAccess();
         }
 
         private void ShowWarnings()
         {
-            bool warning;
-            settings.TryGetValue<bool>( "warning", out warning );
-            if ( !warning )
+            if ( AppSettings.Current.IsFirstRun )
             {
+                AppSettings.Current.IsFirstRun = false;
                 MessageBox.Show( "This software uses GPS signals to calculate your speed and direction which is subject to interference and results may be skewed.\n\nThe information provided can only be used as a guide.", "Accuracy warning", MessageBoxButton.OK );
                 MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
-                settings["warning"] = true;
             }
         }
 
@@ -223,8 +156,7 @@ namespace Speedo
 
         private void UpdateLocationAccess()
         {
-            settings["LocationAccess"] = AllowLocationAccess;
-            if ( AllowLocationAccess )
+            if ( AppSettings.Current.AllowLocationAccess )
             {
                 SwitchLocationAccessText = "disable location access";
                 MovementSource.Start();
@@ -236,7 +168,6 @@ namespace Speedo
                 StatusTextBlock.Text = "location inaccessible";
                 MapStatus = MapStatus.Disabled;
             }
-            settings.Save();
         }
 
         protected override void OnNavigatedTo( NavigationEventArgs e )
@@ -283,24 +214,23 @@ namespace Speedo
 
         private void ExecuteSwitchUnitsCommand( object parameter )
         {
-            settings["unit"] = SpeedUnit = SpeedUtils.Switch( SpeedUnit );
-            settings.Save();
+            AppSettings.Current.SpeedUnit = SpeedUtils.Switch( AppSettings.Current.SpeedUnit );
         }
 
         private void ExecuteSwitchLocationAccessCommand( object parameter )
         {
-            if ( AllowLocationAccess )
+            if ( AppSettings.Current.AllowLocationAccess )
             {
                 var warningMsg = MessageBox.Show( "This application will not work without location access. Are you sure you still want to disable it?", "Disable location", MessageBoxButton.OKCancel );
                 if ( warningMsg == MessageBoxResult.OK )
                 {
-                    AllowLocationAccess = false;
+                    AppSettings.Current.AllowLocationAccess = false;
                     UpdateLocationAccess();
                 }
             }
             else
             {
-                AllowLocationAccess = true;
+                AppSettings.Current.AllowLocationAccess = true;
                 UpdateLocationAccess();
             }
         }
@@ -342,7 +272,6 @@ namespace Speedo
                     // Show the current position and enable the Stop Location button.
                     StatusTextBlock.Text = "";
                     IsLocating = false;
-                    settings.TryGetValue<MapStatus>( "map", out mapStatus );
                     break;
             }
         }
@@ -388,8 +317,7 @@ namespace Speedo
         {
             if ( SpeedAlert.IsEnabled )
             {
-                settings["SpeedAlertConfig"] = SpeedAlert.IsEnabled = false;
-                settings.Save();
+                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = false;
             }
             else
             {
@@ -404,9 +332,8 @@ namespace Speedo
                     PopupContent.Children.Clear();
                     LayoutRoot.IsHitTestVisible = true;
                     ApplicationBar.IsVisible = true;
-                    settings["SpeedLimit"] = SpeedAlert.Limit;
-                    settings["SpeedAlertConfig"] = SpeedAlert.IsEnabled = true;
-                    settings.Save();
+                    AppSettings.Current.SpeedLimit = SpeedAlert.Limit;
+                    AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
                 };
             }
         }
@@ -417,8 +344,7 @@ namespace Speedo
                       : MapStatus == MapStatus.Off ? MapStatus.On
                                                    : MapStatus.Disabled;
 
-            settings["map"] = MapStatus;
-            settings.Save();
+            AppSettings.Current.MapStatus = MapStatus;
         }
 
         #region INotifyPropertyChanged implementation

@@ -4,7 +4,8 @@
                             xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
                             xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
                             xmlns:bar="clr-namespace:BindableApplicationBar;assembly=BindableApplicationBar"
-                            xmlns:my="clr-namespace:Speedo.Controls"
+                            xmlns:my="clr-namespace:Speedo"
+                            xmlns:myControls="clr-namespace:Speedo.Controls"
                             xmlns:maps="clr-namespace:Microsoft.Phone.Maps.Controls;assembly=Microsoft.Phone.Maps"
                             xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
                             FontFamily="{StaticResource PhoneFontFamilyNormal}"
@@ -23,8 +24,7 @@
               Background="{StaticResource PhoneBackgroundBrush}" 
               MouseLeftButtonDown="LayoutRoot_MouseLeftButtonDown">
             <!-- TODO: LoadingError isn't supported any more, fix it? -->
-
-            <my:BackgroundMap Source="{Binding MovementSource}" />
+            <myControls:BackgroundMap Source="{Binding MovementSource}" />
 
             <Grid VerticalAlignment="Center" 
                   Margin="0,-70,0,0" 
@@ -40,9 +40,9 @@
                                VerticalAlignment="Top" 
                                Margin="0,0,0,20" 
                                Text="Status" />
-                    
-                    <my:SpeedDisplay Source="{Binding MovementSource}"
-                                     Unit="{Binding SpeedUnit}" />
+
+                    <myControls:SpeedDisplay Source="{Binding MovementSource}"
+                                             Unit="{Binding Settings.SpeedUnit}" />
                 </Grid>
 
                 <Grid Margin="10,0,10,0" 
@@ -52,14 +52,14 @@
                         <RowDefinition Height="64" />
                     </Grid.RowDefinitions>
                     
-                    <my:SpeedGraph Source="{Binding MovementSource}"
-                                   PointsCount="360"
-                                   Height="30"
-                                   Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
+                    <myControls:SpeedGraph Source="{Binding MovementSource}"
+                                           PointsCount="360"
+                                           Height="30"
+                                           Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
 
-                    <my:DirectionDisplay Grid.Row="1"
-                                         Source="{Binding MovementSource}"
-                                         HorizontalAlignment="Center" />
+                    <myControls:DirectionDisplay Grid.Row="1"
+                                                 Source="{Binding MovementSource}"
+                                                 HorizontalAlignment="Center" />
                 </Grid>
                 <Grid.RenderTransform>
                     <ScaleTransform x:Name="ContentScaleTransform" />
@@ -71,12 +71,12 @@
                 <Grid x:Name="windscreenRoot" 
                       HorizontalAlignment="Left" 
                       VerticalAlignment="Top">
-                    <my:BubbleButton x:Name="windscreenButton" 
-                                     MouseLeftButtonDown="WindscreenButton_MouseLeftButtonDown" 
-                                     Style="{StaticResource RoundIconButton}" 
-                                     tool:TiltEffect.IsTiltEnabled="True">
+                    <myControls:BubbleButton x:Name="windscreenButton" 
+                                             MouseLeftButtonDown="WindscreenButton_MouseLeftButtonDown" 
+                                             Style="{StaticResource RoundIconButton}" 
+                                             tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/windscreen.png" />
-                    </my:BubbleButton>
+                    </myControls:BubbleButton>
                     <Grid x:Name="windsreenIndicator" 
                           Visibility="Collapsed" 
                           IsHitTestVisible="False" 
@@ -99,12 +99,12 @@
                 <Grid x:Name="mapRoot" 
                       HorizontalAlignment="Right" 
                       VerticalAlignment="Top">
-                    <my:BubbleButton x:Name="mapButton" 
-                                     MouseLeftButtonDown="MapButton_MouseLeftButtonDown" 
-                                     Style="{StaticResource RoundIconButton}" 
-                                     tool:TiltEffect.IsTiltEnabled="True">
+                    <myControls:BubbleButton x:Name="mapButton" 
+                                             MouseLeftButtonDown="MapButton_MouseLeftButtonDown" 
+                                             Style="{StaticResource RoundIconButton}" 
+                                             tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/map.png" />
-                    </my:BubbleButton>
+                    </myControls:BubbleButton>
                     <Grid.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -117,12 +117,12 @@
                 <Grid x:Name="alertRoot" 
                       HorizontalAlignment="Left" 
                       VerticalAlignment="Bottom">
-                    <my:BubbleButton x:Name="alertButton" 
-                                     MouseLeftButtonDown="AlertButton_MouseLeftButtonDown" 
-                                     Style="{StaticResource RoundIconButton}" 
-                                     tool:TiltEffect.IsTiltEnabled="True">
+                    <myControls:BubbleButton x:Name="alertButton" 
+                                             MouseLeftButtonDown="AlertButton_MouseLeftButtonDown" 
+                                             Style="{StaticResource RoundIconButton}" 
+                                             tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/alert.png" />
-                    </my:BubbleButton>
+                    </myControls:BubbleButton>
                     <Grid IsHitTestVisible="False" 
                           Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}"
                           Background="{StaticResource PhoneAccentBrush}" 
@@ -141,10 +141,10 @@
                         </TransformGroup>
                     </Grid.RenderTransform>
                 </Grid>
-                <my:DistanceDisplay HorizontalAlignment="Center"
-                                    VerticalAlignment="Bottom"
-                                    Margin="0,15"
-                                    Source="{Binding MovementSource}" />
+                <myControls:DistanceDisplay HorizontalAlignment="Center"
+                                            VerticalAlignment="Bottom"
+                                            Margin="0,15"
+                                            Source="{Binding MovementSource}" />
             </Grid>
         </Grid>
 
@@ -245,14 +245,13 @@
                                     Opacity="{Binding IsMenuVisible, RelativeSource={RelativeSource Self}, 
                                                       Converter={StaticResource BoolToAppBarOpacity}}">
             <bar:BindableApplicationBar.MenuItems>
-                <bar:BindableApplicationBarMenuItem Text="{Binding SpeedUnit, Converter={StaticResource SpeedToSwitchString}}"
+                <bar:BindableApplicationBarMenuItem Text="{Binding Settings.SpeedUnit, Converter={StaticResource SpeedToSwitchString}}"
                                                     Command="{Binding SwitchUnitsCommand}" />
                 <bar:BindableApplicationBarMenuItem Text="{Binding SwitchLocationAccessText}" 
                                                     Command="{Binding SwitchLocationAccessCommand}" />
                 <bar:BindableApplicationBarMenuItem Text="about" 
                                                     Command="{Binding AboutCommand}" />
             </bar:BindableApplicationBar.MenuItems>
-
         </bar:BindableApplicationBar>
     </bar:Bindable.ApplicationBar>
 </phone:PhoneApplicationPage>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
