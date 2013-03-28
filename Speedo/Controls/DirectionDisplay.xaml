@@ -7,13 +7,13 @@
                 Visibility="{Binding IsEnabled, Converter={StaticResource BoolToVisibility}}">
         <TextBlock Text="{Binding DirectionInitials}"
                    FontSize="50" 
-                   Foreground="{StaticResource PhoneAccentBrush}"
+                   Foreground="{StaticResource ImportantAccentBrush}"
                    Margin="0,0,20,0" />
 
         <Path Width="24" 
               Height="28"
               VerticalAlignment="Center"
-              Fill="{StaticResource PhoneAccentBrush}" 
+              Fill="{StaticResource ImportantAccentBrush}" 
               Stretch="Fill" 
               Data="F1 M 383.125,183.208L 395.625,214.208L 383.125,204.708L 370.625,214.208L 383.125,183.208 Z" 
               RenderTransformOrigin="0.5,0.5">

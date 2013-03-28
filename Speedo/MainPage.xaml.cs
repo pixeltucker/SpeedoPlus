@@ -53,7 +53,6 @@ namespace Speedo
 
         private MapStatus previousStatus;
         private bool windscreenMode = false;
-        private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
 
         public MainPage()
         {
@@ -102,24 +101,9 @@ namespace Speedo
             if ( windscreenMode )
             {
                 ContentScaleTransform.ScaleX = -1;
-                if ( !darkTheme )
-                {
-                    SolidColorBrush foregroundbrush = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
-                    SolidColorBrush backgroundbrush = (SolidColorBrush) App.Current.Resources["PhoneBackgroundBrush"];
-                    SolidColorBrush subtlebrush = (SolidColorBrush) App.Current.Resources["PhoneSubtleBrush"];
-                    SolidColorBrush disabledbrush = (SolidColorBrush) App.Current.Resources["PhoneDisabledBrush"];
-                    foregroundbrush.Color = Colors.White;
-                    backgroundbrush.Color = Colors.Black;
-                    subtlebrush.Color = Colors.LightGray;
-                    disabledbrush.Color = Colors.Gray;
-                }
-                // TODO fix that
 
-                //SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
-                //DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
-                //DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["WindscreenColor"];
-                //SpeedChart.Visibility = Visibility.Collapsed;
-                //UnitTextBlock.Opacity = 0;
+                App.Current.ForceDarkTheme();
+                App.Current.EnableWindscreenColors();
 
                 ShowSpeedGraph = false;
                 windsreenIndicator.Visibility = Visibility.Visible;
@@ -130,20 +114,10 @@ namespace Speedo
             else
             {
                 ContentScaleTransform.ScaleX = 1;
-                if ( !darkTheme )
-                {
-                    SolidColorBrush foregroundbrush = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
-                    SolidColorBrush backgroundbrush = (SolidColorBrush) App.Current.Resources["PhoneBackgroundBrush"];
-                    SolidColorBrush subtlebrush = (SolidColorBrush) App.Current.Resources["PhoneSubtleBrush"];
-                    SolidColorBrush disabledbrush = (SolidColorBrush) App.Current.Resources["PhoneDisabledBrush"];
-                    foregroundbrush.Color = (Color) App.Current.Resources["PhoneForegroundColor"];
-                    backgroundbrush.Color = (Color) App.Current.Resources["PhoneBackgroundColor"];
-                    subtlebrush.Color = (Color) App.Current.Resources["PhoneSubtleColor"];
-                    disabledbrush.Color = (Color) App.Current.Resources["PhoneDisabledColor"];
-                }
-                //SpeedTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneForegroundBrush"];
-                //DirectionTextBlock.Foreground = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
-                //DirectionIcon.Fill = (SolidColorBrush) App.Current.Resources["PhoneAccentBrush"];
+
+                App.Current.AllowLightTheme();
+                App.Current.DisableWindscreenColors();
+
                 ShowSpeedGraph = true;
                 windsreenIndicator.Visibility = Visibility.Collapsed;
                 MapStatus = previousStatus;

@@ -28,6 +28,7 @@
                  VerticalAlignment="Stretch"
                  MaxHeight="260">
             <TextBlock Text="{Binding Current, StringFormat=0}"
+                       Foreground="{StaticResource ImportantForegroundBrush}"
                        FontSize="260"
                        FontFamily="Segoe WP"
                        FontWeight="Light" />

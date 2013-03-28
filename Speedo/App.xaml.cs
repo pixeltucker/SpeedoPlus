@@ -17,6 +17,13 @@ namespace Speedo
 {
     public partial class App : Application
     {
+        private bool lightThemeEnabled;
+
+        new public static App Current
+        {
+            get { return (App) Application.Current; }
+        }
+
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>
@@ -36,6 +43,8 @@ namespace Speedo
 
             // Phone-specific initialization
             InitializePhoneApplication();
+
+            lightThemeEnabled = (Visibility) Resources["PhoneLightThemeVisibility"] == Visibility.Visible;
 
             // Show graphics profiling information while debugging.
             if ( System.Diagnostics.Debugger.IsAttached )
@@ -57,6 +66,40 @@ namespace Speedo
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
 
+        }
+
+        public void ForceDarkTheme()
+        {
+            if ( lightThemeEnabled )
+            {
+                ( (SolidColorBrush) Resources["PhoneForegroundBrush"] ).Color = Colors.White;
+                ( (SolidColorBrush) Resources["PhoneBackgroundBrush"] ).Color = Colors.Black;
+                ( (SolidColorBrush) Resources["PhoneSubtleBrush"] ).Color = Colors.LightGray;
+                ( (SolidColorBrush) Resources["PhoneDisabledBrush"] ).Color = Colors.Gray;
+            }
+        }
+
+        public void AllowLightTheme()
+        {
+            if ( lightThemeEnabled )
+            {
+                ( (SolidColorBrush) Resources["PhoneForegroundBrush"] ).Color = (Color) Resources["PhoneForegroundColor"];
+                ( (SolidColorBrush) Resources["PhoneBackgroundBrush"] ).Color = (Color) Resources["PhoneBackgroundColor"];
+                ( (SolidColorBrush) Resources["PhoneSubtleBrush"] ).Color = (Color) Resources["PhoneSubtleColor"];
+                ( (SolidColorBrush) Resources["PhoneDisabledBrush"] ).Color = (Color) Resources["PhoneDisabledColor"];
+            }
+        }
+
+        public void EnableWindscreenColors()
+        {
+            ( (SolidColorBrush) Resources["ImportantForegroundBrush"] ).Color = (Color) Resources["WindscreenColor"];
+            ( (SolidColorBrush) Resources["ImportantAccentBrush"] ).Color = (Color) Resources["WindscreenColor"];
+        }
+
+        public void DisableWindscreenColors()
+        {
+            ( (SolidColorBrush) Resources["ImportantForegroundBrush"] ).Color = (Color) Resources["PhoneForegroundColor"];
+            ( (SolidColorBrush) Resources["ImportantAccentBrush"] ).Color = (Color) Resources["PhoneAccentColor"];
         }
 
         // Code to execute when the application is launching (eg, from Start)
