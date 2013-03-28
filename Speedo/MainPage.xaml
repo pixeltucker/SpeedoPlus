@@ -28,7 +28,8 @@
 
             <!-- Background map -->
             <myControls:BackgroundMap Grid.RowSpan="6"
-                                      Source="{Binding MovementSource}" />
+                                      Source="{Binding MovementSource}" 
+                                      Status="{Binding MapStatus}" />
 
             <!-- Status -->
             <TextBlock Grid.Row="1"
