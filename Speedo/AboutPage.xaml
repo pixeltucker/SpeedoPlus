@@ -56,6 +56,11 @@
                     <Button Command="{Binding ReviewAppCommand}"
                             Content="Write a review" />
                 </StackPanel>
+
+                <HyperlinkButton Command="{Binding ShowPrivacyPolicyCommand}"
+                                 Content="Privacy policy"
+                                 HorizontalAlignment="Left" 
+                                 Margin="0,20,0,0" />
             </StackPanel>
         </ScrollViewer>
     </Grid>

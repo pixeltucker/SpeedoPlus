@@ -88,7 +88,7 @@ namespace Speedo
             {
                 Settings.IsFirstRun = false;
                 MessageBox.Show( "This software uses GPS signals to calculate your speed and direction which is subject to interference and results may be skewed.\n\nThe information provided can only be used as a guide.", "Accuracy warning", MessageBoxButton.OK );
-                MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
+                App.Current.ShowPrivacyPolicy();
             }
         }
 

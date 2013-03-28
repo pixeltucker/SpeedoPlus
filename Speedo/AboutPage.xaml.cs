@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Input;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
 
@@ -7,9 +8,10 @@ namespace Speedo
 {
     public partial class AboutPage : PhoneApplicationPage
     {
-        public RelayCommand WebsiteCommand { get; private set; }
-        public RelayCommand ReviewAppCommand { get; private set; }
-        public RelayCommand AwesomeCommand { get; private set; }
+        public ICommand WebsiteCommand { get; private set; }
+        public ICommand AwesomeCommand { get; private set; }
+        public ICommand ReviewAppCommand { get; private set; }
+        public ICommand ShowPrivacyPolicyCommand { get; private set; }
 
         public AboutPage()
         {
@@ -17,6 +19,7 @@ namespace Speedo
             WebsiteCommand = new RelayCommand( ExecuteWebsiteCommand );
             ReviewAppCommand = new RelayCommand( ExecuteReviewAppCommand );
             AwesomeCommand = new RelayCommand( ExecuteAwesomeCommand );
+            ShowPrivacyPolicyCommand = new RelayCommand( ExecuteShowPrivacyPolicyCommand );
             InitializeComponent();
         }
 
@@ -25,14 +28,19 @@ namespace Speedo
             new WebBrowserTask { Uri = new Uri( (string) parameter ) }.Show();
         }
 
+        private void ExecuteAwesomeCommand( object parameter )
+        {
+            MessageBox.Show( "Very awesome.", "How awesome?", MessageBoxButton.OK );
+        }
+
         private void ExecuteReviewAppCommand( object parameter )
         {
             new MarketplaceReviewTask().Show();
         }
 
-        private void ExecuteAwesomeCommand( object parameter )
+        private void ExecuteShowPrivacyPolicyCommand( object parameter )
         {
-            MessageBox.Show( "Very awesome.", "How awesome?", MessageBoxButton.OK );
+            App.Current.ShowPrivacyPolicy();
         }
     }
 }

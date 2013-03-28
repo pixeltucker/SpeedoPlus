@@ -62,6 +62,11 @@ namespace Speedo
             }
         }
 
+        public void ShowPrivacyPolicy()
+        {
+            MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
+        }
+
         public void ForceDarkTheme()
         {
             if ( lightThemeEnabled )
