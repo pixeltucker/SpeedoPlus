@@ -5,11 +5,9 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Speedo.Controls;
 
 namespace Speedo
 {
@@ -182,24 +180,6 @@ namespace Speedo
             stateSettings["SpeedAlertConfig"] = SpeedAlert.IsEnabled;
         }
 
-        protected override void OnBackKeyPress( CancelEventArgs e )
-        {
-            if ( PopupContent.Children.Count > 0 )
-            {
-                Storyboard hidePopup = (Storyboard) App.Current.Resources["SwivelOut"];
-                Storyboard.SetTarget( hidePopup, PopupHost );
-                hidePopup.Begin();
-                hidePopup.Completed += ( s, _ ) =>
-                {
-                    PopupContent.Children.Clear();
-                    LayoutRoot.IsHitTestVisible = true;
-                    ApplicationBar.IsVisible = true;
-                    hidePopup.Stop();
-                };
-                e.Cancel = true;
-            }
-        }
-
         protected override void OnOrientationChanged( OrientationChangedEventArgs e )
         {
             base.OnOrientationChanged( e );
@@ -296,20 +276,10 @@ namespace Speedo
             }
             else
             {
-                var alertPopup = new AlertPopup( SpeedAlert );
-
-                PopupContent.Children.Add( alertPopup );
-                LayoutRoot.IsHitTestVisible = false;
-                ApplicationBar.IsVisible = false;
-
-                alertPopup.CloseCompleted += ( s, _ ) =>
-                {
-                    PopupContent.Children.Clear();
-                    LayoutRoot.IsHitTestVisible = true;
-                    ApplicationBar.IsVisible = true;
-                    AppSettings.Current.SpeedLimit = SpeedAlert.Limit;
-                    AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
-                };
+                // HACK: simplest way to pass parameters...
+                PhoneApplicationService.Current.State["SpeedAlert"] = SpeedAlert;
+                NavigationService.Navigate( new Uri( "/AlertPage.xaml", UriKind.Relative ) );
+                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
             }
         }
 

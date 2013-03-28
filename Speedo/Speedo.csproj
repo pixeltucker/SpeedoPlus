@@ -112,12 +112,12 @@
     <Compile Include="AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="AlertPage.xaml.cs">
+      <DependentUpon>AlertPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AppSettings.cs" />
     <Compile Include="BooleanToOpacityConverter.cs" />
     <Compile Include="BooleanToStringConverter.cs" />
-    <Compile Include="Controls\AlertPopup.xaml.cs">
-      <DependentUpon>AlertPopup.xaml</DependentUpon>
-    </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -165,9 +165,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\AlertPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="AlertPage.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\BackgroundMap.xaml">
       <SubType>Designer</SubType>

@@ -1,29 +1,32 @@
-﻿<my:ObservableControl x:Class="Speedo.Controls.AlertPopup"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:my="clr-namespace:Speedo.Controls"
-                      FontFamily="{StaticResource PhoneFontFamilyNormal}"
-                      FontSize="{StaticResource PhoneFontSizeNormal}"
-                      Foreground="{StaticResource PhoneForegroundBrush}"
-                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-    <Grid x:Name="LayoutRoot"
-          Background="{StaticResource PhoneChromeBrush}">
+﻿<phone:PhoneApplicationPage x:Class="Speedo.AlertPage"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"  
+                            xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+                            xmlns:myControls="clr-namespace:Speedo.Controls"
+                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                            Foreground="{StaticResource PhoneForegroundBrush}"
+                            SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
+                            shell:SystemTray.IsVisible="True">
+    <Grid Background="{StaticResource PhoneChromeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
-        
+
         <TextBlock Style="{StaticResource PhoneTextSmallStyle}"
                    Text="Set maximum speed to trigger audible alert" />
 
         <StackPanel Grid.Row="1"
                     HorizontalAlignment="Center"
                     Orientation="Horizontal">
-            <my:NumberPicker TensSource="{Binding TensSource}" 
-                             UnitsSource="{Binding UnitsSource}" 
-                             Value="{Binding AlertSpeed, Mode=TwoWay}" />
+            <myControls:NumberPicker TensSource="{Binding TensSource}" 
+                                     UnitsSource="{Binding UnitsSource}" 
+                                     Value="{Binding Alert.Limit, Mode=TwoWay}" />
             <TextBlock VerticalAlignment="Center"
                        FontSize="100"
                        Text="{Binding Alert.Unit, Converter={StaticResource SpeedToString}}" />
@@ -38,11 +41,11 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
+
             <TextBlock Grid.ColumnSpan="2"
                        Style="{StaticResource PhoneTextLargeStyle}"
                        Text="Alarm type:" />
-            
+
             <RadioButton Grid.Row="1" 
                          IsChecked="{Binding UseSound, Mode=TwoWay}"
                          Content="Sound" />
@@ -51,7 +54,7 @@
                          IsChecked="{Binding UseSound, Converter={StaticResource OppositeBool}, Mode=TwoWay}"
                          Content="Voice" />
         </Grid>
-        
+
         <Button Grid.Row="3" 
                 Command="{Binding CloseCommand}"
                 Content="Enable speed alert" 
@@ -61,7 +64,7 @@
             <PlaneProjection CenterOfRotationY="0.5" 
                              RotationX="0" />
         </Grid.Projection>
-        
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="PopupStates">
                 <VisualState x:Name="Open">
@@ -92,5 +95,26 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+
+        <tool:TransitionService.NavigationInTransition>
+            <tool:NavigationInTransition>
+                <tool:NavigationInTransition.Backward>
+                    <tool:TurnstileTransition Mode="BackwardIn"/>
+                </tool:NavigationInTransition.Backward>
+                <tool:NavigationInTransition.Forward>
+                    <tool:TurnstileTransition Mode="ForwardIn"/>
+                </tool:NavigationInTransition.Forward>
+            </tool:NavigationInTransition>
+        </tool:TransitionService.NavigationInTransition>
+        <tool:TransitionService.NavigationOutTransition>
+            <tool:NavigationOutTransition>
+                <tool:NavigationOutTransition.Backward>
+                    <tool:TurnstileTransition Mode="BackwardOut"/>
+                </tool:NavigationOutTransition.Backward>
+                <tool:NavigationOutTransition.Forward>
+                    <tool:TurnstileTransition Mode="ForwardOut"/>
+                </tool:NavigationOutTransition.Forward>
+            </tool:NavigationOutTransition>
+        </tool:TransitionService.NavigationOutTransition>
     </Grid>
-</my:ObservableControl>
+</phone:PhoneApplicationPage>

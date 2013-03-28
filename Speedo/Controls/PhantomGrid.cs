@@ -29,7 +29,7 @@ namespace Speedo.Controls
             IsHitTestVisible = true;
             Background = new SolidColorBrush( Colors.Transparent );
 
-            hideStoryboard.Begin();
+            Opacity = 0;
         }
 
         private void CreateStoryboards()

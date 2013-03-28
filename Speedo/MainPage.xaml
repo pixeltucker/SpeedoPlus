@@ -20,8 +20,7 @@
                                  Text="Locating..." />
     </shell:SystemTray.ProgressIndicator>
     <Grid>
-        <Grid x:Name="LayoutRoot" 
-              Background="{StaticResource PhoneBackgroundBrush}">
+        <Grid Background="{StaticResource PhoneBackgroundBrush}">
             <!-- TODO: LoadingError isn't supported any more, fix it? -->
             <myControls:BackgroundMap Source="{Binding MovementSource}" />
 
@@ -143,13 +142,6 @@
                                             Margin="0,15"
                                             Source="{Binding MovementSource}" />
             </myControls:PhantomGrid>
-        </Grid>
-
-        <Grid x:Name="PopupHost">
-            <Grid x:Name="PopupContent" />
-            <Grid.Projection>
-                <PlaneProjection CenterOfRotationY="0.5" RotationX="0"></PlaneProjection>
-            </Grid.Projection>
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
