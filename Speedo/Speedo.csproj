@@ -133,6 +133,7 @@
       <DependentUpon>DistanceDisplay.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\MovementControl.cs" />
+    <Compile Include="Controls\PhantomGrid.cs" />
     <Compile Include="Controls\SpeedDisplay.xaml.cs">
       <DependentUpon>SpeedDisplay.xaml</DependentUpon>
     </Compile>

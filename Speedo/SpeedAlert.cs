@@ -101,6 +101,7 @@ namespace Speedo
 
             public void Notify()
             {
+                FrameworkDispatcher.Update(); // needed for whatever reason
                 sound.Play();
             }
         }

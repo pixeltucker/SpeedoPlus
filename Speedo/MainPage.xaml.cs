@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Device.Location;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -56,7 +55,6 @@ namespace Speedo
         private MapStatus previousStatus;
         private bool windscreenMode = false;
         private bool darkTheme = (Visibility) Application.Current.Resources["PhoneDarkThemeVisibility"] == Visibility.Visible;
-        private int settingsDisplayCount;
 
         public MainPage()
         {
@@ -282,20 +280,6 @@ namespace Speedo
         private void ResetTrip_Click( object sender, EventArgs e )
         {
             MovementSource.Start();
-        }
-
-        private async void LayoutRoot_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
-        {
-            settingsDisplayCount++;
-            int oldCount = settingsDisplayCount;
-            VisualStateManager.GoToState( this, "ShowControls", true );
-
-            await Task.Delay( 2000 );
-
-            if ( settingsDisplayCount == oldCount ) // the user didn't touch again
-            {
-                VisualStateManager.GoToState( this, "HideControls", true );
-            }
         }
 
         private void WindscreenButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
