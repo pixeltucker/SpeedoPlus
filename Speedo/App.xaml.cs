@@ -92,8 +92,9 @@ namespace Speedo
 
         public void EnableWindscreenColors()
         {
-            ( (SolidColorBrush) Resources["ImportantForegroundBrush"] ).Color = (Color) Resources["WindscreenColor"];
-            ( (SolidColorBrush) Resources["ImportantAccentBrush"] ).Color = (Color) Resources["WindscreenColor"];
+            var color = ( (SolidColorBrush) Resources["WindscreenBrush"] ).Color;
+            ( (SolidColorBrush) Resources["ImportantForegroundBrush"] ).Color = color;
+            ( (SolidColorBrush) Resources["ImportantAccentBrush"] ).Color = color;
         }
 
         public void DisableWindscreenColors()

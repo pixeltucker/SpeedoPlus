@@ -4,9 +4,7 @@
                             xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
                             xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
                             xmlns:bar="clr-namespace:BindableApplicationBar;assembly=BindableApplicationBar"
-                            xmlns:my="clr-namespace:Speedo"
                             xmlns:myControls="clr-namespace:Speedo.Controls"
-                            xmlns:maps="clr-namespace:Microsoft.Phone.Maps.Controls;assembly=Microsoft.Phone.Maps"
                             xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
                             FontFamily="{StaticResource PhoneFontFamilyNormal}"
                             FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -19,148 +17,160 @@
                                  IsVisible="{Binding IsLocating}" 
                                  Text="Locating..." />
     </shell:SystemTray.ProgressIndicator>
-    <Grid>
-        <Grid Background="{StaticResource PhoneBackgroundBrush}">
-            <!-- TODO: LoadingError isn't supported any more, fix it? -->
-            <myControls:BackgroundMap Source="{Binding MovementSource}" />
+    <Grid Background="{StaticResource PhoneBackgroundBrush}">
+        <!-- Main grid -->
+        <Grid RenderTransformOrigin="0.5,0.5">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
-            <Grid RenderTransformOrigin="0.5,0.5">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+            <!-- Background map -->
+            <myControls:BackgroundMap Grid.RowSpan="6"
+                                      Source="{Binding MovementSource}" />
 
-                <Grid Margin="10,0,10,0" VerticalAlignment="Bottom">
-                    <TextBlock HorizontalAlignment="Center" 
-                               VerticalAlignment="Top" 
-                               Margin="0,0,0,20" 
-                               Text="{Binding GpsStatus, Converter={StaticResource GpsToString}}" />
+            <!-- Status -->
+            <TextBlock Grid.Row="1"
+                       Text="{Binding GpsStatus, Converter={StaticResource GpsToString}}"
+                       HorizontalAlignment="Center" />
 
-                    <myControls:SpeedDisplay Source="{Binding MovementSource}"
-                                             Unit="{Binding Settings.SpeedUnit}" />
-                </Grid>
+            <!-- Speed (avg/current/max) -->
+            <myControls:SpeedDisplay Grid.Row="2"
+                                     Source="{Binding MovementSource}"
+                                     Unit="{Binding Settings.SpeedUnit}" />
 
-                <Grid Margin="10,0,10,150" 
-                      Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30" />
-                        <RowDefinition Height="64" />
-                    </Grid.RowDefinitions>
+            <!-- Speed graph -->
+            <myControls:SpeedGraph Grid.Row="3"
+                                   Source="{Binding MovementSource}"
+                                   PointsCount="360"
+                                   Height="30"
+                                   Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
 
-                    <myControls:SpeedGraph Source="{Binding MovementSource}"
-                                           PointsCount="360"
-                                           Height="30"
-                                           Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
+            <!-- Direction -->
+            <myControls:DirectionDisplay Grid.Row="4"
+                                         Source="{Binding MovementSource}"
+                                         HorizontalAlignment="Center" />
 
-                    <myControls:DirectionDisplay Grid.Row="1"
-                                                 Source="{Binding MovementSource}"
-                                                 HorizontalAlignment="Center" />
-                </Grid>
+            <!-- Distance -->
+            <myControls:DistanceDisplay Grid.Row="5"
+                                        Source="{Binding MovementSource}"
+                                        VerticalAlignment="Bottom"
+                                        HorizontalAlignment="Center" />
+            
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="ContentScaleTransform" />
+            </Grid.RenderTransform>
+        </Grid>
 
-                <myControls:DistanceDisplay Grid.Row="2"
-                                            HorizontalAlignment="Center"
-                                            Margin="0,15"
-                                            Source="{Binding MovementSource}" />
-                <Grid.RenderTransform>
-                    <ScaleTransform x:Name="ContentScaleTransform" />
-                </Grid.RenderTransform>
-            </Grid>
+        <!-- Settings grid (switch map, alert, windscreen mode) -->
+        <myControls:PhantomGrid>
+            <myControls:PhantomGrid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </myControls:PhantomGrid.ColumnDefinitions>
+            <myControls:PhantomGrid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+                <RowDefinition Height="Auto" />
+            </myControls:PhantomGrid.RowDefinitions>
 
-            <myControls:PhantomGrid>
-                <Grid x:Name="windscreenRoot" 
-                      HorizontalAlignment="Left" 
-                      VerticalAlignment="Top">
-                    <myControls:BubbleButton Command="{Binding SwitchWindscreenModeCommand}"
+            <!-- Windscreen mode button container -->
+            <Grid x:Name="WindscreenRoot">
+                <myControls:BubbleButton Command="{Binding SwitchWindscreenModeCommand}"
                                              Style="{StaticResource RoundIconButton}" 
                                              tool:TiltEffect.IsTiltEnabled="True">
-                        <ImageBrush ImageSource="Resources/windscreen.png" />
-                    </myControls:BubbleButton>
-                    <Grid Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToVisibility}}"
+                    <ImageBrush ImageSource="Resources/windscreen.png" />
+                </myControls:BubbleButton>
+                <Grid Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToVisibility}}"
                           IsHitTestVisible="False" 
                           Background="{StaticResource PhoneAccentBrush}" 
                           Width="48" Height="48" 
                           Margin="16">
-                        <Grid.OpacityMask>
-                            <ImageBrush ImageSource="Resources/windscreen.png"/>
-                        </Grid.OpacityMask>
-                    </Grid>
-                    <Grid.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Grid.RenderTransform>
+                    <Grid.OpacityMask>
+                        <ImageBrush ImageSource="Resources/windscreen.png"/>
+                    </Grid.OpacityMask>
                 </Grid>
-                <Grid x:Name="mapRoot" 
-                      HorizontalAlignment="Right" 
-                      VerticalAlignment="Top">
-                    <myControls:BubbleButton Command="{Binding SwitchMapStatusCommand}"
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
+            </Grid>
+
+            <!-- Map button container -->
+            <Grid x:Name="MapRoot" 
+                  Grid.Column="2">
+                <myControls:BubbleButton Command="{Binding SwitchMapStatusCommand}"
                                              Style="{StaticResource RoundIconButton}" 
                                              tool:TiltEffect.IsTiltEnabled="True">
-                        <ImageBrush ImageSource="Resources/map.png" />
-                    </myControls:BubbleButton>
-                    <Grid.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Grid.RenderTransform>
-                </Grid>
-                <Grid x:Name="alertRoot" 
-                      HorizontalAlignment="Left" 
-                      VerticalAlignment="Bottom">
-                    <myControls:BubbleButton Command="{Binding SwitchSpeedAlertCommand}"
+                    <ImageBrush ImageSource="Resources/map.png" />
+                </myControls:BubbleButton>
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
+            </Grid>
+
+            <!-- Speed alert button container -->
+            <Grid x:Name="AlertRoot"
+                  Grid.Row="2">
+                <myControls:BubbleButton Command="{Binding SwitchSpeedAlertCommand}"
                                              Style="{StaticResource RoundIconButton}" 
                                              tool:TiltEffect.IsTiltEnabled="True">
-                        <ImageBrush ImageSource="Resources/alert.png" />
-                    </myControls:BubbleButton>
-                    <Grid IsHitTestVisible="False" 
+                    <ImageBrush ImageSource="Resources/alert.png" />
+                </myControls:BubbleButton>
+                <Grid IsHitTestVisible="False" 
                           Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}"
                           Background="{StaticResource PhoneAccentBrush}" 
                           Width="48" Height="48" 
                           Margin="16">
-                        <Grid.OpacityMask>
-                            <ImageBrush ImageSource="Resources/alert.png"/>
-                        </Grid.OpacityMask>
-                    </Grid>
-                    <Grid.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </Grid.RenderTransform>
+                    <Grid.OpacityMask>
+                        <ImageBrush ImageSource="Resources/alert.png"/>
+                    </Grid.OpacityMask>
                 </Grid>
-            </myControls:PhantomGrid>
-        </Grid>
+                <Grid.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Grid.RenderTransform>
+            </Grid>
+        </myControls:PhantomGrid>
 
+        <!-- Change the settings button placement when using landscape orientation -->
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="OrientationStates">
                 <VisualState x:Name="PortraitUp" />
                 <VisualState x:Name="LandscapeRight">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="alertRoot" 
-                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
-                                         To="80" 
-                                         Duration="0" />
-                        <DoubleAnimation Storyboard.TargetName="windscreenRoot" 
-                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
-                                         To="80" 
-                                         Duration="0" />
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="AlertRoot"
+                                                       Storyboard.TargetProperty="(Grid.Column)"
+                                                       Duration="0">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2" />
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <VisualState x:Name="LandscapeLeft">
                     <Storyboard>
-                        <DoubleAnimation Storyboard.TargetName="mapRoot" 
-                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[3].(TranslateTransform.X)" 
-                                         To="-80" 
-                                         Duration="0" />
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="MapRoot"
+                                                       Storyboard.TargetProperty="(Grid.Row)"
+                                                       Duration="0">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="2" />
+                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
             </VisualStateGroup>
@@ -188,6 +198,7 @@
         </tool:TransitionService.NavigationOutTransition>
     </Grid>
 
+    <!-- Application bar -->
     <bar:Bindable.ApplicationBar>
         <bar:BindableApplicationBar IsVisible="True"
                                     IsMenuEnabled="True"

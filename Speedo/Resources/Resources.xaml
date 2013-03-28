@@ -1,8 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:my="clr-namespace:Speedo.Controls">
-    <!-- For some reason, Cider throws a few errors on the following tag even though it's valid... -->
-    <Color x:Name="WindscreenColor">#FFE200</Color>
+    <!-- For some reason, Cider throws errors all over the place when using the following:
+         <Color x:Name="WindscreenColor">#FFE200</Color>
+         so we have to use a SolidColorBrush and take its Color (or create a bunch of sys:Byte, but that's annoying -->
+    <SolidColorBrush x:Key="WindscreenBrush" Color="#FFE200" />
     <SolidColorBrush x:Name="ImportantForegroundBrush" Color="{StaticResource PhoneForegroundColor}" />
     <SolidColorBrush x:Name="ImportantAccentBrush" Color="{StaticResource PhoneAccentColor}" />
 

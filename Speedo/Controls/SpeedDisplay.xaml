@@ -6,9 +6,9 @@
                     Foreground="{StaticResource PhoneForegroundBrush}">
     <Grid x:Name="LayoutRoot">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -21,7 +21,8 @@
                    HorizontalAlignment="Center" />
         <TextBlock Grid.Row="1"
                    Style="{StaticResource PhoneTextSmallStyle}"
-                   Text="average" />
+                   Text="average"
+                   HorizontalAlignment="Center" />
         
         <Viewbox Grid.Column="1"
                  HorizontalAlignment="Center"
@@ -47,6 +48,7 @@
         <TextBlock Grid.Column="2"
                    Grid.Row="1"
                    Style="{StaticResource PhoneTextSmallStyle}"
-                   Text="max" />
+                   Text="max"
+                   HorizontalAlignment="Center" />
     </Grid>
 </my:MovementControl>

@@ -4,7 +4,6 @@ using System.Device.Location;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
@@ -65,13 +64,13 @@ namespace Speedo
         public MainPage()
         {
             Settings = AppSettings.Current;
+
             MovementSource = new MovementSource();
             MovementSource.GeoStatusChanged += MovementSource_GeoStatusChanged;
             MovementSource.ReadingChanged += MovementSource_ReadingChanged;
+
             ShowSpeedGraph = true;
             DataContext = this;
-
-            IsLocating = true;
 
             SwitchMapStatusCommand = new RelayCommand( ExecuteSwitchMapStatusCommand, CanExecuteSwitchMapStatusCommand );
             SwitchWindscreenModeCommand = new RelayCommand( ExecuteSwitchWindscreenModeCommand );
@@ -81,17 +80,13 @@ namespace Speedo
             AboutCommand = new RelayCommand( ExecuteAboutCommand );
 
             SpeedAlert = new SpeedAlert( MovementSource, SpeedAlert.SoundProvider );
+            SpeedAlert.Limit = AppSettings.Current.SpeedLimit;
 
             InitializeComponent();
             ShowWarnings();
 
             // no idling here
             PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
-
-            // hide settings button
-            VisualStateManager.GoToState( this, "HideControls", false );
-
-            SpeedAlert.Limit = AppSettings.Current.SpeedLimit;
 
             UpdateLocationAccess();
         }
@@ -136,6 +131,7 @@ namespace Speedo
         {
             if ( AppSettings.Current.AllowLocationAccess )
             {
+                IsLocating = true;
                 MovementSource.Start();
             }
             else
