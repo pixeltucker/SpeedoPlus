@@ -8,6 +8,8 @@ namespace Speedo
 {
     public partial class AlertPage : PhoneApplicationPage, INotifyPropertyChanged
     {
+        private SpeedAlert alert;
+
         private bool useSound;
         public bool UseSound
         {
@@ -15,8 +17,17 @@ namespace Speedo
             set { SetProperty( ref useSound, value ); }
         }
 
-        public AppSettings Settings { get; private set; }
-        public SpeedAlert Alert { get; private set; }
+        private int limit;
+        public int Limit
+        {
+            get { return limit; }
+            set { SetProperty( ref limit, value ); }
+        }
+
+        public SpeedUnit Unit
+        {
+            get { return AppSettings.Current.SpeedUnit; }
+        }
 
         public IntLoopingDataSource UnitsSource { get; private set; }
         public IntLoopingDataSource TensSource { get; private set; }
@@ -24,16 +35,15 @@ namespace Speedo
 
         public AlertPage()
         {
-            // HACK: Can't bind to static properties (subclassing Binding results in weird stuff)
-            Settings = AppSettings.Current;
             // HACK: simplest way to pass parameters
-            Alert = (SpeedAlert) PhoneApplicationService.Current.State["SpeedAlert"];
-            UseSound = Alert.NotificationProvider == SpeedAlert.SoundProvider;
+            alert = (SpeedAlert) PhoneApplicationService.Current.State["SpeedAlert"];
+            UseSound = alert.NotificationProvider == SpeedAlert.SoundProvider;
+            Limit = AppSettings.Current.SpeedLimit;
 
             TensSource = new IntLoopingDataSource( 0, 24, 1 );
             UnitsSource = new IntLoopingDataSource( 0, 5, 5 ) { Loop = false };
             CloseCommand = new RelayCommand( ExecuteCloseCommand, CanExecuteCloseCommand );
-            CloseCommand.BindToPropertyChange( Settings, "SpeedLimit" );
+            CloseCommand.BindToPropertyChange( this, "Limit" );
 
             DataContext = this;
             InitializeComponent();
@@ -41,14 +51,15 @@ namespace Speedo
 
         private void ExecuteCloseCommand( object parameter )
         {
-            Alert.NotificationProvider = UseSound ? SpeedAlert.SoundProvider : SpeedAlert.SpeechProvider;
-            Settings.IsSpeedAlertEnabled = true;
+            alert.NotificationProvider = UseSound ? SpeedAlert.SoundProvider : SpeedAlert.SpeechProvider;
+            AppSettings.Current.IsSpeedAlertEnabled = true;
+            AppSettings.Current.SpeedLimit = limit;
             NavigationService.GoBack();
         }
 
         private bool CanExecuteCloseCommand( object parameter )
         {
-            return Settings.SpeedLimit != 0;
+            return Limit != 0;
         }
 
         #region INotifyPropertyChanged implementation

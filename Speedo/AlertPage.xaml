@@ -22,10 +22,10 @@
                     Orientation="Horizontal">
             <myControls:NumberPicker TensSource="{Binding TensSource}" 
                                      UnitsSource="{Binding UnitsSource}" 
-                                     Value="{Binding Settings.SpeedLimit, Mode=TwoWay}" />
+                                     Value="{Binding Limit, Mode=TwoWay}" />
             <TextBlock VerticalAlignment="Center"
                        FontSize="100"
-                       Text="{Binding Settings.SpeedUnit, Converter={StaticResource SpeedToString}}" />
+                       Text="{Binding Unit, Converter={StaticResource SpeedToString}}" />
         </StackPanel>
 
         <Grid Grid.Row="2">
