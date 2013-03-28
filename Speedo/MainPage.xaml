@@ -46,6 +46,7 @@
                                    Source="{Binding MovementSource}"
                                    PointsCount="360"
                                    Height="30"
+                                   Margin="20,0"
                                    Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToOppositeVisibility}}" />
 
             <!-- Direction -->

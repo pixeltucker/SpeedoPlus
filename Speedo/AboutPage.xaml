@@ -41,13 +41,11 @@
                 <StackPanel Margin="0,20,0,0">
                     <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}" 
                                Text="Support the developer" />
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}" 
-                                   TextWrapping="Wrap"
-                                   Text="Thanks for downloading the app! :)" />
-                        <Button Command="{Binding AwesomeCommand}" 
-                                Content="You are awesome" />
-                    </StackPanel>
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}" 
+                               TextWrapping="Wrap"
+                               Text="Thanks for downloading the app! :)" />
+                    <Button Command="{Binding AwesomeCommand}" 
+                            Content="You are awesome" />
                 </StackPanel>
                 <StackPanel Margin="0,20,0,0">
                     <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}"
@@ -61,25 +59,4 @@
             </StackPanel>
         </ScrollViewer>
     </Grid>
-
-    <tool:TransitionService.NavigationInTransition>
-        <tool:NavigationInTransition>
-            <tool:NavigationInTransition.Backward>
-                <tool:TurnstileTransition Mode="BackwardIn" />
-            </tool:NavigationInTransition.Backward>
-            <tool:NavigationInTransition.Forward>
-                <tool:TurnstileTransition Mode="ForwardIn" />
-            </tool:NavigationInTransition.Forward>
-        </tool:NavigationInTransition>
-    </tool:TransitionService.NavigationInTransition>
-    <tool:TransitionService.NavigationOutTransition>
-        <tool:NavigationOutTransition>
-            <tool:NavigationOutTransition.Backward>
-                <tool:TurnstileTransition Mode="BackwardOut" />
-            </tool:NavigationOutTransition.Backward>
-            <tool:NavigationOutTransition.Forward>
-                <tool:TurnstileTransition Mode="ForwardOut" />
-            </tool:NavigationOutTransition.Forward>
-        </tool:NavigationOutTransition>
-    </tool:TransitionService.NavigationOutTransition>
 </phone:PhoneApplicationPage>
