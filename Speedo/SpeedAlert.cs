@@ -2,7 +2,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -10,7 +9,7 @@ using Windows.Phone.Speech.Synthesis;
 
 namespace Speedo
 {
-    public sealed class SpeedAlert : INotifyPropertyChanged
+    public sealed class SpeedAlert
     {
         private readonly MovementSource source;
         private readonly DispatcherTimer timer;
@@ -60,14 +59,6 @@ namespace Speedo
             NotificationProvider.Notify();
         }
 
-        #region INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void SetProperty<T>( ref T field, T value, [CallerMemberName] string propertyName = "" )
-        {
-            NotifyHelper.SetProperty( ref field, value, propertyName, this, PropertyChanged );
-        }
-        #endregion
-
         public interface INotificationProvider
         {
             void Notify();
@@ -79,8 +70,10 @@ namespace Speedo
 
             public SoundNotificationProvider()
             {
-                var soundStream = TitleContainer.OpenStream( "Resources/alert.wav" );
-                sound = SoundEffect.FromStream( soundStream );
+                using ( var soundStream = TitleContainer.OpenStream( "Resources/alert.wav" ) )
+                {
+                    sound = SoundEffect.FromStream( soundStream );
+                }
             }
 
             public void Notify()

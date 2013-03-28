@@ -33,7 +33,7 @@ namespace Speedo
             TensSource = new IntLoopingDataSource( 0, 24, 1 );
             UnitsSource = new IntLoopingDataSource( 0, 5, 5 ) { Loop = false };
             CloseCommand = new RelayCommand( ExecuteCloseCommand, CanExecuteCloseCommand );
-            CloseCommand.BindToPropertyChange( Alert, "Limit" );
+            CloseCommand.BindToPropertyChange( Settings, "SpeedLimit" );
 
             DataContext = this;
             InitializeComponent();

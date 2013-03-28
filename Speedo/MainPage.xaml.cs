@@ -12,7 +12,7 @@ namespace Speedo
 {
     public partial class MainPage : PhoneApplicationPage, INotifyPropertyChanged
     {
-        // HACK: For some reason, a Binding subclass for settings makes the app crash on startup or not show some UI parts
+        // HACK: Can't bind to static properties (subclassing Binding results in weird stuff)
         public AppSettings Settings { get; private set; }
         public MovementSource MovementSource { get; private set; }
         public SpeedAlert SpeedAlert { get; private set; }
