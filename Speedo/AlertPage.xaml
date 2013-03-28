@@ -5,17 +5,13 @@
                             xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"  
                             xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
                             xmlns:myControls="clr-namespace:Speedo.Controls"
-                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
-                            FontSize="{StaticResource PhoneFontSizeNormal}"
-                            Foreground="{StaticResource PhoneForegroundBrush}"
-                            SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
-                            shell:SystemTray.IsVisible="True">
+                            Style="{StaticResource PageStyle}">
     <Grid Background="{StaticResource PhoneChromeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="100" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Style="{StaticResource PhoneTextSmallStyle}"
@@ -59,62 +55,5 @@
                 Command="{Binding CloseCommand}"
                 Content="Enable speed alert" 
                 Margin="5" />
-
-        <Grid.Projection>
-            <PlaneProjection CenterOfRotationY="0.5" 
-                             RotationX="0" />
-        </Grid.Projection>
-
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="PopupStates">
-                <VisualState x:Name="Open">
-                    <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)"  
-                                                       Storyboard.TargetName="LayoutRoot">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="-30" />
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="0">
-                                <EasingDoubleKeyFrame.EasingFunction>
-                                    <ExponentialEase EasingMode="EaseOut" Exponent="6" />
-                                </EasingDoubleKeyFrame.EasingFunction>
-                            </EasingDoubleKeyFrame>
-                        </DoubleAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="Close">
-                    <Storyboard>
-                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Projection).(PlaneProjection.RotationX)" 
-                                                       Storyboard.TargetName="LayoutRoot">
-                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                            <EasingDoubleKeyFrame KeyTime="0:0:0.35" Value="30">
-                                <EasingDoubleKeyFrame.EasingFunction>
-                                    <ExponentialEase EasingMode="EaseIn" Exponent="6" />
-                                </EasingDoubleKeyFrame.EasingFunction>
-                            </EasingDoubleKeyFrame>
-                        </DoubleAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
-        <tool:TransitionService.NavigationInTransition>
-            <tool:NavigationInTransition>
-                <tool:NavigationInTransition.Backward>
-                    <tool:TurnstileTransition Mode="BackwardIn"/>
-                </tool:NavigationInTransition.Backward>
-                <tool:NavigationInTransition.Forward>
-                    <tool:TurnstileTransition Mode="ForwardIn"/>
-                </tool:NavigationInTransition.Forward>
-            </tool:NavigationInTransition>
-        </tool:TransitionService.NavigationInTransition>
-        <tool:TransitionService.NavigationOutTransition>
-            <tool:NavigationOutTransition>
-                <tool:NavigationOutTransition.Backward>
-                    <tool:TurnstileTransition Mode="BackwardOut"/>
-                </tool:NavigationOutTransition.Backward>
-                <tool:NavigationOutTransition.Forward>
-                    <tool:TurnstileTransition Mode="ForwardOut"/>
-                </tool:NavigationOutTransition.Forward>
-            </tool:NavigationOutTransition>
-        </tool:TransitionService.NavigationOutTransition>
     </Grid>
 </phone:PhoneApplicationPage>

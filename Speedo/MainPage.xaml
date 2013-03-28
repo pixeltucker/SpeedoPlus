@@ -6,12 +6,7 @@
                             xmlns:bar="clr-namespace:BindableApplicationBar;assembly=BindableApplicationBar"
                             xmlns:myControls="clr-namespace:Speedo.Controls"
                             xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
-                            FontFamily="{StaticResource PhoneFontFamilyNormal}"
-                            FontSize="{StaticResource PhoneFontSizeNormal}"
-                            Foreground="{StaticResource PhoneForegroundBrush}"
-                            SupportedOrientations="PortraitOrLandscape"
-                            Orientation="Portrait"
-                            shell:SystemTray.IsVisible="True">
+                            Style="{StaticResource PageStyle}">
     
     <shell:SystemTray.ProgressIndicator>
         <shell:ProgressIndicator IsIndeterminate="True" 
@@ -50,7 +45,7 @@
                                    Source="{Binding MovementSource}"
                                    PointsCount="360"
                                    Height="30"
-                                   Visibility="{Binding ShowSpeedGraph, Converter={StaticResource BoolToVisibility}}" />
+                                   Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToOppositeVisibility}}" />
 
             <!-- Direction -->
             <myControls:DirectionDisplay Grid.Row="4"
@@ -88,13 +83,10 @@
                                          tool:TiltEffect.IsTiltEnabled="True">
                     <ImageBrush ImageSource="Resources/windscreen.png" />
                 </myControls:BubbleButton>
-                <Grid Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToVisibility}}"
-                      IsHitTestVisible="False" 
-                      Background="{StaticResource PhoneAccentBrush}" 
-                      Width="48" Height="48" 
-                      Margin="16">
+                <Grid Style="{StaticResource RoundIconButtonOverlay}"
+                      Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToVisibility}}">
                     <Grid.OpacityMask>
-                        <ImageBrush ImageSource="Resources/windscreen.png"/>
+                        <ImageBrush ImageSource="Resources/windscreen.png" />
                     </Grid.OpacityMask>
                 </Grid>
             </Grid>
@@ -117,11 +109,8 @@
                                          tool:TiltEffect.IsTiltEnabled="True">
                     <ImageBrush ImageSource="Resources/alert.png" />
                 </myControls:BubbleButton>
-                <Grid IsHitTestVisible="False" 
-                      Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}"
-                      Background="{StaticResource PhoneAccentBrush}"
-                      Width="48" Height="48" 
-                      Margin="16">
+                <Grid Style="{StaticResource RoundIconButtonOverlay}"
+                      Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}">
                     <Grid.OpacityMask>
                         <ImageBrush ImageSource="Resources/alert.png" />
                     </Grid.OpacityMask>
@@ -153,27 +142,6 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-
-        <tool:TransitionService.NavigationInTransition>
-            <tool:NavigationInTransition>
-                <tool:NavigationInTransition.Backward>
-                    <tool:TurnstileTransition Mode="BackwardIn"/>
-                </tool:NavigationInTransition.Backward>
-                <tool:NavigationInTransition.Forward>
-                    <tool:TurnstileTransition Mode="ForwardIn"/>
-                </tool:NavigationInTransition.Forward>
-            </tool:NavigationInTransition>
-        </tool:TransitionService.NavigationInTransition>
-        <tool:TransitionService.NavigationOutTransition>
-            <tool:NavigationOutTransition>
-                <tool:NavigationOutTransition.Backward>
-                    <tool:TurnstileTransition Mode="BackwardOut"/>
-                </tool:NavigationOutTransition.Backward>
-                <tool:NavigationOutTransition.Forward>
-                    <tool:TurnstileTransition Mode="ForwardOut"/>
-                </tool:NavigationOutTransition.Forward>
-            </tool:NavigationOutTransition>
-        </tool:TransitionService.NavigationOutTransition>
     </Grid>
 
     <!-- Application bar -->

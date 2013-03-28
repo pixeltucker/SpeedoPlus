@@ -17,20 +17,6 @@ namespace Speedo
         public MovementSource MovementSource { get; private set; }
         public SpeedAlert SpeedAlert { get; private set; }
 
-        private bool showSpeedGraph;
-        public bool ShowSpeedGraph
-        {
-            get { return showSpeedGraph; }
-            set { SetProperty( ref showSpeedGraph, value ); }
-        }
-
-        private bool isLocating;
-        public bool IsLocating
-        {
-            get { return isLocating; }
-            set { SetProperty( ref isLocating, value ); }
-        }
-
         private MapStatus mapStatus;
         public MapStatus MapStatus
         {
@@ -52,6 +38,13 @@ namespace Speedo
             set { SetProperty( ref isWindscreenModeEnabled, value ); }
         }
 
+        private bool isLocating;
+        public bool IsLocating
+        {
+            get { return isLocating; }
+            set { SetProperty( ref isLocating, value ); }
+        }
+
         public ICommand SwitchMapStatusCommand { get; private set; }
         public ICommand SwitchWindscreenModeCommand { get; private set; }
         public ICommand SwitchSpeedAlertCommand { get; private set; }
@@ -69,7 +62,6 @@ namespace Speedo
             MovementSource.GeoStatusChanged += MovementSource_GeoStatusChanged;
             MovementSource.ReadingChanged += MovementSource_ReadingChanged;
 
-            ShowSpeedGraph = true;
             DataContext = this;
 
             SwitchMapStatusCommand = new RelayCommand( ExecuteSwitchMapStatusCommand, CanExecuteSwitchMapStatusCommand );
@@ -110,8 +102,6 @@ namespace Speedo
                 App.Current.ForceDarkTheme();
                 App.Current.EnableWindscreenColors();
 
-                ShowSpeedGraph = false;
-
                 previousStatus = MapStatus;
                 MapStatus = MapStatus.Disabled;
             }
@@ -122,7 +112,6 @@ namespace Speedo
                 App.Current.AllowLightTheme();
                 App.Current.DisableWindscreenColors();
 
-                ShowSpeedGraph = true;
                 MapStatus = previousStatus;
             }
         }
