@@ -110,7 +110,7 @@
                     <ImageBrush ImageSource="Resources/alert.png" />
                 </myControls:BubbleButton>
                 <Grid Style="{StaticResource RoundIconButtonOverlay}"
-                      Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}">
+                      Visibility="{Binding Settings.IsSpeedAlertEnabled, Converter={StaticResource BoolToVisibility}}">
                     <Grid.OpacityMask>
                         <ImageBrush ImageSource="Resources/alert.png" />
                     </Grid.OpacityMask>

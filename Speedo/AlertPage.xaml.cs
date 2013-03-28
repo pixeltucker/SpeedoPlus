@@ -4,8 +4,6 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 
-// TODO: Convert the speed limit when switching units
-
 namespace Speedo
 {
     public partial class AlertPage : PhoneApplicationPage, INotifyPropertyChanged
@@ -17,6 +15,7 @@ namespace Speedo
             set { SetProperty( ref useSound, value ); }
         }
 
+        public AppSettings Settings { get; private set; }
         public SpeedAlert Alert { get; private set; }
 
         public IntLoopingDataSource UnitsSource { get; private set; }
@@ -25,6 +24,8 @@ namespace Speedo
 
         public AlertPage()
         {
+            // HACK: Can't bind to static properties (subclassing Binding results in weird stuff)
+            Settings = AppSettings.Current;
             // HACK: simplest way to pass parameters
             Alert = (SpeedAlert) PhoneApplicationService.Current.State["SpeedAlert"];
             UseSound = Alert.NotificationProvider == SpeedAlert.SoundProvider;
@@ -46,7 +47,7 @@ namespace Speedo
 
         private bool CanExecuteCloseCommand( object parameter )
         {
-            return Alert != null && Alert.Limit != 0;
+            return Settings.SpeedLimit != 0;
         }
 
         #region INotifyPropertyChanged implementation

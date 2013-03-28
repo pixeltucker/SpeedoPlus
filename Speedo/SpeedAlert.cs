@@ -15,27 +15,6 @@ namespace Speedo
         private readonly MovementSource source;
         private readonly DispatcherTimer timer;
 
-        private SpeedUnit unit;
-        public SpeedUnit Unit
-        {
-            get { return unit; }
-            set { SetProperty( ref unit, value ); }
-        }
-
-        private int limit;
-        public int Limit
-        {
-            get { return limit; }
-            set { SetProperty( ref limit, value ); }
-        }
-
-        private bool isEnabled;
-        public bool IsEnabled
-        {
-            get { return isEnabled; }
-            set { SetProperty( ref isEnabled, value ); }
-        }
-
         public INotificationProvider NotificationProvider { get; set; }
 
         public static INotificationProvider SoundProvider { get; private set; }
@@ -62,7 +41,9 @@ namespace Speedo
         {
             if ( e.PropertyName == "Speed" )
             {
-                if ( IsEnabled && source.Speed > Limit && !timer.IsEnabled )
+                if ( AppSettings.Current.IsSpeedAlertEnabled
+                  && source.Speed > AppSettings.Current.SpeedLimit
+                  && !timer.IsEnabled )
                 {
                     NotificationProvider.Notify();
                     timer.Start();

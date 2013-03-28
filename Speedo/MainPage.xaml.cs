@@ -72,7 +72,6 @@ namespace Speedo
             AboutCommand = new RelayCommand( ExecuteAboutCommand );
 
             SpeedAlert = new SpeedAlert( MovementSource, SpeedAlert.SoundProvider );
-            SpeedAlert.Limit = Settings.SpeedLimit;
 
             InitializeComponent();
             ShowWarnings();
@@ -137,7 +136,6 @@ namespace Speedo
             {
                 var stateSettings = PhoneApplicationService.Current.State;
                 IsWindscreenModeEnabled = (bool) stateSettings["windscreenMode"];
-                SpeedAlert.IsEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
             }
         }
@@ -146,7 +144,6 @@ namespace Speedo
         {
             var stateSettings = PhoneApplicationService.Current.State;
             stateSettings["windscreenMode"] = IsWindscreenModeEnabled;
-            stateSettings["SpeedAlertConfig"] = SpeedAlert.IsEnabled;
         }
 
         protected override void OnOrientationChanged( OrientationChangedEventArgs e )
@@ -174,24 +171,22 @@ namespace Speedo
 
         private void ExecuteSwitchSpeedAlertCommand( object parameter )
         {
-            if ( SpeedAlert.IsEnabled )
-            {
-                Settings.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = false;
-            }
-            else
+            Settings.IsSpeedAlertEnabled = !Settings.IsSpeedAlertEnabled;
+
+            if ( Settings.IsSpeedAlertEnabled )
             {
                 // HACK: simplest way to pass parameters...
                 PhoneApplicationService.Current.State["SpeedAlert"] = SpeedAlert;
                 NavigationService.Navigate( new Uri( "/AlertPage.xaml", UriKind.Relative ) );
-                Settings.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
+                Settings.IsSpeedAlertEnabled = true;
             }
         }
 
         private void ExecuteSwitchUnitsCommand( object parameter )
         {
             var newUnit = SpeedUtils.Switch( Settings.SpeedUnit );
-            Settings.SpeedLimit = SpeedAlert.Limit = SpeedUtils.ConvertSpeedLimit( Settings.SpeedUnit, newUnit, SpeedAlert.Limit );
-            Settings.SpeedUnit = SpeedAlert.Unit = newUnit;
+            Settings.SpeedLimit = SpeedUtils.ConvertSpeedLimit( Settings.SpeedUnit, newUnit, Settings.SpeedLimit );
+            Settings.SpeedUnit = newUnit;
         }
 
         private void ExecuteSwitchLocationAccessCommand( object parameter )
