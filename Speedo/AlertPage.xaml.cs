@@ -42,6 +42,7 @@ namespace Speedo
         private void ExecuteCloseCommand( object parameter )
         {
             Alert.NotificationProvider = UseSound ? SpeedAlert.SoundProvider : SpeedAlert.SpeechProvider;
+            Settings.IsSpeedAlertEnabled = true;
             NavigationService.GoBack();
         }
 

@@ -171,14 +171,15 @@ namespace Speedo
 
         private void ExecuteSwitchSpeedAlertCommand( object parameter )
         {
-            Settings.IsSpeedAlertEnabled = !Settings.IsSpeedAlertEnabled;
-
             if ( Settings.IsSpeedAlertEnabled )
+            {
+                Settings.IsSpeedAlertEnabled = false;
+            }
+            else
             {
                 // HACK: simplest way to pass parameters...
                 PhoneApplicationService.Current.State["SpeedAlert"] = SpeedAlert;
                 NavigationService.Navigate( new Uri( "/AlertPage.xaml", UriKind.Relative ) );
-                Settings.IsSpeedAlertEnabled = true;
             }
         }
 
