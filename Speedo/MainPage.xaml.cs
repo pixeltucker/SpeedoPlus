@@ -46,6 +46,7 @@ namespace Speedo
             set { SetProperty( ref gpsStatus, value ); }
         }
 
+        public ICommand SwitchMapStatusCommand { get; private set; }
         public ICommand SwitchUnitsCommand { get; private set; }
         public ICommand SwitchLocationAccessCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
@@ -65,6 +66,7 @@ namespace Speedo
 
             IsLocating = true;
 
+            SwitchMapStatusCommand = new RelayCommand( ExecuteSwitchMapStatusCommand, CanExecuteSwitchMapStatusCommand );
             SwitchUnitsCommand = new RelayCommand( ExecuteSwitchUnitsCommand );
             SwitchLocationAccessCommand = new RelayCommand( ExecuteSwitchLocationAccessCommand );
             AboutCommand = new RelayCommand( ExecuteAboutCommand );
@@ -186,6 +188,17 @@ namespace Speedo
             VisualStateManager.GoToState( this, e.Orientation.ToString(), true );
         }
 
+        private void ExecuteSwitchMapStatusCommand( object parameter )
+        {
+            MapStatus = MapStatus == MapStatus.On ? MapStatus.Off : MapStatus.On;
+            AppSettings.Current.MapStatus = MapStatus;
+        }
+
+        private bool CanExecuteSwitchMapStatusCommand( object parameter )
+        {
+            return MapStatus != MapStatus.Disabled;
+        }
+
         private void ExecuteSwitchUnitsCommand( object parameter )
         {
             AppSettings.Current.SpeedUnit = SpeedUtils.Switch( AppSettings.Current.SpeedUnit );
@@ -281,15 +294,6 @@ namespace Speedo
                 NavigationService.Navigate( new Uri( "/AlertPage.xaml", UriKind.Relative ) );
                 AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
             }
-        }
-
-        private void MapButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
-        {
-            MapStatus = MapStatus == MapStatus.On ? MapStatus.Off
-                      : MapStatus == MapStatus.Off ? MapStatus.On
-                                                   : MapStatus.Disabled;
-
-            AppSettings.Current.MapStatus = MapStatus;
         }
 
         #region INotifyPropertyChanged implementation

@@ -24,15 +24,14 @@
             <!-- TODO: LoadingError isn't supported any more, fix it? -->
             <myControls:BackgroundMap Source="{Binding MovementSource}" />
 
-            <Grid VerticalAlignment="Center" 
-                  Margin="0,-70,0,0" 
-                  RenderTransformOrigin="0.5,0.5">
+            <Grid RenderTransformOrigin="0.5,0.5">
                 <Grid.RowDefinitions>
+                    <RowDefinition />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid Margin="10,0,10,0">
+                <Grid Margin="10,0,10,0" VerticalAlignment="Bottom">
                     <TextBlock HorizontalAlignment="Center" 
                                VerticalAlignment="Top" 
                                Margin="0,0,0,20" 
@@ -42,7 +41,7 @@
                                              Unit="{Binding Settings.SpeedUnit}" />
                 </Grid>
 
-                <Grid Margin="10,0,10,0" 
+                <Grid Margin="10,0,10,150" 
                       Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30" />
@@ -58,6 +57,11 @@
                                                  Source="{Binding MovementSource}"
                                                  HorizontalAlignment="Center" />
                 </Grid>
+
+                <myControls:DistanceDisplay Grid.Row="2"
+                                            HorizontalAlignment="Center"
+                                            Margin="0,15"
+                                            Source="{Binding MovementSource}" />
                 <Grid.RenderTransform>
                     <ScaleTransform x:Name="ContentScaleTransform" />
                 </Grid.RenderTransform>
@@ -95,8 +99,7 @@
                 <Grid x:Name="mapRoot" 
                       HorizontalAlignment="Right" 
                       VerticalAlignment="Top">
-                    <myControls:BubbleButton x:Name="mapButton" 
-                                             MouseLeftButtonDown="MapButton_MouseLeftButtonDown" 
+                    <myControls:BubbleButton Command="{Binding SwitchMapStatusCommand}"
                                              Style="{StaticResource RoundIconButton}" 
                                              tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/map.png" />
@@ -137,10 +140,6 @@
                         </TransformGroup>
                     </Grid.RenderTransform>
                 </Grid>
-                <myControls:DistanceDisplay HorizontalAlignment="Center"
-                                            VerticalAlignment="Bottom"
-                                            Margin="0,15"
-                                            Source="{Binding MovementSource}" />
             </myControls:PhantomGrid>
         </Grid>
 
