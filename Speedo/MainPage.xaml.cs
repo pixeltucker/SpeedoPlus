@@ -46,13 +46,21 @@ namespace Speedo
             set { SetProperty( ref gpsStatus, value ); }
         }
 
+        private bool isWindscreenModeEnabled;
+        public bool IsWindscreenModeEnabled
+        {
+            get { return isWindscreenModeEnabled; }
+            set { SetProperty( ref isWindscreenModeEnabled, value ); }
+        }
+
         public ICommand SwitchMapStatusCommand { get; private set; }
+        public ICommand SwitchWindscreenModeCommand { get; private set; }
+        public ICommand SwitchSpeedAlertCommand { get; private set; }
         public ICommand SwitchUnitsCommand { get; private set; }
         public ICommand SwitchLocationAccessCommand { get; private set; }
         public ICommand AboutCommand { get; private set; }
 
         private MapStatus previousStatus;
-        private bool windscreenMode = false;
 
         public MainPage()
         {
@@ -66,6 +74,8 @@ namespace Speedo
             IsLocating = true;
 
             SwitchMapStatusCommand = new RelayCommand( ExecuteSwitchMapStatusCommand, CanExecuteSwitchMapStatusCommand );
+            SwitchWindscreenModeCommand = new RelayCommand( ExecuteSwitchWindscreenModeCommand );
+            SwitchSpeedAlertCommand = new RelayCommand( ExecuteSwitchSpeedAlertCommand );
             SwitchUnitsCommand = new RelayCommand( ExecuteSwitchUnitsCommand );
             SwitchLocationAccessCommand = new RelayCommand( ExecuteSwitchLocationAccessCommand );
             AboutCommand = new RelayCommand( ExecuteAboutCommand );
@@ -98,7 +108,7 @@ namespace Speedo
 
         private void UpdateWindscreen()
         {
-            if ( windscreenMode )
+            if ( IsWindscreenModeEnabled )
             {
                 ContentScaleTransform.ScaleX = -1;
 
@@ -106,7 +116,6 @@ namespace Speedo
                 App.Current.EnableWindscreenColors();
 
                 ShowSpeedGraph = false;
-                windsreenIndicator.Visibility = Visibility.Visible;
 
                 previousStatus = MapStatus;
                 MapStatus = MapStatus.Disabled;
@@ -119,7 +128,6 @@ namespace Speedo
                 App.Current.DisableWindscreenColors();
 
                 ShowSpeedGraph = true;
-                windsreenIndicator.Visibility = Visibility.Collapsed;
                 MapStatus = previousStatus;
             }
         }
@@ -143,7 +151,7 @@ namespace Speedo
             if ( PhoneApplicationService.Current.StartupMode == StartupMode.Activate )
             {
                 var stateSettings = PhoneApplicationService.Current.State;
-                windscreenMode = (bool) stateSettings["windscreenMode"];
+                IsWindscreenModeEnabled = (bool) stateSettings["windscreenMode"];
                 SpeedAlert.IsEnabled = (bool) stateSettings["SpeedAlertConfig"];
                 UpdateWindscreen();
             }
@@ -152,7 +160,7 @@ namespace Speedo
         protected override void OnNavigatedFrom( NavigationEventArgs e )
         {
             var stateSettings = PhoneApplicationService.Current.State;
-            stateSettings["windscreenMode"] = windscreenMode;
+            stateSettings["windscreenMode"] = IsWindscreenModeEnabled;
             stateSettings["SpeedAlertConfig"] = SpeedAlert.IsEnabled;
         }
 
@@ -171,6 +179,27 @@ namespace Speedo
         private bool CanExecuteSwitchMapStatusCommand( object parameter )
         {
             return MapStatus != MapStatus.Disabled;
+        }
+
+        private void ExecuteSwitchWindscreenModeCommand( object parameter )
+        {
+            IsWindscreenModeEnabled = !IsWindscreenModeEnabled;
+            UpdateWindscreen();
+        }
+
+        private void ExecuteSwitchSpeedAlertCommand( object parameter )
+        {
+            if ( SpeedAlert.IsEnabled )
+            {
+                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = false;
+            }
+            else
+            {
+                // HACK: simplest way to pass parameters...
+                PhoneApplicationService.Current.State["SpeedAlert"] = SpeedAlert;
+                NavigationService.Navigate( new Uri( "/AlertPage.xaml", UriKind.Relative ) );
+                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
+            }
         }
 
         private void ExecuteSwitchUnitsCommand( object parameter )
@@ -244,31 +273,10 @@ namespace Speedo
         }
 
         // TODO: This is not bound to anything
-        private void ResetTrip_Click( object sender, EventArgs e )
-        {
-            MovementSource.Start();
-        }
-
-        private void WindscreenButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
-        {
-            windscreenMode = !windscreenMode;
-            UpdateWindscreen();
-        }
-
-        private void AlertButton_MouseLeftButtonDown( object sender, MouseButtonEventArgs e )
-        {
-            if ( SpeedAlert.IsEnabled )
-            {
-                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = false;
-            }
-            else
-            {
-                // HACK: simplest way to pass parameters...
-                PhoneApplicationService.Current.State["SpeedAlert"] = SpeedAlert;
-                NavigationService.Navigate( new Uri( "/AlertPage.xaml", UriKind.Relative ) );
-                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
-            }
-        }
+        //private void ResetTrip_Click( object sender, EventArgs e )
+        //{
+        //    MovementSource.Start();
+        //}
 
         #region INotifyPropertyChanged implementation
         public event PropertyChangedEventHandler PropertyChanged;

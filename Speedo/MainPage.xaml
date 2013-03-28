@@ -67,18 +67,16 @@
                 </Grid.RenderTransform>
             </Grid>
 
-            <myControls:PhantomGrid x:Name="settingsGrid">
+            <myControls:PhantomGrid>
                 <Grid x:Name="windscreenRoot" 
                       HorizontalAlignment="Left" 
                       VerticalAlignment="Top">
-                    <myControls:BubbleButton x:Name="windscreenButton" 
-                                             MouseLeftButtonDown="WindscreenButton_MouseLeftButtonDown" 
+                    <myControls:BubbleButton Command="{Binding SwitchWindscreenModeCommand}"
                                              Style="{StaticResource RoundIconButton}" 
                                              tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/windscreen.png" />
                     </myControls:BubbleButton>
-                    <Grid x:Name="windsreenIndicator" 
-                          Visibility="Collapsed"
+                    <Grid Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToVisibility}}"
                           IsHitTestVisible="False" 
                           Background="{StaticResource PhoneAccentBrush}" 
                           Width="48" Height="48" 
@@ -116,8 +114,7 @@
                 <Grid x:Name="alertRoot" 
                       HorizontalAlignment="Left" 
                       VerticalAlignment="Bottom">
-                    <myControls:BubbleButton x:Name="alertButton" 
-                                             MouseLeftButtonDown="AlertButton_MouseLeftButtonDown" 
+                    <myControls:BubbleButton Command="{Binding SwitchSpeedAlertCommand}"
                                              Style="{StaticResource RoundIconButton}" 
                                              tool:TiltEffect.IsTiltEnabled="True">
                         <ImageBrush ImageSource="Resources/alert.png" />
