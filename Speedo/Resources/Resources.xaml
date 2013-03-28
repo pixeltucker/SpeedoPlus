@@ -1,4 +1,10 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<!--
+This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+Contributors: Long Zheng, Solal Pirelli
+-->
+
+    
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:my="clr-namespace:Speedo.Controls"
                     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"

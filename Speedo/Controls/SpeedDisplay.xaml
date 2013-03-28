@@ -1,4 +1,9 @@
-﻿<my:MovementControl x:Class="Speedo.Controls.SpeedDisplay"
+﻿<!--
+This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+Contributors: Long Zheng, Solal Pirelli
+-->
+
+<my:MovementControl x:Class="Speedo.Controls.SpeedDisplay"
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:my="clr-namespace:Speedo.Controls"
@@ -31,7 +36,6 @@
             <TextBlock Text="{Binding Current, StringFormat=0}"
                        Foreground="{StaticResource ImportantForegroundBrush}"
                        FontSize="260"
-                       FontFamily="Segoe WP"
                        FontWeight="Light" />
         </Viewbox>
 

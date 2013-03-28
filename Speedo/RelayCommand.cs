@@ -1,11 +1,9 @@
-﻿// new
+﻿// This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+// Contributors: Solal Pirelli
 
 using System;
 using System.ComponentModel;
 using System.Windows.Input;
-
-// TODO: Find a better way to notify changes than a public OnCanExecuteChanged method
-// beware of memory leaks though...
 
 namespace Speedo
 {

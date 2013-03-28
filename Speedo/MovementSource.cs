@@ -1,12 +1,11 @@
-﻿// new
+﻿// This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+// Contributors: Solal Pirelli
 
 using System;
 using System.ComponentModel;
 using System.Device.Location;
 using System.Runtime.CompilerServices;
 using Windows.Devices.Sensors;
-
-// TODO: Maybe three separate events are needed?
 
 namespace Speedo
 {

@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+// Contributors: Long Zheng, Solal Pirelli
+
+using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
 

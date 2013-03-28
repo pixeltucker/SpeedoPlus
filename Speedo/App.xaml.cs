@@ -1,4 +1,7 @@
-﻿using System.Diagnostics;
+﻿// This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+// Contributors: Long Zheng, Solal Pirelli
+
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Navigation;

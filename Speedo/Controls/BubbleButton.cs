@@ -1,4 +1,7 @@
-﻿using System.Windows.Controls;
+﻿// This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+// Contributors: Long Zheng, Solal Pirelli
+
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Speedo.Controls
