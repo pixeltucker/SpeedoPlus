@@ -1,6 +1,7 @@
 ﻿// new
 
 using System;
+using System.ComponentModel;
 using System.Windows.Input;
 
 // TODO: Find a better way to notify changes than a public OnCanExecuteChanged method
@@ -19,6 +20,17 @@ namespace Speedo
             this.canExecute = canExecute;
         }
 
+        public void BindToPropertyChange( INotifyPropertyChanged source, string propertyName )
+        {
+            source.PropertyChanged += ( s, e ) =>
+            {
+                if ( e.PropertyName == propertyName )
+                {
+                    OnCanExecuteChanged();
+                }
+            };
+        }
+
         #region ICommand implementation
         public bool CanExecute( object parameter )
         {
@@ -31,7 +43,7 @@ namespace Speedo
         }
 
         public event EventHandler CanExecuteChanged;
-        public void OnCanExecuteChanged()
+        private void OnCanExecuteChanged()
         {
             var evt = CanExecuteChanged;
             if ( evt != null )

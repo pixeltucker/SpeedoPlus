@@ -12,8 +12,8 @@ namespace Speedo
 {
     public sealed class SpeedAlert : INotifyPropertyChanged
     {
-        private MovementSource source;
-        private DispatcherTimer timer;
+        private readonly MovementSource source;
+        private readonly DispatcherTimer timer;
 
         private SpeedUnit unit;
         public SpeedUnit Unit
@@ -55,19 +55,22 @@ namespace Speedo
             timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds( 5 ) };
             timer.Tick += Timer_Tick;
 
-            source.ReadingChanged += Source_ReadingChanged;
+            source.PropertyChanged += Source_PropertyChanged;
         }
 
-        private void Source_ReadingChanged( object sender, EventArgs e )
+        private void Source_PropertyChanged( object sender, PropertyChangedEventArgs e )
         {
-            if ( IsEnabled && source.Speed > Limit && !timer.IsEnabled )
+            if ( e.PropertyName == "Speed" )
             {
-                NotificationProvider.Notify();
-                timer.Start();
-            }
-            else if ( timer.IsEnabled )
-            {
-                timer.Stop();
+                if ( IsEnabled && source.Speed > Limit && !timer.IsEnabled )
+                {
+                    NotificationProvider.Notify();
+                    timer.Start();
+                }
+                else if ( timer.IsEnabled )
+                {
+                    timer.Stop();
+                }
             }
         }
 

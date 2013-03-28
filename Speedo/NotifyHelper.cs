@@ -2,8 +2,6 @@
 
 using System.ComponentModel;
 
-// TODO: Is that really the best way?
-
 namespace Speedo
 {
     public static class NotifyHelper

@@ -3,21 +3,39 @@
 using System;
 using System.ComponentModel;
 using System.Device.Location;
+using System.Runtime.CompilerServices;
 using Windows.Devices.Sensors;
 
 // TODO: Maybe three separate events are needed?
 
 namespace Speedo
 {
-    public sealed class MovementSource
+    public sealed class MovementSource : INotifyPropertyChanged
     {
-        private Compass compass;
-        private IGeoPositionWatcher<GeoCoordinate> watcher;
+        private readonly Compass compass;
+        private readonly IGeoPositionWatcher<GeoCoordinate> watcher;
         private bool forceStop;
 
-        public double Speed { get; private set; }
-        public GeoCoordinate Position { get; private set; }
-        public double Course { get; private set; }
+        private double speed;
+        public double Speed
+        {
+            get { return speed; }
+            set { SetProperty( ref speed, value ); }
+        }
+
+        private GeoCoordinate position;
+        public GeoCoordinate Position
+        {
+            get { return position; }
+            set { SetProperty( ref position, value ); }
+        }
+
+        private double course;
+        public double Course
+        {
+            get { return course; }
+            set { SetProperty( ref course, value ); }
+        }
 
         public MovementSource()
         {
@@ -49,16 +67,6 @@ namespace Speedo
             if ( evt != null )
             {
                 evt( this, e );
-            }
-        }
-
-        public event EventHandler ReadingChanged;
-        private void OnReadingChanged()
-        {
-            var evt = ReadingChanged;
-            if ( evt != null )
-            {
-                evt( this, EventArgs.Empty );
             }
         }
 
@@ -98,7 +106,6 @@ namespace Speedo
         private void Compass_ReadingChanged( Compass sender, CompassReadingChangedEventArgs e )
         {
             Course = e.Reading.HeadingTrueNorth ?? e.Reading.HeadingMagneticNorth;
-            OnReadingChanged();
         }
 
         private void Watcher_PositionChanged( object sender, GeoPositionChangedEventArgs<GeoCoordinate> e )
@@ -113,7 +120,6 @@ namespace Speedo
             {
                 Course = e.Position.Location.Course;
             }
-            OnReadingChanged();
         }
 
         private void Watcher_StatusChanged( object sender, GeoPositionStatusChangedEventArgs e )
@@ -131,5 +137,13 @@ namespace Speedo
                 }
             }
         }
+
+        #region INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void SetProperty<T>( ref T field, T value, [CallerMemberName] string propertyName = "" )
+        {
+            NotifyHelper.SetProperty( ref field, value, propertyName, this, PropertyChanged );
+        }
+        #endregion
     }
 }

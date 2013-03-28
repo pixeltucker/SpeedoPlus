@@ -1,7 +1,6 @@
 ﻿// new
 
 using System;
-using System.Device.Location;
 
 namespace Speedo.Controls
 {

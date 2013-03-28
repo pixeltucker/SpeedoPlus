@@ -40,7 +40,7 @@
 
             <TextBlock Grid.ColumnSpan="2"
                        Style="{StaticResource PhoneTextLargeStyle}"
-                       Text="Alarm type:" />
+                       Text="Alert type:" />
 
             <RadioButton Grid.Row="1" 
                          IsChecked="{Binding UseSound, Mode=TwoWay}"

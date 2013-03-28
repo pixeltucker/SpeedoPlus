@@ -25,13 +25,14 @@ namespace Speedo
 
         public AlertPage()
         {
-            TensSource = new IntLoopingDataSource( 0, 24, 1 );
-            UnitsSource = new IntLoopingDataSource( 0, 5, 5 ) { Loop = false };
-            CloseCommand = new RelayCommand( ExecuteCloseCommand, CanExecuteCloseCommand );
-
             // HACK: simplest way to pass parameters
             Alert = (SpeedAlert) PhoneApplicationService.Current.State["SpeedAlert"];
             UseSound = Alert.NotificationProvider == SpeedAlert.SoundProvider;
+
+            TensSource = new IntLoopingDataSource( 0, 24, 1 );
+            UnitsSource = new IntLoopingDataSource( 0, 5, 5 ) { Loop = false };
+            CloseCommand = new RelayCommand( ExecuteCloseCommand, CanExecuteCloseCommand );
+            CloseCommand.BindToPropertyChange( Alert, "Limit" );
 
             DataContext = this;
             InitializeComponent();

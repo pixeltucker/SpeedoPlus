@@ -60,7 +60,7 @@ namespace Speedo
 
             MovementSource = new MovementSource();
             MovementSource.GeoStatusChanged += MovementSource_GeoStatusChanged;
-            MovementSource.ReadingChanged += MovementSource_ReadingChanged;
+            MovementSource.PropertyChanged += MovementSource_PropertyChanged;
 
             DataContext = this;
 
@@ -72,7 +72,7 @@ namespace Speedo
             AboutCommand = new RelayCommand( ExecuteAboutCommand );
 
             SpeedAlert = new SpeedAlert( MovementSource, SpeedAlert.SoundProvider );
-            SpeedAlert.Limit = AppSettings.Current.SpeedLimit;
+            SpeedAlert.Limit = Settings.SpeedLimit;
 
             InitializeComponent();
             ShowWarnings();
@@ -85,9 +85,9 @@ namespace Speedo
 
         private void ShowWarnings()
         {
-            if ( AppSettings.Current.IsFirstRun )
+            if ( Settings.IsFirstRun )
             {
-                AppSettings.Current.IsFirstRun = false;
+                Settings.IsFirstRun = false;
                 MessageBox.Show( "This software uses GPS signals to calculate your speed and direction which is subject to interference and results may be skewed.\n\nThe information provided can only be used as a guide.", "Accuracy warning", MessageBoxButton.OK );
                 MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
             }
@@ -118,7 +118,7 @@ namespace Speedo
 
         private void UpdateLocationAccess()
         {
-            if ( AppSettings.Current.AllowLocationAccess )
+            if ( Settings.AllowLocationAccess )
             {
                 IsLocating = true;
                 MovementSource.Start();
@@ -158,7 +158,7 @@ namespace Speedo
         private void ExecuteSwitchMapStatusCommand( object parameter )
         {
             MapStatus = MapStatus == MapStatus.On ? MapStatus.Off : MapStatus.On;
-            AppSettings.Current.MapStatus = MapStatus;
+            Settings.MapStatus = MapStatus;
         }
 
         private bool CanExecuteSwitchMapStatusCommand( object parameter )
@@ -176,36 +176,38 @@ namespace Speedo
         {
             if ( SpeedAlert.IsEnabled )
             {
-                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = false;
+                Settings.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = false;
             }
             else
             {
                 // HACK: simplest way to pass parameters...
                 PhoneApplicationService.Current.State["SpeedAlert"] = SpeedAlert;
                 NavigationService.Navigate( new Uri( "/AlertPage.xaml", UriKind.Relative ) );
-                AppSettings.Current.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
+                Settings.IsSpeedAlertEnabled = SpeedAlert.IsEnabled = true;
             }
         }
 
         private void ExecuteSwitchUnitsCommand( object parameter )
         {
-            AppSettings.Current.SpeedUnit = SpeedUtils.Switch( AppSettings.Current.SpeedUnit );
+            var newUnit = SpeedUtils.Switch( Settings.SpeedUnit );
+            Settings.SpeedLimit = SpeedAlert.Limit = SpeedUtils.ConvertSpeedLimit( Settings.SpeedUnit, newUnit, SpeedAlert.Limit );
+            Settings.SpeedUnit = SpeedAlert.Unit = newUnit;
         }
 
         private void ExecuteSwitchLocationAccessCommand( object parameter )
         {
-            if ( AppSettings.Current.AllowLocationAccess )
+            if ( Settings.AllowLocationAccess )
             {
                 var warningMsg = MessageBox.Show( "This application will not work without location access. Are you sure you still want to disable it?", "Disable location", MessageBoxButton.OKCancel );
                 if ( warningMsg == MessageBoxResult.OK )
                 {
-                    AppSettings.Current.AllowLocationAccess = false;
+                    Settings.AllowLocationAccess = false;
                     UpdateLocationAccess();
                 }
             }
             else
             {
-                AppSettings.Current.AllowLocationAccess = true;
+                Settings.AllowLocationAccess = true;
                 UpdateLocationAccess();
             }
         }
@@ -247,12 +249,12 @@ namespace Speedo
                     // Show the current position and enable the Stop Location button.
                     GpsStatus = GpsStatus.Normal;
                     IsLocating = false;
-                    MapStatus = AppSettings.Current.MapStatus;
+                    MapStatus = Settings.MapStatus;
                     break;
             }
         }
 
-        private void MovementSource_ReadingChanged( object sender, EventArgs e )
+        private void MovementSource_PropertyChanged( object sender, PropertyChangedEventArgs e )
         {
             GpsStatus = MovementSource.Position.HorizontalAccuracy < 70 ? GpsStatus.Normal : GpsStatus.Weak;
         }

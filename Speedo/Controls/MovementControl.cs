@@ -1,6 +1,7 @@
 ﻿// new
 
 using System;
+using System.ComponentModel;
 using System.Device.Location;
 using System.Windows;
 
@@ -24,14 +25,14 @@ namespace Speedo.Controls
             if ( args.OldValue != null )
             {
                 var source = (MovementSource) args.OldValue;
-                source.ReadingChanged -= control.Source_ReadingChanged;
+                source.PropertyChanged -= control.Source_PropertyChanged;
                 source.Ready -= control.Source_Ready;
                 source.Stopped -= control.Source_Stopped;
             }
             if ( args.NewValue != null )
             {
                 var source = (MovementSource) args.NewValue;
-                source.ReadingChanged += control.Source_ReadingChanged;
+                source.PropertyChanged += control.Source_PropertyChanged;
                 source.Ready += control.Source_Ready;
                 source.Stopped += control.Source_Stopped;
             }
@@ -66,13 +67,22 @@ namespace Speedo.Controls
         protected virtual void IsReadyChanged() { }
         protected virtual void Clear() { }
 
-        private void Source_ReadingChanged( object sender, EventArgs e )
+        private void Source_PropertyChanged( object sender, PropertyChangedEventArgs e )
         {
             Dispatcher.BeginInvoke( () =>
             {
-                ChangeSpeed( Source.Speed );
-                ChangePosition( Source.Position );
-                ChangeCourse( Source.Course );
+                if ( e.PropertyName == "Speed" )
+                {
+                    ChangeSpeed( Source.Speed );
+                }
+                else if ( e.PropertyName == "Position" )
+                {
+                    ChangePosition( Source.Position );
+                }
+                else if ( e.PropertyName == "Course" )
+                {
+                    ChangeCourse( Source.Course );
+                }
             } );
         }
 
