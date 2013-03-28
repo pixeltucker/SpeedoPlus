@@ -12,11 +12,13 @@
                             SupportedOrientations="PortraitOrLandscape"
                             Orientation="Portrait"
                             shell:SystemTray.IsVisible="True">
+    
     <shell:SystemTray.ProgressIndicator>
         <shell:ProgressIndicator IsIndeterminate="True" 
                                  IsVisible="{Binding IsLocating}" 
                                  Text="Locating..." />
     </shell:SystemTray.ProgressIndicator>
+    
     <Grid Background="{StaticResource PhoneBackgroundBrush}">
         <!-- Main grid -->
         <Grid RenderTransformOrigin="0.5,0.5">
@@ -80,74 +82,50 @@
             </myControls:PhantomGrid.RowDefinitions>
 
             <!-- Windscreen mode button container -->
-            <Grid x:Name="WindscreenRoot">
+            <Grid>
                 <myControls:BubbleButton Command="{Binding SwitchWindscreenModeCommand}"
-                                             Style="{StaticResource RoundIconButton}" 
-                                             tool:TiltEffect.IsTiltEnabled="True">
+                                         Style="{StaticResource RoundIconButton}" 
+                                         tool:TiltEffect.IsTiltEnabled="True">
                     <ImageBrush ImageSource="Resources/windscreen.png" />
                 </myControls:BubbleButton>
                 <Grid Visibility="{Binding IsWindscreenModeEnabled, Converter={StaticResource BoolToVisibility}}"
-                          IsHitTestVisible="False" 
-                          Background="{StaticResource PhoneAccentBrush}" 
-                          Width="48" Height="48" 
-                          Margin="16">
+                      IsHitTestVisible="False" 
+                      Background="{StaticResource PhoneAccentBrush}" 
+                      Width="48" Height="48" 
+                      Margin="16">
                     <Grid.OpacityMask>
                         <ImageBrush ImageSource="Resources/windscreen.png"/>
                     </Grid.OpacityMask>
                 </Grid>
-                <Grid.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.RenderTransform>
             </Grid>
 
             <!-- Map button container -->
             <Grid x:Name="MapRoot" 
                   Grid.Column="2">
                 <myControls:BubbleButton Command="{Binding SwitchMapStatusCommand}"
-                                             Style="{StaticResource RoundIconButton}" 
-                                             tool:TiltEffect.IsTiltEnabled="True">
+                                         Style="{StaticResource RoundIconButton}" 
+                                         tool:TiltEffect.IsTiltEnabled="True">
                     <ImageBrush ImageSource="Resources/map.png" />
                 </myControls:BubbleButton>
-                <Grid.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.RenderTransform>
             </Grid>
 
             <!-- Speed alert button container -->
             <Grid x:Name="AlertRoot"
                   Grid.Row="2">
                 <myControls:BubbleButton Command="{Binding SwitchSpeedAlertCommand}"
-                                             Style="{StaticResource RoundIconButton}" 
-                                             tool:TiltEffect.IsTiltEnabled="True">
+                                         Style="{StaticResource RoundIconButton}" 
+                                         tool:TiltEffect.IsTiltEnabled="True">
                     <ImageBrush ImageSource="Resources/alert.png" />
                 </myControls:BubbleButton>
                 <Grid IsHitTestVisible="False" 
-                          Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}"
-                          Background="{StaticResource PhoneAccentBrush}" 
-                          Width="48" Height="48" 
-                          Margin="16">
+                      Visibility="{Binding SpeedAlert.IsEnabled, Converter={StaticResource BoolToVisibility}}"
+                      Background="{StaticResource PhoneAccentBrush}"
+                      Width="48" Height="48" 
+                      Margin="16">
                     <Grid.OpacityMask>
-                        <ImageBrush ImageSource="Resources/alert.png"/>
+                        <ImageBrush ImageSource="Resources/alert.png" />
                     </Grid.OpacityMask>
                 </Grid>
-                <Grid.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Grid.RenderTransform>
             </Grid>
         </myControls:PhantomGrid>
 
