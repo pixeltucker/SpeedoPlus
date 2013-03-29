@@ -46,7 +46,7 @@ namespace Speedo.Controls
 
         protected override void ChangeCourse( double course )
         {
-            DirectionAngle = course;
+            DirectionAngle = -course;
             DirectionInitials = Directions.Last( p => course >= p.Key ).Value;
         }
     }
