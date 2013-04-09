@@ -1,0 +1,64 @@
+﻿<!--
+This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+Contributors: Long Zheng, Solal Pirelli
+-->
+
+<phone:PhoneApplicationPage x:Class="Speedo.AlertPage"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"  
+                            xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+                            xmlns:myControls="clr-namespace:Speedo.Controls"
+                            Style="{StaticResource PageStyle}">
+    <Grid Background="{StaticResource PhoneChromeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Style="{StaticResource PhoneTextSmallStyle}"
+                   Text="Set maximum speed to trigger audible alert" />
+
+        <StackPanel Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal">
+            <myControls:NumberPicker TensSource="{Binding TensSource}" 
+                                     UnitsSource="{Binding UnitsSource}" 
+                                     Value="{Binding Limit, Mode=TwoWay}" />
+            <TextBlock VerticalAlignment="Center"
+                       FontSize="100"
+                       Text="{Binding Unit, Converter={StaticResource SpeedToString}}" />
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.ColumnSpan="2"
+                       Style="{StaticResource PhoneTextLargeStyle}"
+                       Text="Alert type:" />
+
+            <RadioButton Grid.Row="1" 
+                         IsChecked="{Binding UseSound, Mode=TwoWay}"
+                         Content="Sound" />
+            <RadioButton Grid.Column="1"
+                         Grid.Row="1"
+                         IsChecked="{Binding UseSound, Converter={StaticResource OppositeBool}, Mode=TwoWay}"
+                         Content="Voice" />
+        </Grid>
+
+        <Button Grid.Row="3" 
+                Command="{Binding CloseCommand}"
+                Content="Enable speed alert" 
+                Margin="5" />
+    </Grid>
+</phone:PhoneApplicationPage>

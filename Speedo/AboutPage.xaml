@@ -1,0 +1,74 @@
+﻿<!--
+This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+Contributors: Long Zheng, Solal Pirelli
+-->
+
+<phone:PhoneApplicationPage x:Class="Speedo.AboutPage"
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+                            xmlns:tool="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" 
+                            Style="{StaticResource PageStyle}">
+    <Grid Background="{StaticResource PhoneBackgroundBrush}" 
+          tool:TiltEffect.IsTiltEnabled="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Image Grid.RowSpan="3" 
+               Source="Resources/roadbg.jpg"             
+               Stretch="UniformToFill"
+               Opacity="0.25" />
+
+        <TextBlock Text="Speedo Plus" 
+                   Style="{StaticResource PhoneTextNormalStyle}"
+                   Margin="20,0" />
+        <TextBlock Grid.Row="1"
+                   Text="about"                        
+                   Style="{StaticResource PhoneTextTitle1Style}"
+                   Margin="20,-10,20,0" />
+
+        <ScrollViewer Grid.Row="2" 
+                      Margin="12,0">
+            <StackPanel>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}"
+                               Text="Made in Australia" />
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                               Text="Long Zheng" />
+                    <HyperlinkButton Command="{Binding WebsiteCommand}"
+                                     CommandParameter="http://www.istartedsomething.com"
+                                     Content="www.istartedsomething.com"
+                                     HorizontalAlignment="Left" />
+                    <TextBlock Style="{StaticResource PhoneTextSubtleStyle}"
+                               Text="Adapted for Windows Phone 8 by Solal Pirelli" />
+                </StackPanel>
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}" 
+                               Text="Support the developer" />
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}" 
+                               TextWrapping="Wrap"
+                               Text="Thanks for downloading the app! :)" />
+                    <Button Command="{Binding AwesomeCommand}" 
+                            Content="You are awesome" />
+                </StackPanel>
+                <StackPanel Margin="0,20,0,0">
+                    <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}"
+                               Text="Share the love" />
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                               TextWrapping="Wrap" 
+                               Text="If you enjoy using the app, please share a review in the Marketplace." />
+                    <Button Command="{Binding ReviewAppCommand}"
+                            Content="Write a review" />
+                </StackPanel>
+
+                <HyperlinkButton Command="{Binding ShowPrivacyPolicyCommand}"
+                                 Content="Privacy policy"
+                                 HorizontalAlignment="Left" 
+                                 Margin="0,20,0,0" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</phone:PhoneApplicationPage>

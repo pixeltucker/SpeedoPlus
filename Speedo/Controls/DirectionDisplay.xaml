@@ -1,0 +1,30 @@
+﻿<!--
+This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+Contributors: Long Zheng, Solal Pirelli
+-->
+
+<my:MovementControl x:Class="Speedo.Controls.DirectionDisplay"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:my="clr-namespace:Speedo.Controls">
+    <StackPanel x:Name="LayoutRoot"
+                Orientation="Horizontal"
+                Visibility="{Binding IsEnabled, Converter={StaticResource BoolToVisibility}}">
+        <TextBlock Text="{Binding DirectionInitials}"
+                   FontSize="50" 
+                   Foreground="{StaticResource ImportantAccentBrush}"
+                   Margin="0,0,20,0" />
+
+        <Path Width="24" 
+              Height="28"
+              VerticalAlignment="Center"
+              Fill="{StaticResource ImportantAccentBrush}" 
+              Stretch="Fill" 
+              Data="F1 M 383.125,183.208L 395.625,214.208L 383.125,204.708L 370.625,214.208L 383.125,183.208 Z" 
+              RenderTransformOrigin="0.5,0.5">
+            <Path.RenderTransform>
+                <RotateTransform Angle="{Binding DirectionAngle}" />
+            </Path.RenderTransform>
+        </Path>
+    </StackPanel>
+</my:MovementControl>

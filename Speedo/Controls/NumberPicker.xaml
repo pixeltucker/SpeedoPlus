@@ -1,0 +1,42 @@
+﻿<!--
+This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
+Contributors: Long Zheng, Solal Pirelli
+-->
+
+<my:ObservableControl x:Class="Speedo.Controls.NumberPicker"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:my="clr-namespace:Speedo.Controls"
+                      xmlns:tool="clr-namespace:Microsoft.Phone.Controls.Primitives;assembly=Microsoft.Phone.Controls.Toolkit">
+    <my:ObservableControl.Resources>
+        <DataTemplate x:Key="TensTemplate">
+            <TextBlock Text="{Binding}" 
+                       FontSize="120"
+                       Margin="0,0,0,-15"
+                       HorizontalAlignment="Right" 
+                       VerticalAlignment="Bottom" />
+        </DataTemplate>
+        <DataTemplate x:Key="UnitsTemplate">
+            <TextBlock Text="{Binding}" 
+                       FontSize="120"
+                       Margin="0,0,0,-15"
+                       HorizontalAlignment="Left" 
+                       VerticalAlignment="Bottom" />
+        </DataTemplate>
+    </my:ObservableControl.Resources>
+    <StackPanel x:Name="LayoutRoot"
+                Orientation="Horizontal"
+                Background="{StaticResource PhoneChromeBrush}">
+        <tool:LoopingSelector DataSource="{Binding TensSource}"
+                              ItemTemplate="{StaticResource TensTemplate}"
+                              Margin="0,0,1,0"
+                              ItemMargin="1"
+                              ItemSize="140,130"
+                              Width="140" />
+        <tool:LoopingSelector DataSource="{Binding UnitsSource}"
+                              ItemTemplate="{StaticResource UnitsTemplate}"
+                              ItemMargin="1"
+                              ItemSize="75,130"
+                              Width="75" />
+    </StackPanel>
+</my:ObservableControl>
