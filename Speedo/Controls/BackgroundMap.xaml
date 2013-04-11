@@ -12,8 +12,7 @@ Contributors: Long Zheng, Solal Pirelli
                  FontFamily="{StaticResource PhoneFontFamilyNormal}"
                  FontSize="{StaticResource PhoneFontSizeNormal}"
                  Foreground="{StaticResource PhoneForegroundBrush}">
-    <Grid x:Name="LayoutRoot" 
-          Background="#CCCCCC">
+    <Grid x:Name="LayoutRoot">
             <maps:Map IsHitTestVisible="False"
                       Visibility="{Binding IsEnabled, Converter={StaticResource BoolToVisibility}}" 
                       ZoomLevel="{Binding Zoom, Mode=TwoWay}"

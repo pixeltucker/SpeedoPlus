@@ -104,7 +104,7 @@ namespace Speedo
                 App.Current.ForceDarkTheme();
                 App.Current.EnableWindscreenColors();
 
-                previousStatus = MapStatus;
+                previousStatus = Settings.MapStatus;
                 MapStatus = MapStatus.Disabled;
             }
             else
@@ -248,7 +248,11 @@ namespace Speedo
                     // Show the current position and enable the Stop Location button.
                     GpsStatus = GpsStatus.Normal;
                     IsLocating = false;
-                    MapStatus = Settings.MapStatus;
+                    if ( !IsWindscreenModeEnabled )
+                    {
+                        // Don't enable the map if the user enabled windscreen mode during loading
+                        MapStatus = Settings.MapStatus;
+                    }
                     break;
             }
         }
