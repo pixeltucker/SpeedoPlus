@@ -48,12 +48,12 @@ namespace Speedo
             set { SetProperty( ref isLocating, value ); }
         }
 
-        public ICommand SwitchMapStatusCommand { get; private set; }
-        public ICommand SwitchWindscreenModeCommand { get; private set; }
-        public ICommand SwitchSpeedAlertCommand { get; private set; }
-        public ICommand SwitchUnitsCommand { get; private set; }
-        public ICommand SwitchLocationAccessCommand { get; private set; }
-        public ICommand AboutCommand { get; private set; }
+        public RelayCommand SwitchMapStatusCommand { get; private set; }
+        public RelayCommand SwitchWindscreenModeCommand { get; private set; }
+        public RelayCommand SwitchSpeedAlertCommand { get; private set; }
+        public RelayCommand SwitchUnitsCommand { get; private set; }
+        public RelayCommand SwitchLocationAccessCommand { get; private set; }
+        public RelayCommand AboutCommand { get; private set; }
 
         private MapStatus previousStatus;
 
@@ -68,6 +68,7 @@ namespace Speedo
             DataContext = this;
 
             SwitchMapStatusCommand = new RelayCommand( ExecuteSwitchMapStatusCommand, CanExecuteSwitchMapStatusCommand );
+            SwitchMapStatusCommand.BindToPropertyChange( this, "MapStatus" );
             SwitchWindscreenModeCommand = new RelayCommand( ExecuteSwitchWindscreenModeCommand );
             SwitchSpeedAlertCommand = new RelayCommand( ExecuteSwitchSpeedAlertCommand );
             SwitchUnitsCommand = new RelayCommand( ExecuteSwitchUnitsCommand );
