@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.Device.Location;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
@@ -222,31 +221,24 @@ namespace Speedo
             switch ( e.Status )
             {
                 case GeoPositionStatus.Disabled:
-                    // The Location Service is disabled or unsupported.
-                    // Check to see whether the user has disabled the Location Service.
                     GpsStatus = GpsStatus.Inaccessible;
                     IsLocating = false;
                     MapStatus = MapStatus.Disabled;
                     break;
 
                 case GeoPositionStatus.Initializing:
-                    // The Location Service is initializing.
-                    // Disable the Start Location button.
                     GpsStatus = GpsStatus.Initializing;
                     IsLocating = true;
                     MapStatus = MapStatus.Disabled;
                     break;
 
                 case GeoPositionStatus.NoData:
-                    // The Location Service is working, but it cannot get location data.
                     GpsStatus = GpsStatus.Unavailable;
                     IsLocating = false;
                     MapStatus = MapStatus.Disabled;
                     break;
 
                 case GeoPositionStatus.Ready:
-                    // The Location Service is working and is receiving location data.
-                    // Show the current position and enable the Stop Location button.
                     GpsStatus = GpsStatus.Normal;
                     IsLocating = false;
                     if ( !IsWindscreenModeEnabled )
