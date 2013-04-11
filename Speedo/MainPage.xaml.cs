@@ -255,7 +255,10 @@ namespace Speedo
 
         private void MovementSource_PropertyChanged( object sender, PropertyChangedEventArgs e )
         {
-            GpsStatus = MovementSource.Position.HorizontalAccuracy < 70 ? GpsStatus.Normal : GpsStatus.Weak;
+            Dispatcher.BeginInvoke( () =>
+            {
+                GpsStatus = MovementSource.Position.HorizontalAccuracy < 70 ? GpsStatus.Normal : GpsStatus.Weak;
+            } );
         }
 
         // TODO: This is not bound to anything

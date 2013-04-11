@@ -90,12 +90,14 @@ namespace Speedo.Controls
         private void Source_Ready( object sender, EventArgs e )
         {
             IsReady = true;
+            IsReadyChanged();
             Clear();
         }
 
         private void Source_Stopped( object sender, EventArgs e )
         {
             IsReady = false;
+            IsReadyChanged();
             Clear();
         }
     }

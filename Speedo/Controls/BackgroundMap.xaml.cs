@@ -22,9 +22,7 @@ namespace Speedo.Controls
 
         private static void OnStatusPropertyChanged( DependencyObject obj, DependencyPropertyChangedEventArgs args )
         {
-            var map = (BackgroundMap) obj;
-            var status = (MapStatus) args.NewValue;
-            map.SetIsEnabled();
+            ( (BackgroundMap) obj ).SetIsEnabled();
         }
         #endregion
 
@@ -68,6 +66,11 @@ namespace Speedo.Controls
         protected override void ChangePosition( GeoCoordinate position )
         {
             Position = position;
+        }
+
+        protected override void IsReadyChanged()
+        {
+            SetIsEnabled();
         }
 
         // I don't think there's a simpler way to disable panning on a map
