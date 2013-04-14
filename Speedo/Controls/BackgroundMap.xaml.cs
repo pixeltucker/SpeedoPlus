@@ -86,5 +86,11 @@ namespace Speedo.Controls
             double desiredZoom = oldZoom * Math.Pow( e.DistanceRatio, 0.5 );
             Zoom = Math.Max( 1, Math.Min( desiredZoom, 19 ) ); // clip between 1 and 19
         }
+
+		private void Map_Loaded(object sender, RoutedEventArgs e)
+		{
+			Microsoft.Phone.Maps.MapsSettings.ApplicationContext.ApplicationId = "d2075a58-c9a4-e011-986b-78e7d1fa76f8";
+			Microsoft.Phone.Maps.MapsSettings.ApplicationContext.AuthenticationToken = "st0QyPY2wXv8S8323SVY4Q";
+		}
     }
 }

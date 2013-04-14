@@ -21,7 +21,8 @@ Contributors: Long Zheng, Solal Pirelli
                       HorizontalAlignment="Stretch" 
                       RenderTransformOrigin="0.5,0.5" 
                       CartographicMode="Road"
-                      CacheMode="BitmapCache">
+                      CacheMode="BitmapCache"
+                      Loaded="Map_Loaded">
                 <maps:Map.RenderTransform>
                     <RotateTransform Angle="{Binding MapRotation}" />
                 </maps:Map.RenderTransform>
