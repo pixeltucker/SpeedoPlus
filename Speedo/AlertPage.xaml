@@ -20,7 +20,7 @@ Contributors: Long Zheng, Solal Pirelli
         </Grid.RowDefinitions>
 
         <TextBlock Style="{StaticResource PhoneTextSmallStyle}"
-                   Text="{Binding Strings.SetSpeedAlert, Source={StaticResource Strings}}" />
+                   Text="{Binding Resources.SetSpeedAlert, Source={StaticResource Strings}}" />
 
         <StackPanel Grid.Row="1"
                     HorizontalAlignment="Center"
@@ -45,7 +45,7 @@ Contributors: Long Zheng, Solal Pirelli
 
             <TextBlock Grid.ColumnSpan="2"
                        Style="{StaticResource PhoneTextLargeStyle}"
-                       Text="{Binding Strings.SpeedAlertType, Source={StaticResource Strings}}" />
+                       Text="{Binding Resources.SpeedAlertType, Source={StaticResource Strings}}" />
 
             <RadioButton Grid.Row="1" 
                          IsChecked="{Binding UseSound, Mode=TwoWay}"
