@@ -1,8 +1,10 @@
 ﻿// This code is licensed under the Microsoft Reciprocal License (MS-RL). See the LICENSE file for details.
 // Contributors: Long Zheng, Solal Pirelli
 
+using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
@@ -124,6 +126,26 @@ namespace Speedo
 
             // Ensure we don't initialize again
             phoneApplicationInitialized = true;
+
+            InitializeLanguage();
+        }
+
+        private void InitializeLanguage()
+        {
+            try
+            {
+                RootFrame.Language = XmlLanguage.GetLanguage( AppResources.ResourceLanguage );
+                RootFrame.FlowDirection = (FlowDirection) Enum.Parse( typeof( FlowDirection ), AppResources.ResourceFlowDirection );
+            }
+            catch
+            {
+                if ( Debugger.IsAttached )
+                {
+                    Debugger.Break();
+                }
+
+                throw;
+            }
         }
 
         // Do not add any additional code to this method

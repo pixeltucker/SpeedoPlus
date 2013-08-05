@@ -371,6 +371,24 @@ namespace Speedo.Languages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to LeftToRight.
+        /// </summary>
+        public static string ResourceFlowDirection {
+            get {
+                return ResourceManager.GetString("ResourceFlowDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to en-US.
+        /// </summary>
+        public static string ResourceLanguage {
+            get {
+                return ResourceManager.GetString("ResourceLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Set maximum speed to trigger audible alert.
         /// </summary>
         public static string SetSpeedAlert {
