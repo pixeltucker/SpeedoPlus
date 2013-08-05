@@ -115,6 +115,7 @@
     <Compile Include="AlertPage.xaml.cs">
       <DependentUpon>AlertPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OrientationChangingFrame.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Languages\AppResources.Designer.cs">
       <AutoGen>True</AutoGen>
