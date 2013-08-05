@@ -19,7 +19,7 @@ namespace Speedo
 
         public object ConvertBack( object value, Type targetType, object parameter, System.Globalization.CultureInfo culture )
         {
-            return (double) value == Opacity;
+            return (double) value - Opacity <= double.Epsilon;
         }
     }
 

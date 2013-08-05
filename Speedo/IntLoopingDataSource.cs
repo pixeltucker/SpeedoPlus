@@ -16,6 +16,15 @@ namespace Speedo
 
         public bool Loop { get; set; }
 
+        public IntLoopingDataSource( int min, int max, int increment )
+        {
+            this.min = min;
+            this.max = max;
+            this.increment = increment;
+            this.Loop = true;
+        }
+
+        #region ILoopingSelectorDataSource implementation
         public object GetNext( object relativeTo )
         {
             int next = (int) relativeTo + increment;
@@ -43,23 +52,15 @@ namespace Speedo
             }
         }
 
-        public IntLoopingDataSource( int min, int max, int increment )
-        {
-            this.min = min;
-            this.max = max;
-            this.increment = increment;
-            this.Loop = true;
-        }
-
         public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
         private void OnSelectionChanged( object oldValue, object newValue )
         {
             var evt = SelectionChanged;
             if ( evt != null )
             {
-                var e = new SelectionChangedEventArgs( new[] { oldValue }, new[] { newValue } );
-                evt( this, e );
+                evt( this, new SelectionChangedEventArgs( new[] { oldValue }, new[] { newValue } ) );
             }
         }
+        #endregion
     }
 }

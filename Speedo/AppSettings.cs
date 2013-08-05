@@ -10,49 +10,44 @@ namespace Speedo
 {
     public class AppSettings : INotifyPropertyChanged
     {
-        private const string IsFirstRunKey = "IsFirstRun";
-        private const string SpeedUnitKey = "SpeedUnit";
-        private const string MapStatusKey = "MapStatus";
-        private const string IsSpeedAlertEnabledKey = "IsSpeedAlertEnabled";
-        private const string SpeedLimitKey = "SpeedLimit";
-        private const string AllowLocationAccessKey = "AllowLocationAccess";
+        private static readonly bool UseMiles = CultureInfo.CurrentCulture.Name == "en-US";
 
         private IsolatedStorageSettings settings;
 
         public bool IsFirstRun
         {
-            get { return (bool) settings[IsFirstRunKey]; }
-            set { SetSetting( IsFirstRunKey, value ); }
+            get { return Get<bool>( defaultValue: true ); }
+            set { Set( value ); }
         }
 
         public SpeedUnit SpeedUnit
         {
-            get { return (SpeedUnit) settings[SpeedUnitKey]; }
-            set { SetSetting( SpeedUnitKey, value ); }
+            get { return Get<SpeedUnit>( defaultValue: UseMiles ? SpeedUnit.Miles : SpeedUnit.Kilometers ); }
+            set { Set( value ); }
         }
 
         public MapStatus MapStatus
         {
-            get { return (MapStatus) settings[MapStatusKey]; }
-            set { SetSetting( MapStatusKey, value ); }
+            get { return Get<MapStatus>( defaultValue: MapStatus.On ); }
+            set { Set( value ); }
         }
 
         public bool IsSpeedAlertEnabled
         {
-            get { return (bool) settings[IsSpeedAlertEnabledKey]; }
-            set { SetSetting( IsSpeedAlertEnabledKey, value ); }
+            get { return Get<bool>( defaultValue: false ); }
+            set { Set( value ); }
         }
 
         public int SpeedLimit
         {
-            get { return (int) settings[SpeedLimitKey]; }
-            set { SetSetting( SpeedLimitKey, value ); }
+            get { return Get<int>( defaultValue: UseMiles ? 65 : 100 ); }
+            set { Set( value ); }
         }
 
         public bool AllowLocationAccess
         {
-            get { return (bool) settings[AllowLocationAccessKey]; }
-            set { SetSetting( AllowLocationAccessKey, value ); }
+            get { return Get<bool>( defaultValue: true ); }
+            set { Set( value ); }
         }
 
         public static AppSettings Current { get; private set; }
@@ -64,50 +59,25 @@ namespace Speedo
 
         private AppSettings()
         {
-            if ( DesignerProperties.IsInDesignTool )
+            if ( !DesignerProperties.IsInDesignTool ) // doesn't work in Cider :(
             {
-                return; // doesn't work in Cider :(
-            }
-
-            settings = IsolatedStorageSettings.ApplicationSettings;
+                settings = IsolatedStorageSettings.ApplicationSettings;
 #if DEBUG
-            settings.Clear();
+                settings.Clear();
 #endif
-
-            if ( !settings.Contains( IsFirstRunKey ) )
-            {
-                IsFirstRun = true;
-            }
-
-            if ( !settings.Contains( SpeedUnitKey ) )
-            {
-                SpeedUnit = CultureInfo.CurrentCulture.Name == "en-US" ? SpeedUnit.Miles : SpeedUnit.Kilometers;
-            }
-
-            if ( !settings.Contains( MapStatusKey ) )
-            {
-                MapStatus = MapStatus.On;
-            }
-
-            if ( !settings.Contains( IsSpeedAlertEnabledKey ) )
-            {
-                IsSpeedAlertEnabled = false;
-            }
-
-            if ( !settings.Contains( SpeedLimitKey ) )
-            {
-                SpeedLimit = SpeedUnit == SpeedUnit.Miles ? 65 : 100;
-            }
-
-            if ( !settings.Contains( AllowLocationAccessKey ) )
-            {
-                AllowLocationAccess = true;
             }
         }
 
-        #region INotifyPropertyChanged implementation
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void SetSetting( string key, object value, [CallerMemberName] string propertyName = "" )
+        private T Get<T>( T defaultValue, [CallerMemberName] string key = "" )
+        {
+            if ( !settings.Contains( key ) )
+            {
+                Set( defaultValue, key );
+            }
+            return (T) settings[key];
+        }
+
+        private void Set( object value, [CallerMemberName] string key = "" )
         {
             if ( !settings.Contains( key ) )
             {
@@ -119,8 +89,11 @@ namespace Speedo
             }
 
             settings.Save();
-            NotifyHelper.OnPropertyChanged( propertyName, this, PropertyChanged );
+            NotifyHelper.OnPropertyChanged( key, this, PropertyChanged );
         }
+
+        #region INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler PropertyChanged;
         #endregion
     }
 }
