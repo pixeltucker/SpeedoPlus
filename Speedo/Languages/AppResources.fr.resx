@@ -186,7 +186,7 @@ Les données fournies ne doivent être utilisées que comme conseils.</value>
     <value>SO</value>
   </data>
   <data name="Direction_West" xml:space="preserve">
-    <value>W</value>
+    <value>O</value>
   </data>
   <data name="DistanceDisplay" xml:space="preserve">
     <value>distance</value>
