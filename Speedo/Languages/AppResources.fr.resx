@@ -1,0 +1,271 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutMenu" xml:space="preserve">
+    <value>à propos</value>
+  </data>
+  <data name="AboutPageTitle" xml:space="preserve">
+    <value>à propos</value>
+  </data>
+  <data name="About_AwesomeButton" xml:space="preserve">
+    <value>Vous êtes génial.</value>
+  </data>
+  <data name="About_AwesomeCaption" xml:space="preserve">
+    <value>Génial comment ?</value>
+  </data>
+  <data name="About_AwesomeMessage" xml:space="preserve">
+    <value>Vraiment génial.</value>
+  </data>
+  <data name="About_MadeBy" xml:space="preserve">
+    <value>Fait par</value>
+  </data>
+  <data name="About_PrivacyPolicy" xml:space="preserve">
+    <value>Politique de confidentialité</value>
+  </data>
+  <data name="About_ReviewButton" xml:space="preserve">
+    <value>Donnez votre avis</value>
+  </data>
+  <data name="About_ShareTheLove" xml:space="preserve">
+    <value>Partagez votre enthousiasme</value>
+  </data>
+  <data name="About_SupportTheDev" xml:space="preserve">
+    <value>Aidez le développeur</value>
+  </data>
+  <data name="About_Thanks" xml:space="preserve">
+    <value>Merci d'avoir téléchargé cette app ! :)</value>
+  </data>
+  <data name="About_WriteAReview" xml:space="preserve">
+    <value>Si vous appréciez cette app, veuillez donnez votre avis dans le Store</value>
+  </data>
+  <data name="AccuracyWarningCaption" xml:space="preserve">
+    <value>Avertissement sur l'exactitude des données</value>
+  </data>
+  <data name="AccuracyWarningMessage" xml:space="preserve">
+    <value>Ce logiciel utilise le système GPS pour calculer votre vitesse et votre direction, ce qui peut entraîner quelques inexactitudes.
+
+Les données fournies ne doivent être utilisées que comme conseils.</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Speedo Plus</value>
+  </data>
+  <data name="Direction_East" xml:space="preserve">
+    <value>E</value>
+  </data>
+  <data name="Direction_North" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="Direction_NorthEast" xml:space="preserve">
+    <value>NE</value>
+  </data>
+  <data name="Direction_NorthWest" xml:space="preserve">
+    <value>NO</value>
+  </data>
+  <data name="Direction_South" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="Direction_SouthEast" xml:space="preserve">
+    <value>SO</value>
+  </data>
+  <data name="Direction_SouthWest" xml:space="preserve">
+    <value>SW</value>
+  </data>
+  <data name="Direction_West" xml:space="preserve">
+    <value>W</value>
+  </data>
+  <data name="DistanceDisplay" xml:space="preserve">
+    <value>distance</value>
+  </data>
+  <data name="EnableSpeedAlertButton" xml:space="preserve">
+    <value>Activer l'alerte</value>
+  </data>
+  <data name="GpsStatus_Inaccessible" xml:space="preserve">
+    <value>emplacement inaccessible</value>
+  </data>
+  <data name="GpsStatus_Initializing" xml:space="preserve">
+    <value>initialisation du GPS</value>
+  </data>
+  <data name="GpsStatus_Normal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="GpsStatus_Unavailable" xml:space="preserve">
+    <value>GPS non disponible</value>
+  </data>
+  <data name="GpsStatus_Weak" xml:space="preserve">
+    <value>signal GPS faible</value>
+  </data>
+  <data name="LocationDisableWarningCaption" xml:space="preserve">
+    <value>désactiver la localisation</value>
+  </data>
+  <data name="LocationDisableWarningMessage" xml:space="preserve">
+    <value>Cette application ne peut pas fonctionner sans accéder à votre emplacement. Voulez-vous vraiment désactiver la localisation ?</value>
+  </data>
+  <data name="PrivacyPolicyCaption" xml:space="preserve">
+    <value>Politique de confidentialité</value>
+  </data>
+  <data name="PrivacyPolicyMessage" xml:space="preserve">
+    <value>Ce logiciel garde en mémoire de manière temporaire votre emplacement pour calculer votre vitesse et votre direction.
+
+Votre emplacement peut être envoyé à Bing pour positionner la carte.</value>
+  </data>
+  <data name="ResourceFlowDirection" xml:space="preserve">
+    <value>LeftToRight</value>
+  </data>
+  <data name="ResourceLanguage" xml:space="preserve">
+    <value>fr</value>
+  </data>
+  <data name="SetSpeedAlert" xml:space="preserve">
+    <value>Définissez la vitesse qui déclenche une alerte</value>
+  </data>
+  <data name="SpeechAlert" xml:space="preserve">
+    <value>Vous allez trop vite !</value>
+  </data>
+  <data name="SpeedAlertType" xml:space="preserve">
+    <value>Type d'alerte :</value>
+  </data>
+  <data name="SpeedAlert_Sound" xml:space="preserve">
+    <value>Sonore</value>
+  </data>
+  <data name="SpeedAlert_Voice" xml:space="preserve">
+    <value>Voix</value>
+  </data>
+  <data name="SpeedAverage" xml:space="preserve">
+    <value>moyenne</value>
+  </data>
+  <data name="SpeedMax" xml:space="preserve">
+    <value>max</value>
+  </data>
+  <data name="SpeedUnit_Kilometers" xml:space="preserve">
+    <value>km/h</value>
+  </data>
+  <data name="SpeedUnit_Miles" xml:space="preserve">
+    <value>mph</value>
+  </data>
+  <data name="SwitchLocationMenu_Disabled" xml:space="preserve">
+    <value>activer la localisation</value>
+  </data>
+  <data name="SwitchLocationMenu_Enabled" xml:space="preserve">
+    <value>désactiver la localisation</value>
+  </data>
+  <data name="SwitchUnitMenu_Kilometers" xml:space="preserve">
+    <value>passer en impérial (mph)</value>
+  </data>
+  <data name="SwitchUnitMenu_Miles" xml:space="preserve">
+    <value>passer en métrique (km/h)</value>
+  </data>
+</root>
