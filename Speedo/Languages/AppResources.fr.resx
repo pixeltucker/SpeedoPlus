@@ -180,10 +180,10 @@ Les données fournies ne doivent être utilisées que comme conseils.</value>
     <value>S</value>
   </data>
   <data name="Direction_SouthEast" xml:space="preserve">
-    <value>SO</value>
+    <value>SE</value>
   </data>
   <data name="Direction_SouthWest" xml:space="preserve">
-    <value>SW</value>
+    <value>SO</value>
   </data>
   <data name="Direction_West" xml:space="preserve">
     <value>W</value>
