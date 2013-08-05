@@ -117,12 +117,10 @@
       <DependentUpon>AlertPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppSettings.cs" />
-    <Compile Include="BooleanToOpacityConverter.cs" />
-    <Compile Include="BooleanToStringConverter.cs" />
+    <Compile Include="Converters.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="BooleanToVisibilityConverter.cs" />
     <Compile Include="Controls\BackgroundMap.xaml.cs">
       <DependentUpon>BackgroundMap.xaml</DependentUpon>
     </Compile>
@@ -140,11 +138,8 @@
     </Compile>
     <Compile Include="FakeGeoPositionWatcher.cs" />
     <Compile Include="GpsStatus.cs" />
-    <Compile Include="GpsStatusToStringConverter.cs" />
     <Compile Include="NotifyHelper.cs" />
-    <Compile Include="OppositeBooleanConverter.cs" />
     <Compile Include="SpeedAlert.cs" />
-    <Compile Include="SpeedUnitToStringConverter.cs" />
     <Compile Include="SpeedUtils.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
