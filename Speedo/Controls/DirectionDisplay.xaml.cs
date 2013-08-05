@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Phone.Controls;
 
 namespace Speedo.Controls
 {
@@ -21,11 +22,26 @@ namespace Speedo.Controls
             { 337.5, Direction.North }
         };
 
+        private static readonly Dictionary<PageOrientation, double> OrientationAngles = new Dictionary<PageOrientation, double>
+        {
+            { PageOrientation.PortraitUp, 0 },
+            { PageOrientation.LandscapeRight, 90 },
+            { PageOrientation.PortraitDown, 180 }, // not currently used
+            { PageOrientation.LandscapeLeft, 270 }
+        };
+
         private double directionAngle;
         public double DirectionAngle
         {
             get { return directionAngle; }
             set { SetProperty( ref directionAngle, value ); }
+        }
+
+        private double orientationFixAngle;
+        public double OrientationFixAngle
+        {
+            get { return orientationFixAngle; }
+            set { SetProperty( ref orientationFixAngle, value ); }
         }
 
         private Direction direction;
@@ -42,6 +58,13 @@ namespace Speedo.Controls
 
             DirectionAngle = 0;
             Direction = Directions.First().Value;
+
+            App.Current.RootFrame.OrientationChanged += RootFrame_OrientationChanged;
+        }
+
+        private void RootFrame_OrientationChanged( object sender, OrientationChangedEventArgs e )
+        {
+            OrientationFixAngle = OrientationAngles.First( p => e.Orientation.HasFlag( p.Key ) ).Value;
         }
 
         protected override void ChangeCourse( double course )
