@@ -20,7 +20,7 @@ Contributors: Long Zheng, Solal Pirelli
         </Grid.RowDefinitions>
 
         <TextBlock Style="{StaticResource PhoneTextSmallStyle}"
-                   Text="Set maximum speed to trigger audible alert" />
+                   Text="{Binding Strings.SetSpeedAlert, Source={StaticResource Strings}}" />
 
         <StackPanel Grid.Row="1"
                     HorizontalAlignment="Center"
@@ -30,7 +30,7 @@ Contributors: Long Zheng, Solal Pirelli
                                      Value="{Binding Limit, Mode=TwoWay}" />
             <TextBlock VerticalAlignment="Center"
                        FontSize="100"
-                       Text="{Binding Unit, Converter={StaticResource SpeedToString}}" />
+                       Text="{Binding Unit, Converter={StaticResource EnumToString}}" />
         </StackPanel>
 
         <Grid Grid.Row="2">
@@ -45,20 +45,20 @@ Contributors: Long Zheng, Solal Pirelli
 
             <TextBlock Grid.ColumnSpan="2"
                        Style="{StaticResource PhoneTextLargeStyle}"
-                       Text="Alert type:" />
+                       Text="{Binding Strings.SpeedAlertType, Source={StaticResource Strings}}" />
 
             <RadioButton Grid.Row="1" 
                          IsChecked="{Binding UseSound, Mode=TwoWay}"
-                         Content="Sound" />
+                         Content="{Binding Resources.SpeedAlert_Sound, Source={StaticResource Strings}}" />
             <RadioButton Grid.Column="1"
                          Grid.Row="1"
                          IsChecked="{Binding UseSound, Converter={StaticResource OppositeBool}, Mode=TwoWay}"
-                         Content="Voice" />
+                         Content="{Binding Resources.SpeedAlert_Voice, Source={StaticResource Strings}}" />
         </Grid>
 
         <Button Grid.Row="3" 
                 Command="{Binding CloseCommand}"
-                Content="Enable speed alert" 
+                Content="{Binding Resources.EnableSpeedAlertButton, Source={StaticResource Strings}}" 
                 Margin="5" />
     </Grid>
 </phone:PhoneApplicationPage>

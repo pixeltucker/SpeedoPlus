@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
+using Speedo.Languages;
 
 namespace Speedo
 {
@@ -33,7 +34,7 @@ namespace Speedo
 
         private void ExecuteAwesomeCommand( object parameter )
         {
-            MessageBox.Show( "Very awesome.", "How awesome?", MessageBoxButton.OK );
+            MessageBox.Show( AppResources.About_AwesomeMessage, AppResources.About_AwesomeCaption, MessageBoxButton.OK );
         }
 
         private void ExecuteReviewAppCommand( object parameter )

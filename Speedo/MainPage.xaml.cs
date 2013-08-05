@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Speedo.Languages;
 
 namespace Speedo
 {
@@ -90,7 +91,7 @@ namespace Speedo
             if ( Settings.IsFirstRun )
             {
                 Settings.IsFirstRun = false;
-                MessageBox.Show( "This software uses GPS signals to calculate your speed and direction which is subject to interference and results may be skewed.\n\nThe information provided can only be used as a guide.", "Accuracy warning", MessageBoxButton.OK );
+                MessageBox.Show( AppResources.AccuracyWarningMessage, AppResources.AccuracyWarningCaption, MessageBoxButton.OK );
                 App.Current.ShowPrivacyPolicy();
             }
         }
@@ -197,7 +198,7 @@ namespace Speedo
         {
             if ( Settings.AllowLocationAccess )
             {
-                var warningMsg = MessageBox.Show( "This application will not work without location access. Are you sure you still want to disable it?", "Disable location", MessageBoxButton.OKCancel );
+                var warningMsg = MessageBox.Show( AppResources.LocationDisableWarningMessage, AppResources.LocationDisableWarningCaption, MessageBoxButton.OKCancel );
                 if ( warningMsg == MessageBoxResult.OK )
                 {
                     Settings.AllowLocationAccess = false;

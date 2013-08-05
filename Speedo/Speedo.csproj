@@ -42,7 +42,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -116,6 +116,12 @@
     <Compile Include="AlertPage.xaml.cs">
       <DependentUpon>AlertPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Direction.cs" />
+    <Compile Include="Languages\AppResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AppResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="AppSettings.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="App.xaml.cs">
@@ -138,6 +144,7 @@
     </Compile>
     <Compile Include="FakeGeoPositionWatcher.cs" />
     <Compile Include="GpsStatus.cs" />
+    <Compile Include="LocalizedStrings.cs" />
     <Compile Include="NotifyHelper.cs" />
     <Compile Include="SpeedAlert.cs" />
     <Compile Include="SpeedUtils.cs" />
@@ -227,6 +234,12 @@
     <Resource Include="Resources\roadbg.jpg" />
     <Resource Include="Resources\map.png" />
     <Resource Include="Resources\windscreen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Languages\AppResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />

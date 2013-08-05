@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Speedo.Languages;
 
 namespace Speedo
 {
@@ -67,7 +68,7 @@ namespace Speedo
 
         public void ShowPrivacyPolicy()
         {
-            MessageBox.Show( "This software temporarily stores and uses your location data for the purpose of calculating speed and direction.\n\nYour location may be sent to Bing over the internet to position the map.", "Location privacy statement", MessageBoxButton.OK );
+            MessageBox.Show( AppResources.PrivacyPolicyMessage, AppResources.PrivacyPolicyCaption, MessageBoxButton.OK );
         }
 
         public void ForceDarkTheme()

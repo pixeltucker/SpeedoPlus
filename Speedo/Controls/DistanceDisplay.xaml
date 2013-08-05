@@ -15,11 +15,11 @@ Contributors: Long Zheng, Solal Pirelli
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding Distance, StringFormat=0}"
+        <TextBlock Text="{Binding Distance, StringFormat='0'}"
                     HorizontalAlignment="Center" />
         <TextBlock Grid.Row="1"
                    HorizontalAlignment="Center" 
                    Style="{StaticResource PhoneTextSmallStyle}"
-                   Text="distance" />
+                   Text="{Binding Resources.DistanceDisplay, Source={StaticResource Strings}}" />
     </Grid>
 </my:MovementControl>

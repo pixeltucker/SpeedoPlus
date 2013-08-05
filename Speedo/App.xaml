@@ -15,20 +15,15 @@ Contributors: Long Zheng, Solal Pirelli
                 <ResourceDictionary Source="Resources/Resources.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
-            
+            <my:LocalizedStrings x:Key="Strings" />
+                
             <my:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
             <my:BooleanToVisibilityConverter x:Key="BoolToOppositeVisibility"
                                              IsReversed="True" />
             <my:BooleanToOpacityConverter x:Key="BoolToAppBarOpacity" Opacity="0.8" />
-            <my:BooleanToStringConverter x:Key="LocationAccessToMenuString"
-                                         True="disable location access"
-                                         False="enable location access" />
-            <my:GpsStatusToStringConverter x:Key="GpsToString" />
-            <my:SpeedUnitToStringConverter x:Key="SpeedToString" 
-                                           Kilometers="km/h" Miles="mph" />
-            <my:SpeedUnitToStringConverter x:Key="SpeedToSwitchString" 
-                                           Kilometers="switch to imperial (mph)" 
-                                           Miles="switch to metric (km/h)" />
+            <my:LocationAccessToMenuStringConverter x:Key="LocationAccessToMenuString" />
+            <my:EnumToLocalizedStringConverter x:Key="EnumToString" />
+            <my:SpeedUnitToMenuStringConverter x:Key="SpeedToSwitchString" />
             <my:OppositeBooleanConverter x:Key="OppositeBool" />
         </ResourceDictionary>
     </Application.Resources>

@@ -8,17 +8,17 @@ namespace Speedo.Controls
 {
     public partial class DirectionDisplay : MovementControl
     {
-        private static readonly Dictionary<double, string> Directions = new Dictionary<double, string>
+        private static readonly Dictionary<double, Direction> Directions = new Dictionary<double, Direction>
         {
-            { 0, "N" },
-            { 22.5, "NE" },
-            { 67.5, "E" },
-            { 112.5, "SE" },
-            { 157.5, "S" },
-            { 202.5, "SW" },
-            { 247.5, "W" },
-            { 292.5, "NW" },
-            { 337.5, "N" }
+            { 0, Direction.North },
+            { 22.5, Direction.NorthEast },
+            { 67.5, Direction.East },
+            { 112.5, Direction.SouthEast },
+            { 157.5, Direction.South },
+            { 202.5, Direction.SouthWest },
+            { 247.5, Direction.West },
+            { 292.5, Direction.NorthWest },
+            { 337.5, Direction.North }
         };
 
         private double directionAngle;
@@ -28,11 +28,11 @@ namespace Speedo.Controls
             set { SetProperty( ref directionAngle, value ); }
         }
 
-        private string directionInitials;
-        public string DirectionInitials
+        private Direction direction;
+        public Direction Direction
         {
-            get { return directionInitials; }
-            set { SetProperty( ref directionInitials, value ); }
+            get { return direction; }
+            set { SetProperty( ref direction, value ); }
         }
 
         public DirectionDisplay()
@@ -41,13 +41,13 @@ namespace Speedo.Controls
             LayoutRoot.DataContext = this;
 
             DirectionAngle = 0;
-            DirectionInitials = Directions.First().Value;
+            Direction = Directions.First().Value;
         }
 
         protected override void ChangeCourse( double course )
         {
             DirectionAngle = -course;
-            DirectionInitials = Directions.Last( p => course >= p.Key ).Value;
+            Direction = Directions.Last( p => course >= p.Key ).Value;
         }
     }
 }

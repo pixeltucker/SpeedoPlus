@@ -10,7 +10,7 @@ Contributors: Long Zheng, Solal Pirelli
     <StackPanel x:Name="LayoutRoot"
                 Orientation="Horizontal"
                 Visibility="{Binding IsEnabled, Converter={StaticResource BoolToVisibility}}">
-        <TextBlock Text="{Binding DirectionInitials}"
+        <TextBlock Text="{Binding Direction, Converter={StaticResource EnumToString}}"
                    FontSize="50" 
                    Foreground="{StaticResource ImportantAccentBrush}"
                    Margin="0,0,20,0" />

@@ -16,8 +16,8 @@ namespace Speedo.Controls
     {
         private const int Timeout = 2000; // milliseconds
         private const int AnimationDuration = 200; // milliseconds
-        private int hitCount;
 
+        private int hitCount;
         private Storyboard hideStoryboard;
         private Storyboard showStoryboard;
 

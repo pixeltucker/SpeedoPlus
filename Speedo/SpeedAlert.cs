@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Windows.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
+using Speedo.Languages;
 using Windows.Phone.Speech.Synthesis;
 
 namespace Speedo
@@ -95,7 +96,7 @@ namespace Speedo
 
             public async void Notify()
             {
-                await synthesizer.SpeakTextAsync( "You're going too fast." );
+                await synthesizer.SpeakTextAsync( AppResources.SpeechAlert );
             }
         }
     }

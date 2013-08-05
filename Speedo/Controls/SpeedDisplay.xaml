@@ -20,20 +20,20 @@ Contributors: Long Zheng, Solal Pirelli
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         
-        <TextBlock Text="{Binding Average, StringFormat=0}"
+        <TextBlock Text="{Binding Average, StringFormat='0'}"
                    FontSize="30"
                    VerticalAlignment="Bottom" 
                    HorizontalAlignment="Center" />
         <TextBlock Grid.Row="1"
                    Style="{StaticResource PhoneTextSmallStyle}"
-                   Text="average"
+                   Text="{Binding Resources.SpeedAverage, Source={StaticResource Strings}}"
                    HorizontalAlignment="Center" />
         
         <Viewbox Grid.Column="1"
                  HorizontalAlignment="Center"
                  VerticalAlignment="Stretch"
                  MaxHeight="260">
-            <TextBlock Text="{Binding Current, StringFormat=0}"
+            <TextBlock Text="{Binding Current, StringFormat='0'}"
                        Foreground="{StaticResource ImportantForegroundBrush}"
                        FontSize="260"
                        FontWeight="Light" />
@@ -41,18 +41,18 @@ Contributors: Long Zheng, Solal Pirelli
 
         <TextBlock Grid.Column="1"
                    Grid.Row="1"
-                   Text="{Binding Unit, Converter={StaticResource SpeedToString}}"
+                   Text="{Binding Unit, Converter={StaticResource EnumToString}}"
                    HorizontalAlignment="Center" />
                          
         <TextBlock Grid.Column="2"
-                   Text="{Binding Max, StringFormat=0}"
+                   Text="{Binding Max, StringFormat='0'}"
                    FontSize="30"
                    VerticalAlignment="Bottom" 
                    HorizontalAlignment="Center" />
         <TextBlock Grid.Column="2"
                    Grid.Row="1"
                    Style="{StaticResource PhoneTextSmallStyle}"
-                   Text="max"
+                   Text="{Binding Resources.SpeedMax, Source={StaticResource Strings}}"
                    HorizontalAlignment="Center" />
     </Grid>
 </my:MovementControl>

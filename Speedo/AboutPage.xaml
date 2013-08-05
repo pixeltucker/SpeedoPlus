@@ -22,11 +22,11 @@ Contributors: Long Zheng, Solal Pirelli
                Stretch="UniformToFill"
                Opacity="0.25" />
 
-        <TextBlock Text="Speedo Plus" 
+        <TextBlock Text="{Binding Resources.AppName, Source={StaticResource Strings}}" 
                    Style="{StaticResource PhoneTextNormalStyle}"
                    Margin="20,0" />
         <TextBlock Grid.Row="1"
-                   Text="about"                        
+                   Text="{Binding Resources.AboutPageTitle, Source={StaticResource Strings}}"                        
                    Style="{StaticResource PhoneTextTitle1Style}"
                    Margin="20,-10,20,0" />
 
@@ -35,7 +35,7 @@ Contributors: Long Zheng, Solal Pirelli
             <StackPanel>
                 <StackPanel>
                     <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}"
-                               Text="Made by" />
+                               Text="{Binding Resources.About_MadeBy, Source={StaticResource Strings}}" />
                     <StackPanel Margin="0,0,0,15">
                         <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                             Text="Long Zheng" />
@@ -48,25 +48,25 @@ Contributors: Long Zheng, Solal Pirelli
                 </StackPanel>
                 <StackPanel Margin="0,20,0,0">
                     <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}" 
-                               Text="Support the developer" />
+                               Text="{Binding Resources.About_SupportTheDev, Source={StaticResource Strings}}" />
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}" 
                                TextWrapping="Wrap"
-                               Text="Thanks for downloading the app! :)" />
+                               Text="{Binding Resources.About_Thanks, Source={StaticResource Strings}}" />
                     <Button Command="{Binding AwesomeCommand}" 
-                            Content="You are awesome" />
+                            Content="{Binding Resources.About_AwesomeButton, Source={StaticResource Strings}}" />
                 </StackPanel>
                 <StackPanel Margin="0,20,0,0">
                     <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}"
-                               Text="Share the love" />
+                               Text="{Binding Resources.About_ShareTheLove, Source={StaticResource Strings}}" />
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                TextWrapping="Wrap" 
-                               Text="If you enjoy using the app, please share a review in the Marketplace." />
+                               Text="{Binding Resources.About_WriteAReview, Source={StaticResource Strings}}" />
                     <Button Command="{Binding ReviewAppCommand}"
-                            Content="Write a review" />
+                            Content="{Binding Resources.About_ReviewButton, Source={StaticResource Strings}}" />
                 </StackPanel>
 
                 <HyperlinkButton Command="{Binding ShowPrivacyPolicyCommand}"
-                                 Content="Privacy policy"
+                                 Content="{Binding Resources.About_PrivacyPolicy, Source={StaticResource Strings}}"
                                  HorizontalAlignment="Left" 
                                  Margin="0,20,0,0" />
             </StackPanel>
