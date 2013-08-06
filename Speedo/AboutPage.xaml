@@ -38,12 +38,21 @@ Contributors: Long Zheng, Solal Pirelli
                                Text="{Binding Resources.About_MadeBy, Source={StaticResource Strings}}" />
                     <StackPanel Margin="0,0,0,15">
                         <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
-                            Text="Long Zheng" />
-                        <HyperlinkButton Command="{Binding WebsiteCommand}" CommandParameter="http://www.istartedsomething.com" Content="www.istartedsomething.com" FontSize="20" HorizontalAlignment="Left" />
+                                   Text="Long Zheng" />
+                        <HyperlinkButton Command="{Binding WebsiteCommand}" 
+                                         CommandParameter="http://www.istartedsomething.com" 
+                                         Content="www.istartedsomething.com" 
+                                         FontSize="20" 
+                                         HorizontalAlignment="Left" />
                     </StackPanel>
                     <StackPanel Margin="0,0,0,15">
-                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}" Text="Solal Pirelli" />
-                        <HyperlinkButton Command="{Binding WebsiteCommand}" CommandParameter="https://github.com/Aethec" Content="github.com/Aethec" FontSize="20" HorizontalAlignment="Left" />
+                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}" 
+                                   Text="Solal Pirelli" />
+                        <HyperlinkButton Command="{Binding WebsiteCommand}" 
+                                         CommandParameter="http://people.epfl.ch/solal.pirelli" 
+                                         Content="people.epfl.ch/solal.pirelli" 
+                                         FontSize="20" 
+                                         HorizontalAlignment="Left" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="0,20,0,0">
