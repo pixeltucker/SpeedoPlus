@@ -124,15 +124,6 @@ namespace Speedo.Languages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Support the developer.
-        /// </summary>
-        public static string About_SupportTheDev {
-            get {
-                return ResourceManager.GetString("About_SupportTheDev", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Thanks for downloading the app! :).
         /// </summary>
         public static string About_Thanks {

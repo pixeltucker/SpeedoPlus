@@ -144,9 +144,6 @@
   <data name="About_ShareTheLove" xml:space="preserve">
     <value>Share the love</value>
   </data>
-  <data name="About_SupportTheDev" xml:space="preserve">
-    <value>Support the developer</value>
-  </data>
   <data name="About_Thanks" xml:space="preserve">
     <value>Thanks for downloading the app! :)</value>
   </data>

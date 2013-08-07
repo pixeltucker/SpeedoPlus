@@ -56,17 +56,13 @@ Contributors: Long Zheng, Solal Pirelli
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Margin="0,20,0,0">
-                    <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}" 
-                               Text="{Binding Resources.About_SupportTheDev, Source={StaticResource Strings}}" />
+                    <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}"
+                               Text="{Binding Resources.About_ShareTheLove, Source={StaticResource Strings}}" />
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}" 
                                TextWrapping="Wrap"
                                Text="{Binding Resources.About_Thanks, Source={StaticResource Strings}}" />
                     <Button Command="{Binding AwesomeCommand}" 
                             Content="{Binding Resources.About_AwesomeButton, Source={StaticResource Strings}}" />
-                </StackPanel>
-                <StackPanel Margin="0,20,0,0">
-                    <TextBlock Style="{StaticResource PhoneTextGroupHeaderStyle}"
-                               Text="{Binding Resources.About_ShareTheLove, Source={StaticResource Strings}}" />
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                TextWrapping="Wrap" 
                                Text="{Binding Resources.About_WriteAReview, Source={StaticResource Strings}}" />
